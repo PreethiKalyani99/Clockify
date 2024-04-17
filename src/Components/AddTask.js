@@ -55,7 +55,6 @@ export function AddTask(){
             alert('Please enter task description')
         }
     }
-    console.log(totalTasks)
     const timeConversion = (num) => {
         let  hours = Math.floor(num / 60)
         let mins = num % 60
@@ -69,27 +68,40 @@ export function AddTask(){
     const validateTime = (e) => {
         const name = e.target.name
         let hours, minutes
+        let newValue = timeValue[name], expectedLength = 4, firstValue = '', secondvalue = ''
 
-        if(timeValue[name].length < 6 && !isNaN(parseInt(timeValue[name]))){
-            let splitValue = timeValue[name].split(':')
-            if(splitValue.length === 1 && (splitValue[0].length === 2 || splitValue[0].length === 3)){
-                hours = parseInt(splitValue[0].slice(0,1))
-                minutes = parseInt(splitValue[0].slice(1))
-            }
-            else if(splitValue.length === 1 ){
-                hours = splitValue[0].slice(0,2) === '' ? '00' : parseInt(splitValue[0].slice(0,2))
-                minutes = splitValue[0].slice(2,4) === '' ? '00' : parseInt(splitValue[0].slice(2,4))
-            }
-            else{
-                hours = splitValue[0] === '' ? '00' : parseInt(splitValue[0])
-                minutes = splitValue[1] === '' ? '00' : parseInt(splitValue[1])                
-            }
-            
+        if(newValue[1] === ':'){
+            firstValue = newValue.slice(0, 1)
+            secondvalue = newValue.slice(2)
+
+            newValue = firstValue + secondvalue
+            expectedLength = 3
+        }
+        else if(newValue[2] === ':'){
+            firstValue = newValue.slice(0, 2)
+            secondvalue = newValue.slice(3) 
+
+            newValue = firstValue + secondvalue
+            expectedLength = 4
+        }
+        else if(newValue.length === 3){
+            firstValue = newValue.slice(0,1)
+            secondvalue = newValue.slice(1)
+        }
+        else{
+            firstValue = newValue.slice(0,2)
+            secondvalue = newValue.slice(2,4)
+        }
+
+        if(newValue.length <= expectedLength && (!isNaN(newValue)) && parseInt(newValue) >= 0){
+            hours = firstValue === '' || firstValue === '24' ? 0 : parseInt(firstValue.padStart(2, '0'))
+            minutes = secondvalue === '' ? 0 : parseInt(secondvalue.padStart(2, '0'))
+
             if(hours < 24 && minutes < 60){
                 setTimeValue({...timeValue, [name]: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`})
             }
-            else if(hours > 23){
-                setTimeValue({...timeValue, [name]: `${hrs}:${mins}`})
+            else if(hours > 24 && minutes === 0) {
+                setTimeValue({...timeValue, [name]: `${hours.toString()[0].padStart(2, '0')}:${hours.toString()[1].padStart(2, '0')}`})
             }
             else if(minutes > 60){
                 let {hrs, mins} = timeConversion(minutes)
@@ -97,6 +109,9 @@ export function AddTask(){
                 hours = hours % 24
                 minutes = mins
                 setTimeValue({...timeValue, [name]: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`}) 
+            }
+            else{
+                setTimeValue({...timeValue, [name]: `${hrs}:${mins}`})
             }
         }
         else{
