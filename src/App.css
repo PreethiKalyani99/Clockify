@@ -1,38 +1,94 @@
-.App {
-  text-align: center;
+.container{
+    max-width: 2000px !important;
+    padding-left: 10px !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.row>*, .nav-link{
+    padding: 0 !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.sidebar{
+    text-align: center;
+}
+.col-lg-1{
+    width: 10% !important;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.col-width{
+    width: 88% !important;
 }
 
-.App-link {
-  color: #61dafb;
+ul{
+    padding: 15px;
+    margin-left: 8%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.header-container{
+    height: 50px;
+    padding: 10px !important;
+}
+
+.list-icon{
+    height: 50px !important;
+    width: 50px !important;
+}
+
+.shrink{
+    width: 4.60% !important;
+}
+.shrink-li a:hover, .expand-li a:hover{
+    background-color: rgb(61, 61, 243);
+    color: white;
+    width: 100%;
+}
+
+.hide{
+    display: none;
+}
+
+.add-task-container{
+    height: 65px !important;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+}
+
+.input-box{
+    height: 40px;
+    width: 68%;
+    border: none;
+    outline: none;
+    padding: 10px;
+}
+
+.input-box:hover{
+    border: 1px solid #858181;
+}
+
+.popup{
+    width: 350px;
+    height: 250px;
+    background-color: white;
+    border-radius: 25px;
+    padding: 20px;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    z-index: 1000 !important;
+}
+
+.display-container{
+    border: 1px solid black;
+    display: flex;
+    position: relative;
+    top: 30px;
+}
+
+.sub-container{
+    display: flex;
+    gap: 50px;
 }
