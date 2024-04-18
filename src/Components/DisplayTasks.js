@@ -1,4 +1,5 @@
 import React from "react";
+import { DisplaySingleTask } from "./DisplaySingleTask";
 
 export function DisplayTasks(props){
     return(
@@ -6,16 +7,17 @@ export function DisplayTasks(props){
            {Object.entries(props.totalTasks).map(([key, tasks]) => (
                 <div className="display-container mb-3" key={key}>
                     <div> {tasks.map((task, index) => (
-                       <div className="sub-container" key={index}>
-                            <p>{task.text}</p>
-                            <p>{task.project !== undefined ? (task.project + (task.client !== undefined ? ' - ' + task.client : '')) : (task.client !== undefined ? task.client : '')}</p>
-                            <p>{task.startTime}</p>
-                            <p>{task.endTime}</p>
-                            <p>{task.date}</p>
-                       </div> 
+                           <div className="sub-container" key={index}>
+                                <DisplaySingleTask
+                                    key={index}
+                                    task={task}
+                                    validateTime={props.validateTime}
+                                    addTodayTask={props.addTodayTask}
+                                    totalTasks={props.totalTasks}
+                                />
+                            </div> 
                         ))}
                     </div>
-
                 </div>
             ))} 
         </>

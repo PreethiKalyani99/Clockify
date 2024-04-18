@@ -1,11 +1,11 @@
 import React, {useState} from "react";
-import { addTodayTask } from "../redux/ClockifySlice";
+import { addTodayTask, updateUniqueId } from "../redux/ClockifySlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { AddProject } from "./AddProject";
 import { DisplayTasks } from "./DisplayTasks";
 
 export function AddTask(){
-    const {projectClient, totalTasks} = useSelector(state => state.clockify)
+    const {projectClient, totalTasks , uniqueId} = useSelector(state => state.clockify)
     
     const [inputValue, setInputValue] = useState('')
     
@@ -16,12 +16,16 @@ export function AddTask(){
     const month = currentDateTime.getMonth() + 1
     const year = currentDateTime.getFullYear()
     
-    const [dateValue, setDateValue] = useState(`${day}-${month}-${year}`)
+    const [dateValue, setDateValue] = useState(`${year}-${month.toString().padStart(2, '0')}-${day}`)
     const [timeValue, setTimeValue] = useState({
         start: `${hrs}:${mins}`,
         end: `${hrs}:${mins}`
     })
-    let [uniqueId, setUniqueId] = useState(0) 
+    const [previousValue, setPreviousValue] = useState({
+        start: timeValue.start,
+        end: timeValue.end
+    })
+
     const [isProjectCreated, setIsProjectCreated] = useState(false)
 
     const dispatch = useDispatch()
@@ -35,7 +39,6 @@ export function AddTask(){
     const handleInputChange = (e) => {
         setInputValue(e.target.value)
     }
-    
     const addTask = () => {
         if(inputValue !== ''){
             dispatch(addTodayTask({
@@ -47,9 +50,10 @@ export function AddTask(){
                 startTime: timeValue.start,
                 endTime: timeValue.end 
             }))
-            setUniqueId(uniqueId+1)
+            dispatch(updateUniqueId())
             setInputValue('')
             setIsProjectCreated(false)
+            setDateValue(`${year}-${month.toString().padStart(2, '0')}-${day}`)
         }
         else{
             alert('Please enter task description')
@@ -65,11 +69,10 @@ export function AddTask(){
         setTimeValue({...timeValue, [e.target.name]: e.target.value})
     }
     
-    const validateTime = (e) => {
+    const validateTime = (e, time, setTime, prevTime, setPrevTime) => {
         const name = e.target.name
         let hours, minutes
-        let newValue = timeValue[name], expectedLength = 4, firstValue = '', secondvalue = ''
-
+        let newValue = time[name], expectedLength = 4, firstValue = '', secondvalue = ''
         if(newValue[1] === ':'){
             firstValue = newValue.slice(0, 1)
             secondvalue = newValue.slice(2)
@@ -98,25 +101,37 @@ export function AddTask(){
             minutes = secondvalue === '' ? 0 : parseInt(secondvalue.padStart(2, '0'))
 
             if(hours < 24 && minutes < 60){
-                setTimeValue({...timeValue, [name]: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`})
+                hours = hours.toString().padStart(2, '0')
+                minutes = minutes.toString().padStart(2, '0')
+                setTime({...time, [name]: `${hours}:${minutes}`})
+                setPrevTime({...prevTime, [name]:  `${hours}:${minutes}`})
             }
             else if(hours > 24 && minutes === 0) {
-                setTimeValue({...timeValue, [name]: `${hours.toString()[0].padStart(2, '0')}:${hours.toString()[1].padStart(2, '0')}`})
+                const num1 = hours.toString()[0].padStart(2, '0')
+                const num2 = hours.toString()[1].padStart(2, '0')
+                hours = num1
+                minutes = num2
+                setTime({...time, [name]: `${num1}:${num2}`})
+                setPrevTime({...prevTime, [name]: `${num1}:${num2}`})
             }
-            else if(minutes > 60){
+            else if(hours < 24 && minutes >= 60){
                 let {hrs, mins} = timeConversion(minutes)
                 hours += hrs
-                hours = hours % 24
-                minutes = mins
-                setTimeValue({...timeValue, [name]: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`}) 
+                hours = (hours % 24).toString().padStart(2, '0')
+                minutes = mins.toString().padStart(2, '0')
+                setTime({...time, [name]: `${hours}:${minutes}`}) 
+                setPrevTime({...prevTime, [name]:  `${hours}:${minutes}`})
             }
             else{
-                setTimeValue({...timeValue, [name]: `${hrs}:${mins}`})
+                setTime({...time, [name]: prevTime[name]})
+                return {prevTime: prevTime}
             }
         }
         else{
-            setTimeValue({...timeValue, [name]: `${hrs}:${mins}`})
+            setTime({...time, [name]: prevTime})
+            return {prevTime:prevTime}
         }
+        return {hours: hours, minutes: minutes, prevTime: prevTime}
     }
 
     const handleDateChange = (e) => {
@@ -147,14 +162,14 @@ export function AddTask(){
                     name="start"
                     value={timeValue.start}
                     onChange={handleTimeChange}
-                    onBlur={validateTime}
+                    onBlur={(e) => validateTime(e, timeValue, setTimeValue, previousValue, setPreviousValue)}
                 ></input>
                 <input
                     type="text" 
                     name="end"
                     value={timeValue.end}
                     onChange={handleTimeChange}
-                    onBlur={validateTime}
+                    onBlur={(e) => validateTime(e, timeValue, setTimeValue, previousValue, setPreviousValue)}
                 ></input>
                 <input type="date" name="date" value={dateValue} onChange={handleDateChange}></input>
             </div>
@@ -162,6 +177,9 @@ export function AddTask(){
                <DisplayTasks
                 key={uniqueId}
                 totalTasks={totalTasks}
+                currentDate = {`${year}-${month.toString().padStart(2, '0')}-${day}`}
+                validateTime={validateTime}
+                addTodayTask={addTodayTask}
                /> 
             </div>
         </>
