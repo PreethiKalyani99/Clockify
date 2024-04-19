@@ -91,4 +91,39 @@ ul{
 .sub-container{
     display: flex;
     gap: 50px;
+    width: 1690px;
+}
+
+.border-style{
+    border-bottom: 1px solid black;
+}
+
+.task-container{
+    display: flex;
+    gap: 50px;
+    padding: 5px;
+    align-items: center;
+}
+
+.three-dots{
+    position: absolute;
+    right: 10px;
+}
+
+.action-items-container{
+    position: absolute;
+    right: 50px;
+    width: 150px;
+    height: 100px;
+    display: block;
+}
+
+.hide{
+    display: none;
+}
+
+ul{
+    list-style-type: none;
+    background-color: white;
+    padding: 10px;
 }

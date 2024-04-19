@@ -21,10 +21,24 @@ export const ClockifySlice = createSlice({
             state.projectClient[id] = props
         },
         updateTask: (state, action) => {
-            const {id, date, ...updatedTasks} = action.payload
-            state.totalTasks[date][id] = {
-                ...state.totalTasks[date][id],
-                ...updatedTasks
+            const {id, date, text, ...updatedTasks} = action.payload
+            if(!state.totalTasks[date]){
+                state.totalTasks[date] = []
+                state.totalTasks[date].push({...updatedTasks,text, date, id})
+            }
+            else{
+                state.totalTasks[date][id] = {
+                    ...state.totalTasks[date][id],
+                    ...updatedTasks
+                }
+            }
+            localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
+        },
+        deleteTask: (state, action) => {
+            const {id, date} = action.payload
+            console.log(id, date, 'action payload')
+            if(state.totalTasks[date]){
+                state.totalTasks[date] = state.totalTasks[date].filter(task => task.id !== id)
             }
             localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
         },
@@ -35,5 +49,5 @@ export const ClockifySlice = createSlice({
     }
 })
 
-export const {addTodayTask, addProjectClient, updateUniqueId, updateTask} = ClockifySlice.actions
+export const {addTodayTask, addProjectClient, updateUniqueId, updateTask, deleteTask} = ClockifySlice.actions
 export default ClockifySlice.reducer

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import { useDispatch } from "react-redux";
-import { updateTask } from "../redux/ClockifySlice";
+import { updateTask, deleteTask } from "../redux/ClockifySlice";
 
 export function DisplaySingleTask(props){
     const [timeValue, setTimeValue] = useState({
@@ -12,6 +12,8 @@ export function DisplaySingleTask(props){
         end: timeValue.end
     })
     const [totalTime, setTotalTime] = useState()
+    const [dateValue, setDateValue] = useState(props.task.date)
+    const [showActionItems, setShowActionItems] = useState(false)
     const dispatch = useDispatch()
 
     const handleBlur = (e) => {
@@ -22,13 +24,38 @@ export function DisplaySingleTask(props){
        })
         dispatch(updateTask({
            id: props.task.id,
-           date: props.task.date,
+           date: dateValue,
            startTime: e.target.name === 'start' ? (hours !== undefined || minutes !== undefined)  ?  (hours + ':' + minutes) : prevTime[e.target.name] : timeValue.start,
            endTime: e.target.name === 'end' ?  ((hours !== undefined || minutes !== undefined)  ?  (hours + ':' + minutes) : prevTime[e.target.name]) : timeValue.end
         }))
     }
+
+    const handleDateChange = (e) => {
+        const newDate = e.target.value
+        setDateValue(newDate)
+        console.log(props.task.id, 'id', props.task.text)
+        dispatch(props.addTodayTask({
+            id: props.task.id,
+            date: newDate,
+            startTime: timeValue.start,
+            endTime: timeValue.end,
+            text: props.task.text
+        }))
+        dispatch(deleteTask({
+            id: props.task.id,
+            date: props.task.date
+        }))
+    }
+
+    const handleDeleteTask = () => {
+        dispatch(deleteTask({
+            id: props.task.id,
+            date: props.task.date
+        }))
+        setShowActionItems(false)
+    }
     return(
-        <>
+        <div className="task-container">
             <p>{props.task.text}</p>
             <p>{props.task.project !== undefined ? (props.task.project + (props.task.client !== undefined ? ' - ' + props.task.client : '')) : (props.task.client !== undefined ? props.task.client : '')}</p>
             <input 
@@ -46,12 +73,29 @@ export function DisplaySingleTask(props){
                 onBlur={handleBlur}
             ></input>
             <input
+                type="date"
+                onChange={handleDateChange}
+                value={props.task.date}
+            ></input>
+            <input
                 type="text"
                 name="time"
                 value={totalTime}
                 onChange={(e) => setTotalTime(e.target.value)}
                 // onBlur={handleTotalTime}
             ></input>
-        </>
+            <button className="three-dots" onClick={() => setShowActionItems(!showActionItems)}><i className="bi bi-three-dots-vertical"></i></button>
+            <div className={showActionItems ? "action-items-container": "hide"}>
+                <ul>
+                    <li>
+                    <button>Duplicate</button>
+                    </li>
+                    <li>
+                    <button onClick={handleDeleteTask}>Delete</button>               
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
     )
 }
