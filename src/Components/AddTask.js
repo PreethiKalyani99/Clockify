@@ -54,6 +54,7 @@ export function AddTask(){
             setInputValue('')
             setIsProjectCreated(false)
             setDateValue(`${year}-${month.toString().padStart(2, '0')}-${day}`)
+            setTimeValue({start: `${hrs}:${mins}`, end: `${hrs}:${mins}`})
         }
         else{
             alert('Please enter task description')
@@ -176,6 +177,7 @@ export function AddTask(){
             <div>
                <DisplayTasks
                 key={uniqueId}
+                uniqueId={uniqueId}
                 totalTasks={totalTasks}
                 currentDate = {`${year}-${month.toString().padStart(2, '0')}-${day}`}
                 validateTime={validateTime}

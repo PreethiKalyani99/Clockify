@@ -27,9 +27,12 @@ export const ClockifySlice = createSlice({
                 state.totalTasks[date].push({...updatedTasks,text, date, id})
             }
             else{
-                state.totalTasks[date][id] = {
-                    ...state.totalTasks[date][id],
-                    ...updatedTasks
+                const index = state.totalTasks[date].findIndex(task => task.id === id)
+                if (index !== -1) {
+                    state.totalTasks[date][index] = {
+                        ...state.totalTasks[date][index],
+                        ...updatedTasks
+                    }             
                 }
             }
             localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
@@ -37,8 +40,13 @@ export const ClockifySlice = createSlice({
         deleteTask: (state, action) => {
             const {id, date} = action.payload
             console.log(id, date, 'action payload')
+            console.log(state.totalTasks[date], state.totalTasks[date][id], 'jlkeioj')
             if(state.totalTasks[date]){
                 state.totalTasks[date] = state.totalTasks[date].filter(task => task.id !== id)
+                console.log(state.totalTasks[date], 'state')
+            }
+            if (state.totalTasks[date].length === 0) {
+                delete state.totalTasks[date]
             }
             localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
         },

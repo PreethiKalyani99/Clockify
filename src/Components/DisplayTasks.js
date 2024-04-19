@@ -2,6 +2,7 @@ import React from "react";
 import { DisplaySingleTask } from "./DisplaySingleTask";
 
 export function DisplayTasks(props){
+    console.log(props.totalTasks, 'total tasak')
     return(
         <>
            {Object.entries(props.totalTasks).map(([key, tasks]) => (
@@ -11,6 +12,7 @@ export function DisplayTasks(props){
                                 <DisplaySingleTask
                                     key={index}
                                     task={task}
+                                    uniqueId={props.uniqueId}
                                     validateTime={props.validateTime}
                                     addTodayTask={props.addTodayTask}
                                     totalTasks={props.totalTasks}

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import { useDispatch } from "react-redux";
-import { updateTask, deleteTask } from "../redux/ClockifySlice";
+import { updateTask, deleteTask, updateUniqueId } from "../redux/ClockifySlice";
 
 export function DisplaySingleTask(props){
     const [timeValue, setTimeValue] = useState({
@@ -54,6 +54,18 @@ export function DisplaySingleTask(props){
         }))
         setShowActionItems(false)
     }
+
+    const handleDuplicateTask = () => {
+        dispatch(props.addTodayTask({
+            id: props.uniqueId,
+            date: props.task.date,
+            startTime: props.task.startTime,
+            endTime: props.task.endTime,
+            text: props.task.text
+        }))
+        dispatch(updateUniqueId())
+        setShowActionItems(false)
+    }
     return(
         <div className="task-container">
             <p>{props.task.text}</p>
@@ -88,7 +100,7 @@ export function DisplaySingleTask(props){
             <div className={showActionItems ? "action-items-container": "hide"}>
                 <ul>
                     <li>
-                    <button>Duplicate</button>
+                    <button onClick={handleDuplicateTask}>Duplicate</button>
                     </li>
                     <li>
                     <button onClick={handleDeleteTask}>Delete</button>               
