@@ -3,6 +3,8 @@ import { addTodayTask, updateUniqueId } from "../redux/ClockifySlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { AddProject } from "./AddProject";
 import { DisplayTasks } from "./DisplayTasks";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export function AddTask(){
     const {projectClient, totalTasks , uniqueId} = useSelector(state => state.clockify)
@@ -135,8 +137,12 @@ export function AddTask(){
         return {hours: hours, minutes: minutes, prevTime: prevTime}
     }
 
-    const handleDateChange = (e) => {
-        setDateValue(e.target.value)
+    const handleDateChange = (dateTime) => {
+        const day = dateTime.getDate()
+        const month = dateTime.getMonth() + 1
+        const year = dateTime.getFullYear()
+        const date = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
+        setDateValue(date)
     }
 
     return(
@@ -172,7 +178,18 @@ export function AddTask(){
                     onChange={handleTimeChange}
                     onBlur={(e) => validateTime(e, timeValue, setTimeValue, previousValue, setPreviousValue)}
                 ></input>
-                <input type="date" name="date" value={dateValue} onChange={handleDateChange}></input>
+                <DatePicker
+                    selected={dateValue}
+                    onChange={handleDateChange}
+                    showTimeSelect={false}
+                    dateFormat="yyyy-MM-dd"
+                    customInput={
+                        <button>
+                            <i className="bi bi-calendar"></i>
+                        </button>
+                    }
+                />
+                <p>{dateValue}</p>
             </div>
             <div>
                <DisplayTasks

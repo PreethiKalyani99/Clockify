@@ -39,18 +39,15 @@ export const ClockifySlice = createSlice({
         },
         deleteTask: (state, action) => {
             const {id, date} = action.payload
-            console.log(id, date, 'action payload')
-            console.log(state.totalTasks[date], state.totalTasks[date][id], 'jlkeioj')
             if(state.totalTasks[date]){
                 state.totalTasks[date] = state.totalTasks[date].filter(task => task.id !== id)
-                console.log(state.totalTasks[date], 'state')
             }
             if (state.totalTasks[date].length === 0) {
                 delete state.totalTasks[date]
             }
             localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
         },
-        updateUniqueId: (state, action) => {
+        updateUniqueId: (state) => {
             state.uniqueId = state.uniqueId + 1
             localStorage.setItem('uniqueId', JSON.stringify(state.uniqueId))
         }
