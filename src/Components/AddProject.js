@@ -16,11 +16,11 @@ export function AddProject(props){
     }
 
     function handleInputChange(e){
-        setInputvalues({...inputvalues, [e.target.name]: [e.target.value]})
+        setInputvalues({...inputvalues, [e.target.name]: e.target.value})
     }
     
     function createProject(){
-      dispatch(addProjectClient({id:props.id, project: inputvalues.project[0], client: inputvalues.client[0]}))
+      dispatch(addProjectClient({id:props.id, project: inputvalues.project, client: inputvalues.client}))
       setInputvalues({
         project: '',
         client: ''
