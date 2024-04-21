@@ -42,11 +42,19 @@ export function AddTask(){
         setInputValue(e.target.value)
     }
     const addTask = () => {
+        const startTimeArr = timeValue.start.split(':').map(Number)
+        const endTimeArr = timeValue.end.split(':').map(Number)
+        const startAndEndTime = startTimeArr.concat(endTimeArr)
+
+        const startTimeDiff = startAndEndTime[0] > startAndEndTime[2] ? startAndEndTime[0] + startAndEndTime[2] : Math.abs(startAndEndTime[0] - startAndEndTime[2])
+        const endTimeDiff = startAndEndTime[1] > startAndEndTime[3] ? startAndEndTime[1] + startAndEndTime[3] : Math.abs(startAndEndTime[1] - startAndEndTime[3])
+
         if(inputValue !== ''){
             dispatch(addTodayTask({
                 date: dateValue,
                 id: uniqueId,
                 text: inputValue,
+                totalTime: `${startTimeDiff.toString().padStart(2, '0')}:${endTimeDiff.toString().padStart(2, '0')}:00`,
                 project: projectClient?.[uniqueId]?.project,
                 client: projectClient?.[uniqueId]?.client,
                 startTime: timeValue.start,
@@ -62,6 +70,7 @@ export function AddTask(){
             alert('Please enter task description')
         }
     }
+
     const timeConversion = (num) => {
         let  hours = Math.floor(num / 60)
         let mins = num % 60
