@@ -5,7 +5,9 @@ export const ClockifySlice = createSlice({
     initialState: {
         projectClient: {},
         totalTasks: JSON.parse(localStorage.getItem('totalTasks')) || {},
-        uniqueId: JSON.parse(localStorage.getItem('uniqueId')) || 0
+        uniqueId: JSON.parse(localStorage.getItem('uniqueId')) || 0,
+        tasksByWeek: {},
+        isModalOpen: false
     },
     reducers: {
         addTodayTask: (state, action) => {
@@ -18,8 +20,11 @@ export const ClockifySlice = createSlice({
         },
         addProjectClient: (state, action) => {
             const {id, ...props} = action.payload
-            state.projectClient[id] = props
+            state.projectClient[id] = {...props, id}
         },
+        setIsModalOpen: (state, action) => {
+            state.isModalOpen = action.payload
+        }, 
         updateTask: (state, action) => {
             const {id, date, text, ...updatedTasks} = action.payload
             if(!state.totalTasks[date]){
@@ -31,6 +36,7 @@ export const ClockifySlice = createSlice({
                 if (index !== -1) {
                     state.totalTasks[date][index] = {
                         ...state.totalTasks[date][index],
+                        text,
                         ...updatedTasks
                     }             
                 }
@@ -54,5 +60,5 @@ export const ClockifySlice = createSlice({
     }
 })
 
-export const {addTodayTask, addProjectClient, updateUniqueId, updateTask, deleteTask} = ClockifySlice.actions
+export const {addTodayTask, addProjectClient, updateUniqueId, updateTask, deleteTask, setIsModalOpen} = ClockifySlice.actions
 export default ClockifySlice.reducer

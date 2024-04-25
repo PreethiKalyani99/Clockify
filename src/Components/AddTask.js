@@ -4,24 +4,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AddProject } from "./AddProject";
 import { DisplayTasks } from "./DisplayTasks";
 import DatePicker from "react-datepicker";
+import { currentDateTime } from "../utils/currentDateTime";
+import { splitTime } from "../utils/splitTime";
+import { isStartTimeGreater } from "../utils/isStartTimeGreater";
+import { stringPadStart } from "../utils/stringPadStart";
+import { inputDateTime } from "../utils/inputDateTime";
+import { validateTime } from "../utils/validateTime";
 import "react-datepicker/dist/react-datepicker.css";
 
-export function AddTask(){
-    const {projectClient, totalTasks , uniqueId} = useSelector(state => state.clockify)
+export function AddTask(props){
+    const {projectClient, totalTasks , uniqueId, isModalOpen} = useSelector(state => state.clockify)
     
     const [inputValue, setInputValue] = useState('')
     
-    const currentDateTime = new Date()
-    const hrs = currentDateTime.getHours().toString().padStart(2, '0')
-    const mins = currentDateTime.getMinutes().toString().padStart(2, '0')
-    const day = currentDateTime.getDate()
-    const month = currentDateTime.getMonth() + 1
-    const year = currentDateTime.getFullYear()
+    const {curHrs, curMins, curDay, curMonth, curYear} = currentDateTime()
     
-    const [dateValue, setDateValue] = useState(`${year}-${month.toString().padStart(2, '0')}-${day}`)
+    const [dateValue, setDateValue] = useState(`${curYear}-${curMonth}-${curDay}`)
     const [timeValue, setTimeValue] = useState({
-        start: `${hrs}:${mins}`,
-        end: `${hrs}:${mins}`
+        start: `${curHrs}:${curMins}`,
+        end: `${curHrs}:${curMins}`
     })
     const [previousValue, setPreviousValue] = useState({
         start: timeValue.start,
@@ -41,20 +42,44 @@ export function AddTask(){
     const handleInputChange = (e) => {
         setInputValue(e.target.value)
     }
-    const addTask = () => {
-        const startTimeArr = timeValue.start.split(':').map(Number)
-        const endTimeArr = timeValue.end.split(':').map(Number)
-        const startAndEndTime = startTimeArr.concat(endTimeArr)
 
-        const startTimeDiff = startAndEndTime[0] > startAndEndTime[2] ? startAndEndTime[0] + startAndEndTime[2] : Math.abs(startAndEndTime[0] - startAndEndTime[2])
-        const endTimeDiff = startAndEndTime[1] > startAndEndTime[3] ? startAndEndTime[1] + startAndEndTime[3] : Math.abs(startAndEndTime[1] - startAndEndTime[3])
+    const handleTimeChange = (e) => {
+        setTimeValue({...timeValue, [e.target.name]: e.target.value})
+    }
+
+    const handleDateChange = (dateTime) => {
+        const inputDate = inputDateTime(dateTime)
+        setDateValue(`${inputDate.year}-${inputDate.month}-${inputDate.date}`)
+    }
+
+    const handleTimeBlur = (e) => {
+        const {isValid, validatedHour, validatedMins, prevTime} = validateTime(e.target.value, previousValue[e.target.name])
+        if(isValid){
+            setTimeValue({...timeValue, [e.target.name]: `${validatedHour}:${validatedMins}`})
+            setPreviousValue({...previousValue, [e.target.name]: prevTime})
+        }
+        else{
+            setTimeValue({...timeValue, [e.target.name]: prevTime})
+            setPreviousValue({...previousValue, [e.target.name]: prevTime})
+        }
+    }
+    
+    const addTask = () => {
+        const startValue = typeof timeValue.start === 'object' ? `${curHrs}:${curMins}` : timeValue.start
+        const endValue = typeof timeValue.end === 'object' ? `${curHrs}:${curMins}` : timeValue.end
+
+        const startTimeArr = splitTime(startValue, ':')
+        const endTimeArr = splitTime(endValue, ':')
+
+        const hoursDiff = isStartTimeGreater(startTimeArr, endTimeArr) ? startTimeArr[0] + endTimeArr[0] : Math.abs(startTimeArr[0] - endTimeArr[0])
+        const minutesDiff = isStartTimeGreater(startTimeArr, endTimeArr) ? startTimeArr[1] + endTimeArr[1] : Math.abs(startTimeArr[1] - endTimeArr[1])
 
         if(inputValue !== ''){
             dispatch(addTodayTask({
                 date: dateValue,
                 id: uniqueId,
                 text: inputValue,
-                totalTime: `${startTimeDiff.toString().padStart(2, '0')}:${endTimeDiff.toString().padStart(2, '0')}:00`,
+                totalTime: `${stringPadStart(hoursDiff, 2, '0')}:${stringPadStart(minutesDiff, 2, '0')}:00`,
                 project: projectClient?.[uniqueId]?.project,
                 client: projectClient?.[uniqueId]?.client,
                 startTime: timeValue.start,
@@ -63,104 +88,21 @@ export function AddTask(){
             dispatch(updateUniqueId())
             setInputValue('')
             setIsProjectCreated(false)
-            setDateValue(`${year}-${month.toString().padStart(2, '0')}-${day}`)
-            setTimeValue({start: `${hrs}:${mins}`, end: `${hrs}:${mins}`})
+            setDateValue(`${curYear}-${curMonth}-${curDay}`)
+            setTimeValue({start: `${curHrs}:${curMins}`, end: `${curHrs}:${curMins}`})
         }
         else{
             alert('Please enter task description')
         }
     }
 
-    const timeConversion = (num) => {
-        let  hours = Math.floor(num / 60)
-        let mins = num % 60
-        return {hrs: hours, mins: mins}
-    }
-    
-    const handleTimeChange = (e) => {
-        setTimeValue({...timeValue, [e.target.name]: e.target.value})
-    }
-    
-    const validateTime = (e, time, setTime, prevTime, setPrevTime) => {
-        const name = e.target.name
-        let hours, minutes
-        let newValue = time[name], expectedLength = 4, firstValue = '', secondvalue = ''
-        if(newValue[1] === ':'){
-            firstValue = newValue.slice(0, 1)
-            secondvalue = newValue.slice(2)
-
-            newValue = firstValue + secondvalue
-            expectedLength = 3
-        }
-        else if(newValue[2] === ':'){
-            firstValue = newValue.slice(0, 2)
-            secondvalue = newValue.slice(3) 
-
-            newValue = firstValue + secondvalue
-            expectedLength = 4
-        }
-        else if(newValue.length === 3){
-            firstValue = newValue.slice(0,1)
-            secondvalue = newValue.slice(1)
-        }
-        else{
-            firstValue = newValue.slice(0,2)
-            secondvalue = newValue.slice(2,4)
-        }
-
-        if(newValue.length <= expectedLength && (!isNaN(newValue)) && parseInt(newValue) >= 0){
-            hours = firstValue === '' || firstValue === '24' ? 0 : parseInt(firstValue.padStart(2, '0'))
-            minutes = secondvalue === '' ? 0 : parseInt(secondvalue.padStart(2, '0'))
-
-            if(hours < 24 && minutes < 60){
-                hours = hours.toString().padStart(2, '0')
-                minutes = minutes.toString().padStart(2, '0')
-                setTime({...time, [name]: `${hours}:${minutes}`})
-                setPrevTime({...prevTime, [name]:  `${hours}:${minutes}`})
-            }
-            else if(hours > 24 && minutes === 0) {
-                const num1 = hours.toString()[0].padStart(2, '0')
-                const num2 = hours.toString()[1].padStart(2, '0')
-                hours = num1
-                minutes = num2
-                setTime({...time, [name]: `${num1}:${num2}`})
-                setPrevTime({...prevTime, [name]: `${num1}:${num2}`})
-            }
-            else if(hours < 24 && minutes >= 60){
-                let {hrs, mins} = timeConversion(minutes)
-                hours += hrs
-                hours = (hours % 24).toString().padStart(2, '0')
-                minutes = mins.toString().padStart(2, '0')
-                setTime({...time, [name]: `${hours}:${minutes}`}) 
-                setPrevTime({...prevTime, [name]:  `${hours}:${minutes}`})
-            }
-            else{
-                setTime({...time, [name]: prevTime[name]})
-                return {prevTime: prevTime}
-            }
-        }
-        else{
-            setTime({...time, [name]: prevTime})
-            return {prevTime:prevTime}
-        }
-        return {hours: hours, minutes: minutes, prevTime: prevTime}
-    }
-
-    const handleDateChange = (dateTime) => {
-        const day = dateTime.getDate()
-        const month = dateTime.getMonth() + 1
-        const year = dateTime.getFullYear()
-        const date = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
-        setDateValue(date)
-    }
-
     return(
         <>
-            <div className="add-task-container">
+            <div className = {isModalOpen ? "add-task-container": "add-task-container zIndex"}>
                 <input 
                     type="text"
                     placeholder="What are you working on?"
-                    className="input-box"
+                    className={props.isSidebarShrunk ?  "input-box expand-input-width" : "input-box shrink-input-width"}
                     onKeyDown={handleKey}
                     value={inputValue} 
                     onChange={handleInputChange}
@@ -169,8 +111,11 @@ export function AddTask(){
                     addTodayTask={addTodayTask}
                     projectClient={projectClient}
                     id={uniqueId}
+                    project=''
+                    client=''
                     isProjectCreated={isProjectCreated}
                     setIsProjectCreated={setIsProjectCreated}
+                    buttonText="Project"
                 />
                 <button onClick={addTask}>Add</button>
                 <input 
@@ -178,14 +123,14 @@ export function AddTask(){
                     name="start"
                     value={timeValue.start}
                     onChange={handleTimeChange}
-                    onBlur={(e) => validateTime(e, timeValue, setTimeValue, previousValue, setPreviousValue)}
+                    onBlur={handleTimeBlur}
                 ></input>
                 <input
                     type="text" 
                     name="end"
                     value={timeValue.end}
                     onChange={handleTimeChange}
-                    onBlur={(e) => validateTime(e, timeValue, setTimeValue, previousValue, setPreviousValue)}
+                    onBlur={handleTimeBlur}
                 ></input>
                 <DatePicker
                     selected={dateValue}
@@ -198,16 +143,18 @@ export function AddTask(){
                         </button>
                     }
                 />
-                <p>{dateValue}</p>
+                <p className="ms-2">{dateValue}</p>
             </div>
             <div>
                <DisplayTasks
+                isSidebarShrunk = {props.isSidebarShrunk}
                 key={uniqueId}
                 uniqueId={uniqueId}
                 totalTasks={totalTasks}
-                currentDate = {`${year}-${month.toString().padStart(2, '0')}-${day}`}
-                validateTime={validateTime}
+                currentDate = {`${curYear}-${curMonth}-${curDay}`}
                 addTodayTask={addTodayTask}
+                projectClient={projectClient}
+                isModalOpen={isModalOpen}
                /> 
             </div>
         </>

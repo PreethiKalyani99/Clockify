@@ -1,8 +1,7 @@
-
-
 .container{
     max-width: 2000px !important;
     padding-left: 10px !important;
+    /* padding-right: 0 !important; */
 }
 
 .row>*, .nav-link{
@@ -12,17 +11,28 @@
 .sidebar{
     text-align: center;
 }
+
 .col-lg-1{
     width: 10% !important;
 }
 
 .col-width{
-    width: 88% !important;
+    width: 89% !important;
+}
+
+.width-expand{
+    width: 94% !important;
 }
 
 ul{
     padding: 15px;
     margin-left: 8%;
+}
+
+.header{
+    position: sticky;
+    top: 0;
+    background-color: white;
 }
 
 .header-container{
@@ -36,7 +46,7 @@ ul{
 }
 
 .shrink{
-    width: 4.60% !important;
+    width: 5% !important;
 }
 .shrink-li a:hover, .expand-li a:hover{
     background-color: rgb(61, 61, 243);
@@ -48,17 +58,26 @@ ul{
     display: none;
 }
 
+.parent-container{
+    overflow: auto !important;
+}
 .add-task-container{
     height: 65px !important;
     border: 1px solid black;
     display: flex;
     align-items: center;
     padding-left: 10px;
+    position: sticky;
+    top: 30px;
+    background-color: white;
+}
+
+.zIndex{
+    z-index: 99999 !important;
 }
 
 .input-box{
     height: 40px;
-    width: 68%;
     border: none;
     outline: none;
     padding: 10px;
@@ -66,6 +85,14 @@ ul{
 
 .input-box:hover{
     border: 1px solid #858181;
+}
+
+.expand-input-width{
+    width: 65%;
+}
+
+.shrink-input-width{
+    width: 63%;
 }
 
 .popup{
@@ -87,13 +114,16 @@ ul{
     border: 1px solid black;
     display: flex;
     position: relative;
-    top: 30px;
 }
 
+.week-container{
+    border: 1px solid black;
+    padding: 10px;
+    z-index: 1 !important;
+}
 .sub-container{
     display: flex;
     gap: 50px;
-    width: 1690px;
 }
 
 .border-style{
@@ -128,4 +158,16 @@ ul{
     list-style-type: none;
     background-color: white;
     padding: 10px;
+}
+
+.shrink-width{
+    width: 1671px;
+}
+
+.expand-width{
+    width: 1767px;
+}
+
+.date-picker{
+    z-index: 9999 !important;
 }

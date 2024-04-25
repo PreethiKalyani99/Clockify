@@ -1,18 +1,21 @@
 import React, {useState} from "react";
 import { Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter, Button } from "react-bootstrap";
-import { useDispatch } from "react-redux";
-import { addProjectClient } from "../redux/ClockifySlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addProjectClient, setIsModalOpen } from "../redux/ClockifySlice";
 
 export function AddProject(props){
+    console.log('inside component')
+    const {isModalOpen} = useSelector(state => state.clockify)
     const [isOpen, setIsOpen] = useState(false)
     const [inputvalues, setInputvalues] = useState({
-        project: '',
-        client: ''
+        project: props.project,
+        client: props.client
     })
     const dispatch = useDispatch()
 
     function handleClose(){
         setIsOpen(false)
+        dispatch(setIsModalOpen(false))
     }
 
     function handleInputChange(e){
@@ -27,12 +30,17 @@ export function AddProject(props){
       })
       setIsOpen(false)
       props.setIsProjectCreated(true)
+      dispatch(setIsModalOpen(false))
     }
     return (
         <>
             {props.isProjectCreated ? 
                 `${props.projectClient?.[props.id]?.project !== undefined ? (props.projectClient[props.id].project + (props.projectClient?.[props.id]?.client !== undefined ? ' - ' + props.projectClient[props.id].client : '')) : (props.projectClient?.[props.id]?.client !== undefined ? props.projectClient[props.id].client : '')}` 
-                : <button onClick={() => setIsOpen(!isOpen)}>Project</button>
+                : <button onClick={() => {
+                    console.log('button click')
+                    setIsOpen(!isOpen)
+                    dispatch(setIsModalOpen(!isOpen))
+                }}>{props.buttonText}</button>
             }   
             <Modal show={isOpen} onHide={handleClose}>
                 <ModalHeader closeButton>

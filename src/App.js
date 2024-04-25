@@ -4,11 +4,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { SideBar } from './Components/SideBar';
 import { Header } from './Components/Header';
 import { AddTask } from './Components/AddTask';
-import { Provider } from 'react-redux';
-import store from './redux/store';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 function App() {
+  const {isModalOpen} = useSelector(state => state.clockify)
   const [isSidebarShrunk, setIsSidebarShrunk] = useState(false)
 
   function toggleSidebar(){
@@ -16,9 +16,8 @@ function App() {
   }
   return (
     <Router>
-      <Provider store={store}>
         <div className='container'>
-          <div className='row'>
+          <div className={isModalOpen ? 'row header' : 'row header zIndex'}>
             <Header
               isSidebarShrunk={isSidebarShrunk}
               toggleSidebar={toggleSidebar}
@@ -31,14 +30,15 @@ function App() {
                 toggleSidebar={toggleSidebar}
               />
             </div>
-            <div className= {isSidebarShrunk ? 'col-11' : 'col-11 col-width'}>
+            <div className= {isSidebarShrunk ? 'col-11 width-expand' : 'col-11 col-width'}>
               <Routes>
-                <Route path='/tracker' element={<AddTask/>}></Route>
+                <Route path='/tracker' element={<AddTask
+                    isSidebarShrunk={isSidebarShrunk}
+                />}></Route>
               </Routes>
             </div>
           </div>
         </div> 
-      </Provider>
     </Router>
   );
 }
