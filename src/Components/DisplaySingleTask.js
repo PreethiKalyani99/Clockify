@@ -25,6 +25,7 @@ export function DisplaySingleTask(props){
         start: props.task.startTime.toString(),
         end: props.task.endTime.toString()
     })
+
     const [previousValue, setPreviousValue] = useState({
         start: timeValue.start,
         end: timeValue.end
@@ -183,21 +184,6 @@ export function DisplaySingleTask(props){
             text: input,       
         }))
     }
-
-    const handleProject = () => {
-        console.log('inside')
-        return (
-            <AddProject
-                projectClient={props.projectClient}
-                project=''
-                client=''
-                id={props.task.id}
-                isProjectCreated={isProjectCreated}
-                setIsProjectCreated={setIsProjectCreated}
-                buttonText={isProjectCreated ? `${props.projectClient[props.task.id].project}-${props.projectClient[props.task.id].client}` : "Project"}
-            />
-        );
-    }
     
     return(
         <div className="task-container">
@@ -209,9 +195,16 @@ export function DisplaySingleTask(props){
                 onBlur={onTaskNameBlur}
             ></input>
             {/* <p>{props.task.project !== undefined ? (props.task.project + (props.task.client !== undefined ? ' - ' + props.task.client : '')) : (props.task.client !== undefined ? props.task.client : '')}</p> */}
-            {/* {console.log(props.task.project, props.task.client, 'tp tc', props.projectClient)} */}
-
-            <button onClick={handleProject}>{isProjectCreated ? `${props.projectClient[props.task.id].project}-${props.projectClient[props.task.id].client}` : "Project" }</button>
+            <button onClick={() => setIsProjectCreated(!isProjectCreated)}><AddProject
+                projectClient={props.projectClient}
+                project= {props.task.project ? props.task.project : ''}
+                client={props.task.client ? props.task.client : ''}
+                id={props.task.id}
+                date={props.task.date}
+                isProjectCreated={isProjectCreated}
+                setIsProjectCreated={setIsProjectCreated}
+                buttonText={props.task.project !== undefined || props.task.client !== undefined ? props.task.project+' - '+props.task.client : "Project"}
+            /></button>
             <input 
                 type="text" 
                 name="start"
