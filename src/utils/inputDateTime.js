@@ -8,5 +8,5 @@ export function inputDateTime(dateString){
     const month = stringPadStart(time.getMonth() + 1, 2, '0')
     const year = time.getFullYear()
 
-    return {day: day, date:date, month: month, year: year, hrs: hrs, mins: mins, time: time}
+    return {day, date, month, year, hrs, mins, time}
 }
