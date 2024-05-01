@@ -42,13 +42,9 @@ export function AddProject(props){
                 setIsOpen(!isOpen)
                 dispatch(setIsModalOpen(!isOpen))
             }}>
-                {(typeof props.projectClient?.[props.id]?.project !== 'undefined' && props.projectClient?.[props.id]?.project !== '') ? 
-                    (props.projectClient[props.id].project + ((typeof props.projectClient?.[props.id]?.client !== 'undefined' && props.projectClient?.[props.id]?.client !== '') ? 
-                        ' - ' + props.projectClient[props.id].client : 
-                    '')) : 
-                    ((props.projectClient?.[props.id]?.client !== undefined && props.projectClient?.[props.id]?.client !== '') ? 
-                        props.projectClient[props.id].client : 
-                    'Project')
+                {(props.projectClient?.[props.id]?.project || props.projectClient?.[props.id]?.client) ?
+                    `${props.projectClient?.[props.id]?.project || ''}${props.projectClient?.[props.id]?.client && props.projectClient?.[props.id]?.project ? ' - ' : ''} ${props.projectClient[props.id].client || ''}` 
+                    : 'Project'
                 }
             </button>
             <Modal show={isOpen} onHide={handleClose}>
