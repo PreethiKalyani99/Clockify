@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from "react";
 import { useDispatch } from "react-redux";
-import { updateTask, deleteTask, updateUniqueId } from "../redux/ClockifySlice";
+import { addTodayTask, updateTask, deleteTask, updateUniqueId } from "../redux/ClockifySlice";
 import DatePicker from "react-datepicker";
 import { validateTime } from "../utils/validateTime";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
@@ -12,7 +12,6 @@ import "react-datepicker/dist/react-datepicker.css";
 
 export function DisplaySingleTask(props){
     const [isRunning, setIsRunning] = useState(false)
-    const [startTime, setStartTime] = useState(null)
     const [elapsedTime, setElapsedTime] = useState(0)
     const [duration, setDuration] = useState(props.task.totalTime)
     const [taskName, setTaskName] = useState(props.task.text)
@@ -46,10 +45,7 @@ export function DisplaySingleTask(props){
 
     const handleStart = () => {
         setIsRunning(true)
-        const [hours, minutes, seconds] = duration.split(":").map(Number)
-        const durationInMs = (hours * 60 * 60 + minutes * 60 + seconds) * 1000
-        setElapsedTime(durationInMs)
-        setStartTime(Date.now() - durationInMs)
+        setElapsedTime(0)
     }
 
     const handleStop = () => {
@@ -124,7 +120,7 @@ export function DisplaySingleTask(props){
         const result = inputDateTime(dateTime)
         const date = `${result.year}-${result.month}-${result.date}`
         setDate(date)
-        dispatch(props.addTodayTask({
+        dispatch(addTodayTask({
             id: props.task.id,
             date: date,
             startTime: props.task.startTime,
@@ -149,7 +145,7 @@ export function DisplaySingleTask(props){
     }
 
     const handleDuplicateTask = () => {
-        dispatch(props.addTodayTask({
+        dispatch(addTodayTask({
             id: props.uniqueId,
             date: props.task.date,
             startTime: props.task.startTime,
@@ -162,7 +158,6 @@ export function DisplaySingleTask(props){
         dispatch(updateUniqueId())
         setShowActionItems(false)
     }
-
     const totalTime = formatTime(elapsedTime)
 
     const handleDurationBlur = (e) => {  
