@@ -17,15 +17,13 @@ export function AddTask(props){
     const currentDateTime = inputDateTime()
     
     const [taskName, setTaskName] = useState('')
-    const [dateValue, setDateValue] = useState(`${currentDateTime.year}-${currentDateTime.month}-${currentDateTime.date}`)
+    const [date, setDate] = useState(`${currentDateTime.year}-${currentDateTime.month}-${currentDateTime.date}`)
 
-    const dateTime = new Date(`${dateValue} ${currentDateTime.hrs}:${currentDateTime.mins}`)
+    const dateTime = new Date(`${date} ${currentDateTime.hrs}:${currentDateTime.mins}`)
     const time = convertDateTimeToHoursMinsSec(dateTime)
     
     const [startTime, setStartTime] = useState(`${time.hours}:${time.minutes}`)
     const [endTime, setEndTime] = useState(`${time.hours}:${time.minutes}`)
-
-    const [isProjectCreated, setIsProjectCreated] = useState(false)
 
     const previousTime = useRef({
         start: startTime,
@@ -54,30 +52,28 @@ export function AddTask(props){
 
     const handleDateChange = (dateTime) => {
         const inputDate = inputDateTime(dateTime)
-        setDateValue(`${inputDate.year}-${inputDate.month}-${inputDate.date}`)
+        setDate(`${inputDate.year}-${inputDate.month}-${inputDate.date}`)
     }
 
     const handleStartTimeBlur = (e) => {
-        const {isValid, validatedHour, validatedMins, prevTime} = validateTime(e.target.value, previousTime.start)
+        const {isValid, validatedHour, validatedMins} = validateTime(e.target.value, date)
         if(isValid){
             setStartTime(`${validatedHour}:${validatedMins}`)
-            previousTime.start = prevTime
+            previousTime.start = `${validatedHour}:${validatedMins}`
         }
         else{
-            setStartTime(prevTime)
-            previousTime.start = prevTime
+            setStartTime(previousTime.start)
         }
     }
 
     const handleEndTimeBlur = (e) => {
-        const {isValid, validatedHour, validatedMins, prevTime} = validateTime(e.target.value, previousTime.end)
+        const {isValid, validatedHour, validatedMins} = validateTime(e.target.value, date)
         if(isValid){
             setEndTime(`${validatedHour}:${validatedMins}`)
-            previousTime.end = prevTime
+            previousTime.end = `${validatedHour}:${validatedMins}`
         }
         else{
-            setEndTime(prevTime)
-            previousTime.end = prevTime
+            setEndTime(previousTime.end)
         }
     }
 
@@ -90,19 +86,18 @@ export function AddTask(props){
 
         if(taskName !== ''){
             dispatch(addTodayTask({
-                date: dateValue,
+                date: date,
                 id: uniqueId,
                 text: taskName,
                 totalTime: `${stringPadStart(hoursDiff, 2, '0')}:${stringPadStart(minutesDiff, 2, '0')}:00`,
                 project: projectClient?.[uniqueId]?.project,
                 client: projectClient?.[uniqueId]?.client,
-                startTime: startTime,
-                endTime: endTime 
+                startTime: new Date(`${date} ${startTimeArr[0]}:${startTimeArr[1]}`),
+                endTime: new Date(`${date} ${endTimeArr[0]}:${endTimeArr[1]}`)
             }))
             dispatch(updateUniqueId())
             setTaskName('')
-            setIsProjectCreated(false)
-            setDateValue(`${currentDateTime.year}-${currentDateTime.month}-${currentDateTime.date}`)
+            setDate(`${currentDateTime.year}-${currentDateTime.month}-${currentDateTime.date}`)
             setStartTime(`${currentDateTime.hrs}:${currentDateTime.mins}`)
             setEndTime(`${currentDateTime.hrs}:${currentDateTime.mins}`)
         }
@@ -123,14 +118,10 @@ export function AddTask(props){
                     onChange={handleInputChange}
                 ></input>
                 <AddProject
-                    addTodayTask={addTodayTask}
                     projectClient={projectClient}
                     id={uniqueId}
                     project=''
                     client=''
-                    isProjectCreated={isProjectCreated}
-                    setIsProjectCreated={setIsProjectCreated}
-                    buttonText="Project"
                 />
                 <button onClick={addTask}>Add</button>
                 <input 
@@ -148,7 +139,7 @@ export function AddTask(props){
                     onBlur={handleEndTimeBlur}
                 ></input>
                 <DatePicker
-                    selected={dateValue}
+                    selected={date}
                     onChange={handleDateChange}
                     showTimeSelect={false}
                     dateFormat="yyyy-MM-dd"
@@ -158,7 +149,7 @@ export function AddTask(props){
                         </button>
                     }
                 />
-                <p className="ms-2">{dateValue}</p>
+                <p className="ms-2">{date}</p>
             </div>
             <div>
                <DisplayTasks
@@ -166,7 +157,7 @@ export function AddTask(props){
                 key={uniqueId}
                 uniqueId={uniqueId}
                 totalTasks={totalTasks}
-                currentDate = {`${currentDateTime.year}-${currentDateTime.month}-${currentDateTime.date}`}
+                currentDate = {date}
                 addTodayTask={addTodayTask}
                 projectClient={projectClient}
                 isModalOpen={isModalOpen}

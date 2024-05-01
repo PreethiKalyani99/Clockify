@@ -4,7 +4,7 @@ export const ClockifySlice = createSlice({
     name: 'clockify',
     initialState: {
         projectClient: {},
-        totalTasks: JSON.parse(localStorage.getItem('totalTasks')) || {},
+        totalTasks: {},
         uniqueId: JSON.parse(localStorage.getItem('uniqueId')) || 0,
         tasksByWeek: {},
         isModalOpen: false
@@ -16,7 +16,7 @@ export const ClockifySlice = createSlice({
                 state.totalTasks[date] = []
             }
             state.totalTasks[date].push({...task, date, id})
-            localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
+            // localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
         },
         addProjectClient: (state, action) => {
             const {id, ...props} = action.payload
@@ -41,7 +41,7 @@ export const ClockifySlice = createSlice({
                     }             
                 }
             }
-            localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
+            // localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
         },
         deleteTask: (state, action) => {
             const {id, date} = action.payload
@@ -51,7 +51,7 @@ export const ClockifySlice = createSlice({
             if (state.totalTasks[date].length === 0) {
                 delete state.totalTasks[date]
             }
-            localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
+            // localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
         },
         updateUniqueId: (state) => {
             state.uniqueId = state.uniqueId + 1

@@ -31,10 +31,12 @@ export function convertToHoursAndMinutes(value){
         return {hours: hours, minutes: minutes, isValid: isValid, expectedLength: expectedLength, value: value}
     }
     else if((Number(value) < 24) && (value.length === 1 || value.length === 2)){
+        console.log(value, "insided")
         hours = value
         minutes = '0'
         isValid = true
         value = hours + minutes
+        console.log(hours, minutes, "h,m")
         return {hours: hours, minutes: minutes, isValid: isValid, expectedLength: expectedLength, value: value}
     }
     else if((Number(value) > 24) && (value.length === 2 || value.length === 3)){

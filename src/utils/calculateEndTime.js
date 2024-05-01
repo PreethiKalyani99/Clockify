@@ -1,19 +1,20 @@
-import { splitTime } from "./splitTime";
-import { timeConversion } from "./timeConversion";
 import { stringPadStart } from "./stringPadStart";
-import { convertToHMS } from "./convertToHMS";
+import { convertToTimeComponents } from "./convertToTimeComponents";
 
-export function calculateEndTime(startTime, endTime, totalTime){
-    const {hours, minutes, seconds, isValid} = convertToHMS(totalTime)
+export function calculateEndTime(startTime, totalTime){
+    const startTimeHours = startTime.getHours()
+    const startTimeMinutes = startTime.getMinutes()
+    console.log(startTimeHours, startTimeMinutes, "sh sm")
+    const {hours, minutes, seconds, isValid} = convertToTimeComponents(totalTime)
+    console.log(hours, typeof hours, minutes, typeof minutes, seconds, typeof seconds, "check output - convert to HMS")
+    const endTimeHours = startTimeHours + hours
+    const endTimeMinutes = startTimeMinutes + minutes
 
-    const startTimeArr = splitTime(startTime, ":")
+    startTime.setHours(endTimeHours, endTimeMinutes)
+    const newEndTime = `${startTime.getHours()}:${startTime.getMinutes()}`
 
-    const startTimeMins = startTimeArr[0] * 60 + startTimeArr[1]
-    const totalTimeMins = hours * 60 + minutes
 
-    const totalMins = startTimeMins + totalTimeMins
+   
 
-    const {convertedHrs, convertedMins} = timeConversion(totalMins) 
-
-    return {startTime, endTime: `${stringPadStart(convertedHrs,2, '0')}:${stringPadStart(convertedMins, 2, "0")}`, totalTime: `${stringPadStart(hours, 2, '0')}:${stringPadStart(minutes, 2, "0")}:${stringPadStart(seconds,2, '0')}`, isValid}
+    return {endTime: newEndTime, totalTime: `${stringPadStart(hours, 2, '0')}:${stringPadStart(minutes, 2, "0")}:${stringPadStart(seconds,2, '0')}`}
 }  

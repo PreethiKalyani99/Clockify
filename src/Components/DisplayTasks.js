@@ -77,7 +77,7 @@ export function DisplayTasks(props){
              return (<div key={range} className="mt-3">
                 <p><b>{result.join(' - ')}</b></p>
                 {Object.entries(total_tasks).map(([key, tasks]) => (
-                    <div className="week-container mb-3">
+                    <div className="week-container mb-3" key={key}>
                         <p>{new Date(key).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})}</p>
                         {tasks.length > 0 && <div className="display-container" key={key}>
                             <div> {tasks.map((task, index) => (

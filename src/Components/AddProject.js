@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { addProjectClient, setIsModalOpen, updateTask } from "../redux/ClockifySlice";
+import { addProjectClient, setIsModalOpen } from "../redux/ClockifySlice";
 
 export function AddProject(props){
     const [isOpen, setIsOpen] = useState(false)
@@ -10,6 +10,13 @@ export function AddProject(props){
         client: props.client
     })
     const dispatch = useDispatch()
+
+    useEffect(() => {
+        setInputvalues({
+            project: props.project,
+            client: props.client
+        })
+    }, [props.project, props.client])
 
     function handleClose(){
         setIsOpen(false)
@@ -22,30 +29,28 @@ export function AddProject(props){
     
     function createProject(){
       dispatch(addProjectClient({id:props.id, project: inputvalues.project, client: inputvalues.client}))
-      dispatch(updateTask({
-        id: props.id,
-        date: props.date,
-        project:inputvalues.project,
-        client: inputvalues.client
-      }))
       setInputvalues({
         project: '',
         client: ''
       })
       setIsOpen(false)
-      props.setIsProjectCreated(true)
       dispatch(setIsModalOpen(false))
     }
     return (
         <>
-            {props.isProjectCreated ? 
-                `${props.projectClient?.[props.id]?.project !== undefined ? (props.projectClient[props.id].project + (props.projectClient?.[props.id]?.client !== undefined ? ' - ' + props.projectClient[props.id].client : '')) : (props.projectClient?.[props.id]?.client !== undefined ? props.projectClient[props.id].client : '')}` 
-                : <button onClick={() => {
-                    console.log('button click')
-                    setIsOpen(!isOpen)
-                    dispatch(setIsModalOpen(!isOpen))
-                }}>{props.buttonText}</button>
-            }   
+            <button onClick={() => {
+                setIsOpen(!isOpen)
+                dispatch(setIsModalOpen(!isOpen))
+            }}>
+                {(typeof props.projectClient?.[props.id]?.project !== 'undefined' && props.projectClient?.[props.id]?.project !== '') ? 
+                    (props.projectClient[props.id].project + ((typeof props.projectClient?.[props.id]?.client !== 'undefined' && props.projectClient?.[props.id]?.client !== '') ? 
+                        ' - ' + props.projectClient[props.id].client : 
+                    '')) : 
+                    ((props.projectClient?.[props.id]?.client !== undefined && props.projectClient?.[props.id]?.client !== '') ? 
+                        props.projectClient[props.id].client : 
+                    'Project')
+                }
+            </button>
             <Modal show={isOpen} onHide={handleClose}>
                 <ModalHeader closeButton>
                     <ModalTitle>

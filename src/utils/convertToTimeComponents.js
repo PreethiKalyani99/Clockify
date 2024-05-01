@@ -48,7 +48,8 @@ import { splitTime } from "./splitTime"
 // }
 
 
-export function convertToHMS(value){
+export function convertToTimeComponents(value){
+    console.log(value, "value")
     let hours, minutes, seconds, isValid = false 
     if(isNaN(value.replace(/[:-]/g, ''))){
         console.log('1')
@@ -82,6 +83,7 @@ export function convertToHMS(value){
     }
 
     if(time.length <= 3){
+        console.log(time, "time")
         hours = time[0] ? time[0] : 0
         minutes = time[1] ? time[1] : 0 
         seconds = time[2] ? time[2] : 0
