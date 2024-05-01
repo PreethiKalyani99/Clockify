@@ -196,8 +196,8 @@ export function DisplaySingleTask(props){
             ></input>
             <AddProject
                 projectClient={projectClient}
-                project= {projectClient[props.task.id]?.project}
-                client={projectClient[props.task.id]?.client}
+                project= {projectClient[props.task.id]?.project || ''}
+                client={projectClient[props.task.id]?.client || ''}
                 id={props.task.id}
             />
             <input 
