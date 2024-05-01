@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { SideBar } from './Components/SideBar';
 import { Header } from './Components/Header';
 import { AddTask } from './Components/AddTask';
+import {TimeTracker} from './Components/TimeTracker'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -32,7 +33,7 @@ function App() {
             </div>
             <div className= {isSidebarShrunk ? 'col-11 width-expand' : 'col-11 col-width'}>
               <Routes>
-                <Route path='/tracker' element={<AddTask
+                <Route path='/tracker' element={<TimeTracker
                     isSidebarShrunk={isSidebarShrunk}
                 />}></Route>
               </Routes>

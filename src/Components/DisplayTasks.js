@@ -1,10 +1,12 @@
 import React from "react";
 import { DisplaySingleTask } from "./DisplaySingleTask";
+import { useSelector } from "react-redux";
 
 export function DisplayTasks(props){
+    const {totalTasks} = useSelector(state => state.clockify)
     let tasksByWeek = {}
     
-    Object.entries(props.totalTasks).forEach(([key, tasks]) => {
+    Object.entries(totalTasks).forEach(([key, tasks]) => {
         tasks.forEach(task => {
             let taskDate = new Date(task.date)
 
@@ -85,11 +87,6 @@ export function DisplayTasks(props){
                                     <DisplaySingleTask
                                         key={index}
                                         task={task}
-                                        uniqueId={props.uniqueId}
-                                        validateTime={props.validateTime}
-                                        addTodayTask={props.addTodayTask}
-                                        totalTasks={props.totalTasks}
-                                        projectClient={props.projectClient}
                                     />
                                 </div> 
                             ))}

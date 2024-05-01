@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addTodayTask, updateTask, deleteTask, updateUniqueId } from "../redux/ClockifySlice";
 import DatePicker from "react-datepicker";
 import { validateTime } from "../utils/validateTime";
@@ -11,6 +11,7 @@ import { AddProject } from "./AddProject";
 import "react-datepicker/dist/react-datepicker.css";
 
 export function DisplaySingleTask(props){
+    const {uniqueId, projectClient} = useSelector(state => state.clockify)
     const [isRunning, setIsRunning] = useState(false)
     const [elapsedTime, setElapsedTime] = useState(0)
     const [duration, setDuration] = useState(props.task.totalTime)
@@ -146,7 +147,7 @@ export function DisplaySingleTask(props){
 
     const handleDuplicateTask = () => {
         dispatch(addTodayTask({
-            id: props.uniqueId,
+            id: uniqueId,
             date: props.task.date,
             startTime: props.task.startTime,
             endTime: props.task.endTime,
@@ -194,9 +195,9 @@ export function DisplaySingleTask(props){
                 onBlur={handleTaskNameBlur}
             ></input>
             <AddProject
-                projectClient={props.projectClient}
-                project= {props.projectClient[props.task.id]?.project}
-                client={props.projectClient[props.task.id]?.client}
+                projectClient={projectClient}
+                project= {projectClient[props.task.id]?.project}
+                client={projectClient[props.task.id]?.client}
                 id={props.task.id}
             />
             <input 

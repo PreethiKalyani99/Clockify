@@ -2,7 +2,6 @@ import React, {useState, useRef} from "react";
 import { addTodayTask, updateUniqueId } from "../redux/ClockifySlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { AddProject } from "./AddProject";
-import { DisplayTasks } from "./DisplayTasks";
 import DatePicker from "react-datepicker";
 import { splitTime } from "../utils/splitTime";
 import { isStartTimeGreater } from "../utils/isStartTimeGreater";
@@ -13,7 +12,7 @@ import { convertDateTimeToHoursMinsSec } from "../utils/convertDateTimeToHoursMi
 import "react-datepicker/dist/react-datepicker.css";
 
 export function AddTask(props){
-    const {projectClient, totalTasks , uniqueId, isModalOpen} = useSelector(state => state.clockify)
+    const {projectClient , uniqueId, isModalOpen} = useSelector(state => state.clockify)
     const currentDateTime = inputDateTime()
     
     const [taskName, setTaskName] = useState('')
@@ -150,18 +149,6 @@ export function AddTask(props){
                     }
                 />
                 <p className="ms-2">{date}</p>
-            </div>
-            <div>
-               <DisplayTasks
-                isSidebarShrunk = {props.isSidebarShrunk}
-                key={uniqueId}
-                uniqueId={uniqueId}
-                totalTasks={totalTasks}
-                currentDate = {date}
-                addTodayTask={addTodayTask}
-                projectClient={projectClient}
-                isModalOpen={isModalOpen}
-               /> 
             </div>
         </>
     )
