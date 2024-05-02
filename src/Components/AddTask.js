@@ -1,35 +1,44 @@
-import React, {useState, useRef} from "react";
+import React, {useState} from "react";
 import { addTodayTask, updateUniqueId } from "../redux/ClockifySlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { AddProject } from "./AddProject";
 import DatePicker from "react-datepicker";
-import { splitTime } from "../utils/splitTime";
-import { isStartTimeGreater } from "../utils/isStartTimeGreater";
-import { stringPadStart } from "../utils/stringPadStart";
-import { inputDateTime } from "../utils/inputDateTime";
 import { validateTime } from "../utils/validateTime";
-import { convertDateTimeToHoursMinsSec } from "../utils/convertDateTimeToHoursMinsSec";
 import "react-datepicker/dist/react-datepicker.css";
+import { calculateTimeDifference } from "../utils/calculateTimeDifference";
+import { getFormattedTime } from "../utils/getFormattedTime";
+import { getFormattedDate } from "../utils/getFormattedDate";
+import { calculateEndDate } from "../utils/calculateEndDate";
+import { calculateEndTime } from "../utils/calculateEndTime";
 
 export function AddTask(props){
-    const {projectClient , uniqueId, isModalOpen} = useSelector(state => state.clockify)
-    const currentDateTime = inputDateTime()
-    
+    const {projectClient , uniqueId, isModalOpen, totalTasks} = useSelector(state => state.clockify)
+
     const [taskName, setTaskName] = useState('')
-    const [date, setDate] = useState(`${currentDateTime.year}-${currentDateTime.month}-${currentDateTime.date}`)
 
-    const dateTime = new Date(`${date} ${currentDateTime.hrs}:${currentDateTime.mins}`)
-    const time = convertDateTimeToHoursMinsSec(dateTime)
-    
-    const [startTime, setStartTime] = useState(`${time.hours}:${time.minutes}`)
-    const [endTime, setEndTime] = useState(`${time.hours}:${time.minutes}`)
+    const [startTime, setStartTime] = useState(new Date())
+    const [formattedStartTime, setFormattedStartTime] = useState(getFormattedTime(startTime))
 
-    const previousTime = useRef({
-        start: startTime,
-        end: endTime
-    }).current
+    const [endTime, setEndTime] = useState(new Date())
+    const [formattedEndTime, setFormattedEndTime] = useState(getFormattedTime(endTime))
+
+    const [totalDuration, setTotalDuration] = useState('00:00:00')
+
+    const [previousTime, setPreviousTime] = useState({
+        start: getFormattedTime(startTime),
+        end: getFormattedTime(endTime),
+        duration: '00:00:00'
+    })
 
     const dispatch = useDispatch()
+
+    const handleStartTimeChange = (e) => {
+        setFormattedStartTime(e.target.value)
+    }
+
+    const handleEndTimeChange = (e) => {
+        setFormattedEndTime(e.target.value)
+    }
 
     const handleKey = (e) => {
         if(e.key === 'Enter'){
@@ -41,64 +50,78 @@ export function AddTask(props){
         setTaskName(e.target.value)
     }
 
-    const handleStartTimeChange = (e) => {
-        setStartTime(e.target.value)
-    }
-
-    const handleEndTimeChange = (e) => {
-        setEndTime(e.target.value)
-    }
-
     const handleDateChange = (dateTime) => {
-        const inputDate = inputDateTime(dateTime)
-        setDate(`${inputDate.year}-${inputDate.month}-${inputDate.date}`)
+        setStartTime(dateTime)
+        setEndTime(calculateEndDate(dateTime, endTime, startTime))
     }
 
     const handleStartTimeBlur = (e) => {
-        const {isValid, validatedHour, validatedMins} = validateTime(e.target.value, date)
+        const {isValid, validatedHour, validatedMins} = validateTime(e.target.value, getFormattedDate(startTime))
         if(isValid){
-            setStartTime(`${validatedHour}:${validatedMins}`)
-            previousTime.start = `${validatedHour}:${validatedMins}`
+            setFormattedStartTime(`${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`)
+            setPreviousTime({...previousTime, start: `${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`})
+            startTime.setHours(validatedHour, validatedMins)
+            setStartTime(startTime)
         }
         else{
-            setStartTime(previousTime.start)
+            setFormattedStartTime(previousTime.start)
         }
+        const {hours, minutes} = calculateTimeDifference(startTime, endTime)
+        setTotalDuration(`${hours}:${minutes}:00`)
+        setPreviousTime({...previousTime, duration: `${hours}:${minutes}:00`})
     }
 
     const handleEndTimeBlur = (e) => {
-        const {isValid, validatedHour, validatedMins} = validateTime(e.target.value, date)
+        const {isValid, validatedHour, validatedMins} = validateTime(e.target.value, getFormattedDate(endTime))
         if(isValid){
-            setEndTime(`${validatedHour}:${validatedMins}`)
-            previousTime.end = `${validatedHour}:${validatedMins}`
+            setFormattedEndTime(`${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`)
+            setPreviousTime({...previousTime, end: `${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`})
+            endTime.setHours(validatedHour, validatedMins)
+            setEndTime(endTime)
         }
         else{
-            setEndTime(previousTime.end)
+            setFormattedEndTime(previousTime.end)
+        }
+        setEndTime(calculateEndDate(startTime, endTime, startTime))
+
+        const {hours, minutes} = calculateTimeDifference(startTime, endTime)
+        setTotalDuration(`${hours}:${minutes}:00`)
+        setPreviousTime({...previousTime, duration: `${hours}:${minutes}:00`})
+    }
+
+    const handleTotalDurationBlur = (e) => {
+        const {isValid, newEndTime, timeDuration} = calculateEndTime(startTime, e.target.value)
+
+        if(isValid){
+            setFormattedEndTime(`${(newEndTime.getHours()).toString().padStart(2,'0')}:${(newEndTime.getMinutes()).toString().padStart(2,'0')}`)
+            setEndTime(newEndTime)
+            setTotalDuration(timeDuration)
+            setPreviousTime({...previousTime, duration: timeDuration})
+        }
+        else{
+            setTotalDuration(previousTime.duration)
         }
     }
 
     const addTask = () => {
-        const startTimeArr = splitTime(startTime, ':')
-        const endTimeArr = splitTime(endTime, ':')
-
-        const hoursDiff = isStartTimeGreater(startTimeArr, endTimeArr) ? startTimeArr[0] + endTimeArr[0] : Math.abs(startTimeArr[0] - endTimeArr[0])
-        const minutesDiff = isStartTimeGreater(startTimeArr, endTimeArr) ? startTimeArr[1] + endTimeArr[1] : Math.abs(startTimeArr[1] - endTimeArr[1])
-
         if(taskName !== ''){
             dispatch(addTodayTask({
-                date: date,
+                date: getFormattedDate(startTime),
                 id: uniqueId,
                 text: taskName,
-                totalTime: `${stringPadStart(hoursDiff, 2, '0')}:${stringPadStart(minutesDiff, 2, '0')}:00`,
+                totalTime: totalDuration,
                 project: projectClient?.[uniqueId]?.project,
                 client: projectClient?.[uniqueId]?.client,
-                startTime: new Date(`${date} ${startTimeArr[0]}:${startTimeArr[1]}`),
-                endTime: new Date(`${date} ${endTimeArr[0]}:${endTimeArr[1]}`)
+                startTime: new Date(startTime),
+                endTime:  new Date(endTime)
             }))
             dispatch(updateUniqueId())
             setTaskName('')
-            setDate(`${currentDateTime.year}-${currentDateTime.month}-${currentDateTime.date}`)
-            setStartTime(`${currentDateTime.hrs}:${currentDateTime.mins}`)
-            setEndTime(`${currentDateTime.hrs}:${currentDateTime.mins}`)
+            setStartTime(new Date())
+            setEndTime(new Date())
+            setTotalDuration('00:00:00')
+            setFormattedStartTime(`${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`)
+            setFormattedEndTime(`${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`)
         }
         else{
             alert('Please enter task description')
@@ -125,20 +148,27 @@ export function AddTask(props){
                 <button onClick={addTask}>Add</button>
                 <input 
                     type="text" 
-                    name="start"
-                    value={startTime}
+                    name="startTime"
+                    value={formattedStartTime}
                     onChange={handleStartTimeChange}
                     onBlur={handleStartTimeBlur}
                 ></input>
-                <input
+                <input 
                     type="text" 
-                    name="end"
-                    value={endTime}
+                    name="endTime"
+                    value={formattedEndTime}
                     onChange={handleEndTimeChange}
                     onBlur={handleEndTimeBlur}
                 ></input>
+                <input 
+                    type='text' 
+                    className='duration' 
+                    value={totalDuration} 
+                    onChange={(e) => setTotalDuration(e.target.value)} 
+                    onBlur={handleTotalDurationBlur} 
+                />
                 <DatePicker
-                    selected={date}
+                    selected={startTime}
                     onChange={handleDateChange}
                     showTimeSelect={false}
                     dateFormat="yyyy-MM-dd"
@@ -148,7 +178,7 @@ export function AddTask(props){
                         </button>
                     }
                 />
-                <p className="ms-2">{date}</p>
+                <p className="ms-2">{getFormattedDate(startTime)}</p>
             </div>
         </>
     )

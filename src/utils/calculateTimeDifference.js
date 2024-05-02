@@ -1,10 +1,10 @@
 import { stringPadStart } from "./stringPadStart";
 
 export function calculateTimeDifference(startTime, endTime) {
-    let startHour = startTime[0]
-    let startMinute = startTime[1]
-    let endHour = endTime[0]
-    let endMinute = endTime[1]
+    let startHour = startTime.getHours()
+    let startMinute = startTime.getMinutes()
+    let endHour = endTime.getHours()
+    let endMinute = endTime.getMinutes()
 
     const totalStartTime = startHour * 60 + startMinute
     const totalEndTime = endHour * 60 + endMinute

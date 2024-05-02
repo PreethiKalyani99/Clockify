@@ -3,7 +3,6 @@ import { timeConversion } from "./timeConversion"
 import { convertToHoursAndMinutes } from "./convertToHoursAndMinutes"
 
 export function validateTime(time, date){
-    console.log(typeof time, time , date, "validate function")
     let taskTime
     if(typeof time === 'object'){
         taskTime = `${time.getHours()}:${time.getMinutes()}`
@@ -11,7 +10,7 @@ export function validateTime(time, date){
     else{
         taskTime = time
     }
-    let {hours, minutes} = convertToHoursAndMinutes(taskTime)
+    let {hours, minutes, isValid} = convertToHoursAndMinutes(taskTime)
     hours = Number(hours)
     minutes = Number(minutes)
     if(hours > 24 && minutes === 0) {
@@ -29,10 +28,12 @@ export function validateTime(time, date){
         return {isValid: true, validatedHour: hours, validatedMins: minutes, prevTime: `${hours}:${minutes}`}
     }
     else{
-        console.log(hours, minutes, "vh, vm")
+        if(!isValid || hours > 24){
+            return {isValid: false, validatedHour: '', validatedMins: ''} 
+        }
         const dateTime = new Date(`${date} ${hours}:${minutes}`)
-        console.log(date, hours, minutes, dateTime, "date time")
-        if(isNaN(dateTime) || isNaN(time)){
+
+        if((typeof dateTime !== 'object')){
             return {isValid: false, validatedHour: '', validatedMins: ''}
         }
         else{

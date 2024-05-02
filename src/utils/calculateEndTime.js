@@ -1,20 +1,14 @@
-import { stringPadStart } from "./stringPadStart";
 import { convertToTimeComponents } from "./convertToTimeComponents";
 
 export function calculateEndTime(startTime, totalTime){
-    const startTimeHours = startTime.getHours()
-    const startTimeMinutes = startTime.getMinutes()
-    console.log(startTimeHours, startTimeMinutes, "sh sm")
-    const {hours, minutes, seconds, isValid} = convertToTimeComponents(totalTime)
-    console.log(hours, typeof hours, minutes, typeof minutes, seconds, typeof seconds, "check output - convert to HMS")
-    const endTimeHours = startTimeHours + hours
-    const endTimeMinutes = startTimeMinutes + minutes
+    const startDate = new Date(startTime)
+    const {hours, minutes, seconds, type} = convertToTimeComponents(totalTime)
+    if(type === 'number'){
+        startDate.setHours(hours + startDate.getHours(), minutes + startDate.getMinutes())
+        return {isValid: true, newEndTime: startDate, timeDuration: `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`}
+    }
+    else{
+        return {isValid: false}
+    }
 
-    startTime.setHours(endTimeHours, endTimeMinutes)
-    const newEndTime = `${startTime.getHours()}:${startTime.getMinutes()}`
-
-
-   
-
-    return {endTime: newEndTime, totalTime: `${stringPadStart(hours, 2, '0')}:${stringPadStart(minutes, 2, "0")}:${stringPadStart(seconds,2, '0')}`}
 }  

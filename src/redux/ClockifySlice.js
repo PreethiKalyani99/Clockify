@@ -15,7 +15,7 @@ export const ClockifySlice = createSlice({
             if (!state.totalTasks[date]) {
                 state.totalTasks[date] = []
             }
-            state.totalTasks[date].push({...task, date, id})
+            state.totalTasks[date].push({date, id, ...task})
             // localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
         },
         addProjectClient: (state, action) => {
