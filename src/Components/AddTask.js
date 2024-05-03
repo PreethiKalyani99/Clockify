@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { addTodayTask, updateUniqueId } from "../redux/ClockifySlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { AddProject } from "./AddProject";
@@ -132,8 +132,9 @@ export function AddTask(props){
 
     return(
         <>
-            <div className = {isModalOpen ? "add-task-container": "add-task-container zIndex"}>
-                <input 
+            <div className={isModalOpen ? "add-task-container" : "add-task-container zIndex"} data-testid="container">
+                <input
+                    data-testid="task-name"
                     type="text"
                     placeholder="What are you working on?"
                     className={props.isSidebarShrunk ?  "input-box expand-input-width" : "input-box shrink-input-width"}
@@ -147,7 +148,9 @@ export function AddTask(props){
                     project=''
                     client=''
                 />
-                <button onClick={addTask}>Add</button>
+                <button onClick={addTask} data-testid="add-task">
+                    Add
+                </button>
                 <input
                     data-testid="start-time"
                     type="text"
@@ -157,20 +160,22 @@ export function AddTask(props){
                     onBlur={handleStartTimeBlur}
                 ></input>
                 <p>{startTime.toISOString()}</p>
-                <input 
-                    type="text" 
+                <input
+                    data-testid="end-time"
+                    type="text"
                     name="endTime"
                     value={formattedEndTime}
                     onChange={handleEndTimeChange}
                     onBlur={handleEndTimeBlur}
                 ></input>
                 <p>{endTime.toISOString()}</p>
-                <input 
-                    type='text' 
-                    className='duration' 
-                    value={totalDuration} 
-                    onChange={(e) => setTotalDuration(e.target.value)} 
-                    onBlur={handleTotalDurationBlur} 
+                <input
+                    data-testid="task-duration"
+                    type='text'
+                    className='duration'
+                    value={totalDuration}
+                    onChange={(e) => setTotalDuration(e.target.value)}
+                    onBlur={handleTotalDurationBlur}
                 />
                 <DatePicker
                     selected={startTime}
@@ -183,7 +188,10 @@ export function AddTask(props){
                         </button>
                     }
                 />
-                <p className="ms-2">{getFormattedDate(startTime)}</p>
+                <p
+                    className="ms-2"
+                    data-testid="start-date"
+                >{getFormattedDate(startTime)}</p>
             </div>
         </>
     )

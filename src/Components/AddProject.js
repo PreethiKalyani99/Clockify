@@ -38,7 +38,9 @@ export function AddProject(props){
     }
     return (
         <>
-            <button onClick={() => {
+            <button
+                data-testid="add-project"
+                onClick={() => {
                 setIsOpen(!isOpen)
                 dispatch(setIsModalOpen(!isOpen))
             }}>
