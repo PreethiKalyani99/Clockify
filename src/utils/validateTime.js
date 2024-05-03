@@ -3,6 +3,7 @@ import { timeConversion } from "./timeConversion"
 import { convertToHoursAndMinutes } from "./convertToHoursAndMinutes"
 
 export function validateTime(time, date){
+    console.log(time, date, "timev date")
     let taskTime
     if(typeof time === 'object'){
         taskTime = `${time.getHours()}:${time.getMinutes()}`

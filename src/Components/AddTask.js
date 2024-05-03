@@ -12,7 +12,7 @@ import { calculateEndDate } from "../utils/calculateEndDate";
 import { calculateEndTime } from "../utils/calculateEndTime";
 
 export function AddTask(props){
-    const {projectClient , uniqueId, isModalOpen, totalTasks} = useSelector(state => state.clockify)
+    const {projectClient , uniqueId, isModalOpen} = useSelector(state => state.clockify)
 
     const [taskName, setTaskName] = useState('')
 
@@ -52,46 +52,48 @@ export function AddTask(props){
 
     const handleDateChange = (dateTime) => {
         setStartTime(dateTime)
-        setEndTime(calculateEndDate(dateTime, endTime, startTime))
+        setEndTime(calculateEndDate(dateTime, endTime))
     }
 
     const handleStartTimeBlur = (e) => {
         const {isValid, validatedHour, validatedMins} = validateTime(e.target.value, getFormattedDate(startTime))
         if(isValid){
             setFormattedStartTime(`${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`)
-            setPreviousTime({...previousTime, start: `${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`})
             startTime.setHours(validatedHour, validatedMins)
             setStartTime(startTime)
         }
         else{
-            setFormattedStartTime(previousTime.start)
+            setFormattedStartTime(`${startTime.getHours().toString().padStart(2,'0')}:${startTime.getMinutes().toString().padStart(2,'0')}`)
         }
         const {hours, minutes} = calculateTimeDifference(startTime, endTime)
         setTotalDuration(`${hours}:${minutes}:00`)
-        setPreviousTime({...previousTime, duration: `${hours}:${minutes}:00`})
     }
 
     const handleEndTimeBlur = (e) => {
         const {isValid, validatedHour, validatedMins} = validateTime(e.target.value, getFormattedDate(endTime))
         if(isValid){
             setFormattedEndTime(`${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`)
-            setPreviousTime({...previousTime, end: `${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`})
             endTime.setHours(validatedHour, validatedMins)
             setEndTime(endTime)
         }
         else{
-            setFormattedEndTime(previousTime.end)
+            setFormattedEndTime(`${endTime.getHours().toString().padStart(2,'0')}:${endTime.getMinutes().toString().padStart(2,'0')}`)
         }
-        setEndTime(calculateEndDate(startTime, endTime, startTime))
 
+        if(startTime.getHours() > endTime.getHours() && (startTime.getDate() - endTime.getDate() === 0 || Math.abs(startTime.getDate() - endTime.getDate()) === 1)){
+            endTime.setDate(startTime.getDate() + 1)
+            setEndTime(endTime)
+        }
+        else{
+            endTime.setFullYear(startTime.getFullYear(), startTime.getMonth(), startTime.getDate())
+            setEndTime(endTime)
+        }
         const {hours, minutes} = calculateTimeDifference(startTime, endTime)
         setTotalDuration(`${hours}:${minutes}:00`)
-        setPreviousTime({...previousTime, duration: `${hours}:${minutes}:00`})
     }
 
     const handleTotalDurationBlur = (e) => {
         const {isValid, newEndTime, timeDuration} = calculateEndTime(startTime, e.target.value)
-
         if(isValid){
             setFormattedEndTime(`${(newEndTime.getHours()).toString().padStart(2,'0')}:${(newEndTime.getMinutes()).toString().padStart(2,'0')}`)
             setEndTime(newEndTime)
@@ -153,6 +155,7 @@ export function AddTask(props){
                     onChange={handleStartTimeChange}
                     onBlur={handleStartTimeBlur}
                 ></input>
+                <p>{startTime.toISOString()}</p>
                 <input 
                     type="text" 
                     name="endTime"
@@ -160,6 +163,7 @@ export function AddTask(props){
                     onChange={handleEndTimeChange}
                     onBlur={handleEndTimeBlur}
                 ></input>
+                <p>{endTime.toISOString()}</p>
                 <input 
                     type='text' 
                     className='duration' 

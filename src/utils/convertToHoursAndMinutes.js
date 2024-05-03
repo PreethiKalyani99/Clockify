@@ -1,6 +1,8 @@
 export function convertToHoursAndMinutes(value){
+    console.log(value, "value")
     let expectedLength = 4, hours = '', minutes = '', isValid = false
-    if(isNaN(value.replace(':', '')) || (!isNaN(value) && value.length > expectedLength)){
+    if(isNaN(value.replace(':', '')) || (value.replace(':', '').length > expectedLength)){
+        console.log(value.replace(':','').length, value.length, "inside")
         hours = ''
         minutes = ''
         value = hours + minutes
@@ -23,7 +25,8 @@ export function convertToHoursAndMinutes(value){
         return {hours: hours, minutes: minutes, isValid: isValid, expectedLength: expectedLength, value: value}
     }
     else if(value[2] === ':'){
-        hours = value.slice(0, 2)
+        console.log("oiyewr")
+        hours = Number(value.slice(0, 2)) === 24 ? 0 : value.slice(0,2)
         minutes = value.slice(3) 
         isValid = true
         value = hours + minutes

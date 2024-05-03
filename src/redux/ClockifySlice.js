@@ -12,6 +12,7 @@ export const ClockifySlice = createSlice({
     reducers: {
         addTodayTask: (state, action) => {
             const { date, id, ...task } = action.payload
+            console.log(date, id, task, "add task============")
             if (!state.totalTasks[date]) {
                 state.totalTasks[date] = []
             }
@@ -27,6 +28,7 @@ export const ClockifySlice = createSlice({
         }, 
         updateTask: (state, action) => {
             const {id, date, text, ...updatedTasks} = action.payload
+            console.log(id, 'id', date, "date", text, "text", updatedTasks, "updated taasks----------------")
             if(!state.totalTasks[date]){
                 state.totalTasks[date] = []
                 state.totalTasks[date].push({...updatedTasks,text, date, id})
@@ -45,6 +47,7 @@ export const ClockifySlice = createSlice({
         },
         deleteTask: (state, action) => {
             const {id, date} = action.payload
+            console.log(id, date, "delete id, date++++++++++++++++++++++++++++++")
             if(state.totalTasks[date]){
                 state.totalTasks[date] = state.totalTasks[date].filter(task => task.id !== id)
             }
