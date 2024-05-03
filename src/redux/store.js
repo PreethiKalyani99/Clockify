@@ -1,8 +1,11 @@
-import { configureStore } from "@reduxjs/toolkit";
+import {configureStore} from "@reduxjs/toolkit";
 import ClockifySlice from "./ClockifySlice";
 
-export default configureStore({
+export function setupStore(preloadedState) {
+  return configureStore({
     reducer: {
-        clockify: ClockifySlice 
-    }
-})
+      clockify: ClockifySlice
+    },
+    preloadedState
+  })
+}

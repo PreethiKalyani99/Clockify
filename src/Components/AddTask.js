@@ -148,8 +148,9 @@ export function AddTask(props){
                     client=''
                 />
                 <button onClick={addTask}>Add</button>
-                <input 
-                    type="text" 
+                <input
+                    data-testid="start-time"
+                    type="text"
                     name="startTime"
                     value={formattedStartTime}
                     onChange={handleStartTimeChange}
