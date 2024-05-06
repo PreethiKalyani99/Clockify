@@ -120,8 +120,8 @@ export function AddTask(props){
                 totalTime: duration,
                 project: projectClient?.[uniqueId]?.project,
                 client: projectClient?.[uniqueId]?.client,
-                startTime: new Date(timeStart),
-                endTime:  new Date(timeEnd)
+                startTime: new Date(timeStart).toString(),
+                endTime:  new Date(timeEnd).toString()
             }))
             dispatch(updateUniqueId())
             setTaskName('')

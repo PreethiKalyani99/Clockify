@@ -4,7 +4,7 @@ export const ClockifySlice = createSlice({
     name: 'clockify',
     initialState: {
         projectClient: {},
-        totalTasks: {},
+        tasks: {},
         uniqueId: JSON.parse(localStorage.getItem('uniqueId')) || 0,
         tasksByWeek: {},
         isModalOpen: false,
@@ -15,11 +15,11 @@ export const ClockifySlice = createSlice({
     reducers: {
         addTodayTask: (state, action) => {
             const { date, id, ...task } = action.payload
-            if (!state.totalTasks[date]) {
-                state.totalTasks[date] = []
+            if (!state.tasks[date]) {
+                state.tasks[date] = []
             }
-            state.totalTasks[date].push({date, id, ...task})
-            // localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
+            state.tasks[date].push({date, id, ...task})
+            // localStorage.setItem('tasks', JSON.stringify(state.tasks))
         },
         addProjectClient: (state, action) => {
             const {id, ...props} = action.payload
@@ -30,31 +30,31 @@ export const ClockifySlice = createSlice({
         }, 
         updateTask: (state, action) => {
             const {id, date, text, ...updatedTasks} = action.payload
-            if(!state.totalTasks[date]){
-                state.totalTasks[date] = []
-                state.totalTasks[date].push({...updatedTasks,text, date, id})
+            if(!state.tasks[date]){
+                state.tasks[date] = []
+                state.tasks[date].push({...updatedTasks,text, date, id})
             }
             else{
-                const index = state.totalTasks[date].findIndex(task => task.id === id)
+                const index = state.tasks[date].findIndex(task => task.id === id)
                 if (index !== -1) {
-                    state.totalTasks[date][index] = {
-                        ...state.totalTasks[date][index],
+                    state.tasks[date][index] = {
+                        ...state.tasks[date][index],
                         text,
                         ...updatedTasks
                     }             
                 }
             }
-            // localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
+            // localStorage.setItem('tasks', JSON.stringify(state.tasks))
         },
         deleteTask: (state, action) => {
             const {id, date} = action.payload
-            if(state.totalTasks[date]){
-                state.totalTasks[date] = state.totalTasks[date].filter(task => task.id !== id)
+            if(state.tasks[date]){
+                state.tasks[date] = state.tasks[date].filter(task => task.id !== id)
             }
-            if (state.totalTasks[date].length === 0) {
-                delete state.totalTasks[date]
+            if (state.tasks[date].length === 0) {
+                delete state.tasks[date]
             }
-            // localStorage.setItem('totalTasks', JSON.stringify(state.totalTasks))
+            // localStorage.setItem('tasks', JSON.stringify(state.tasks))
         },
         updateUniqueId: (state) => {
             state.uniqueId = state.uniqueId + 1
