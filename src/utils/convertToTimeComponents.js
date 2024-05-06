@@ -1,5 +1,3 @@
-import { splitTime } from "./splitTime"
-
 export function convertToTimeComponents(value){
     let hours, minutes, seconds, isValid = false 
     if(isNaN(value.replace(/[:-]/g, ''))){
@@ -10,8 +8,7 @@ export function convertToTimeComponents(value){
     }
 
     const newValue = value.replaceAll(/-/g, ':')
-    const time = splitTime(newValue, ':')
-
+    const time =  newValue.split(':').map(Number) 
     if(time.length > 3){
         return {hours: 999, minutes: 0, seconds: 0, isValid: false, type: 'number'}
     }
@@ -48,7 +45,6 @@ export function convertToTimeComponents(value){
         else{
             return {hours, minutes, seconds, isValid: true, type: 'number'} 
         }
-    
     }
     else{
         return {hours: 999, minutes: 0, seconds: 0, isValid: false, type: 'number'}

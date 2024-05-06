@@ -11,7 +11,7 @@ import { getFormattedDate } from "../utils/getFormattedDate";
 import { calculateEndDate } from "../utils/calculateEndDate";
 import { calculateEndTime } from "../utils/calculateEndTime";
 import { calculateDays } from "../utils/calculateDays";
-import { checkTotalDurationLimit } from "../utils/checkTotalDurationLimit";
+import { isDurationLimitExceeded } from "../utils/isDurationLimitExceeded";
 
 export function AddTask(props){
     const {projectClient , uniqueId, isModalOpen, startTime, endTime, duration} = useSelector(state => state.clockify)
@@ -27,19 +27,14 @@ export function AddTask(props){
 
     let timeStart = new Date(startTime)
     let timeEnd = new Date(endTime)
-    // let days = 0
     useEffect(() => {
-        console.log("useEffect, ",Date.now(), timeEnd)
-
         if(timeStart > timeEnd) {
             timeEnd.setDate(timeEnd.getDate() + 1)
             dispatch(updateEndTime(timeEnd.toString()))
         }
-        console.log("useEffect - after, ",Date.now(), timeEnd)
         const {hours, minutes} = calculateTimeDifference(timeStart, timeEnd)
         const totalTimeDuration = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:00`
         const duration = (hours <= 999) ? totalTimeDuration : previousDuration
-        console.log(previousDuration, "previous")
         dispatch(updateDuration(duration))
         totalDurationRef.current.value = duration
     }, [timeStart, timeEnd])
@@ -65,7 +60,7 @@ export function AddTask(props){
         if(isValid){
             const start = new Date(timeStart)
             start.setHours(validatedHour, validatedMins)
-            const isLimitExceeded = checkTotalDurationLimit(start, timeEnd)
+            const isLimitExceeded = isDurationLimitExceeded(start, timeEnd)
             if(!isLimitExceeded){
                 startTimeRef.current.value = `${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`
                 timeStart.setHours(validatedHour, validatedMins)
@@ -85,7 +80,7 @@ export function AddTask(props){
         if(isValid){
             const end = new Date(timeEnd)
             end.setHours(validatedHour, validatedMins)
-            const isLimitExceeded = checkTotalDurationLimit(timeStart, end)
+            const isLimitExceeded = isDurationLimitExceeded(timeStart, end)
             if(!isLimitExceeded){
                 endTimeRef.current.value = `${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`
                 timeEnd.setHours(validatedHour, validatedMins)
@@ -103,14 +98,12 @@ export function AddTask(props){
 
     const handleTotalDurationBlur = (e) => {
         const {isValid, newEndTime, timeDuration} = calculateEndTime(timeStart, e.target.value)
-        console.log(timeDuration, "handle total duration blur", totalDurationRef, "duration ref")
         if(isValid){
             endTimeRef.current.value = `${(newEndTime.getHours()).toString().padStart(2,'0')}:${(newEndTime.getMinutes()).toString().padStart(2,'0')}`
             dispatch(updateEndTime(newEndTime.toString()))
             dispatch(updateDuration(timeDuration))
             setPreviousDuration(timeDuration)
             totalDurationRef.current.value = timeDuration
-            console.log(totalDurationRef.current.value, "duration ref after")
         }
         else{
             dispatch(updateDuration(previousDuration))

@@ -4,9 +4,7 @@ import { addTodayTask, updateTask, deleteTask, updateUniqueId } from "../redux/C
 import DatePicker from "react-datepicker";
 import { validateTime } from "../utils/validateTime";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
-import { inputDateTime } from "../utils/inputDateTime";
 import { calculateEndTime } from "../utils/calculateEndTime";
-import { formatTime } from "../utils/formatTime";
 import { AddProject } from "./AddProject";
 import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
@@ -88,11 +86,11 @@ export function DisplaySingleTask(props){
     }
 
     const handleStop = () => {
-        setTotalDuration(totalTime)
+        // setTotalDuration(totalTime)
         dispatch(updateTask({
             id:props.task.id,
             date:  getFormattedDate(startTime),
-            totalTime: totalTime
+            // totalTime: totalTime
         }))
         setIsRunning(false)
     }
@@ -199,7 +197,7 @@ export function DisplaySingleTask(props){
         dispatch(updateUniqueId())
         setShowActionItems(false)
     }
-    const totalTime = formatTime(elapsedTime)
+    // const totalTime = formatTime(elapsedTime)
 
     const handleTaskNameBlur = (e) => {
         const input = e.target.value

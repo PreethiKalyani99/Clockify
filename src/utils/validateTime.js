@@ -1,32 +1,20 @@
-import { stringPadStart } from "./stringPadStart"
 import { timeConversion } from "./timeConversion"
 import { convertToHoursAndMinutes } from "./convertToHoursAndMinutes"
 
 export function validateTime(time, date){
-    console.log(time, date, "timev date")
-    let taskTime
-    if(typeof time === 'object'){
-        taskTime = `${time.getHours()}:${time.getMinutes()}`
-    }
-    else{
-        taskTime = time
-    }
-    let {hours, minutes, isValid} = convertToHoursAndMinutes(taskTime)
+    let {hours, minutes, isValid} = convertToHoursAndMinutes(time)
     hours = Number(hours)
     minutes = Number(minutes)
     if(hours > 24 && minutes === 0) {
-        const num1 = stringPadStart(hours.toString()[0], 2, '0')
-        const num2 = stringPadStart(hours.toString()[1], 2, '0')
-        hours = num1
-        minutes = num2
-        return {isValid: true, validatedHour: hours, validatedMins: minutes}
+        return {isValid: true, validatedHour: hours.toString()[0].padStart(2, '0'), validatedMins: hours.toString()[1].padStart(2, '0')}
     }
     else if(hours < 24 && minutes >= 60){
         let {convertedHrs, convertedMins} = timeConversion(minutes)
         hours += convertedHrs
-        hours = stringPadStart((hours % 24), 2, '0')
-        minutes = stringPadStart(convertedMins, 2, '0')
-        return {isValid: true, validatedHour: hours, validatedMins: minutes, prevTime: `${hours}:${minutes}`}
+        hours = (hours % 24).toString().padStart(2,'0')
+        minutes = convertedMins.toString().padStart(2, '0')
+
+        return {isValid: true, validatedHour: hours, validatedMins: minutes}
     }
     else{
         if(!isValid || hours > 24){
