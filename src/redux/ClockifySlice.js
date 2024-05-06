@@ -7,12 +7,13 @@ export const ClockifySlice = createSlice({
         totalTasks: {},
         uniqueId: JSON.parse(localStorage.getItem('uniqueId')) || 0,
         tasksByWeek: {},
-        isModalOpen: false
+        isModalOpen: false,
+        startTime: new Date().toString(),
+        endTime: new Date().toString()
     },
     reducers: {
         addTodayTask: (state, action) => {
             const { date, id, ...task } = action.payload
-            console.log(date, id, task, "add task============")
             if (!state.totalTasks[date]) {
                 state.totalTasks[date] = []
             }
@@ -28,7 +29,6 @@ export const ClockifySlice = createSlice({
         }, 
         updateTask: (state, action) => {
             const {id, date, text, ...updatedTasks} = action.payload
-            console.log(id, 'id', date, "date", text, "text", updatedTasks, "updated taasks----------------")
             if(!state.totalTasks[date]){
                 state.totalTasks[date] = []
                 state.totalTasks[date].push({...updatedTasks,text, date, id})
@@ -47,7 +47,6 @@ export const ClockifySlice = createSlice({
         },
         deleteTask: (state, action) => {
             const {id, date} = action.payload
-            console.log(id, date, "delete id, date++++++++++++++++++++++++++++++")
             if(state.totalTasks[date]){
                 state.totalTasks[date] = state.totalTasks[date].filter(task => task.id !== id)
             }
@@ -59,9 +58,24 @@ export const ClockifySlice = createSlice({
         updateUniqueId: (state) => {
             state.uniqueId = state.uniqueId + 1
             localStorage.setItem('uniqueId', JSON.stringify(state.uniqueId))
+        },
+        updateStartTime: (state, action) => {
+            state.startTime = (action.payload).toString()
+        },
+        updateEndTime: (state, action) => {
+            state.endTime = (action.payload).toString()
         }
     }
 })
 
-export const {addTodayTask, addProjectClient, updateUniqueId, updateTask, deleteTask, setIsModalOpen} = ClockifySlice.actions
+export const {
+    addTodayTask, 
+    addProjectClient, 
+    updateUniqueId, 
+    updateTask, 
+    deleteTask, 
+    setIsModalOpen, 
+    updateStartTime, 
+    updateEndTime
+} = ClockifySlice.actions
 export default ClockifySlice.reducer
