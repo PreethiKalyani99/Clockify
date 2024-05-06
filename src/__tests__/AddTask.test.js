@@ -1,8 +1,7 @@
 import { AddTask } from "../Components/AddTask";
 import { renderWithProviders } from "../utils/test-utils";
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import timekeeper from 'timekeeper';
-import reducer, {addTodayTask} from '../redux/ClockifySlice'
 
 beforeAll(() => {
   // Lock Time
@@ -33,56 +32,32 @@ describe("StartTime", () => {
     )
     const startTime = screen.getByTestId("start-time")
 
-    fireEvent.change(startTime, {target: { value: "08:00"}})
-    fireEvent.blur(startTime)
-
-    expect(screen.getByTestId("task-duration").value).toBe("02:00:00")
-    expect(startTime.value).toBe("08:00")
-  })
-
-  test("should update date picker's time on updating start time", () => {
-  
-    const initialState = {totalTasks: {}}
-    renderWithProviders(
-      <AddTask isSidebarShrunk={false}/>,
-      {preloadedState: initialState}
-    )
-    const startTime = screen.getByTestId("start-time")
-
     fireEvent.change(startTime, {target: { value: "09:00"}})
     fireEvent.blur(startTime)
 
-    const startTimeValue = startTime.value
-    const dateString = `2024-05-01 ${startTimeValue}`
+    expect(screen.getByTestId("task-duration").value).toBe("02:00:00")
+    expect(startTime.value).toBe("09:00")
+  })
 
-    const expectedState = {
-      totalTasks: {
-        '2024-05-01': [
-          {
-            date: '2024-05-01',
-            id: 0,
-            text: 'task1',
-            totalTime: '01:00:00',
-            project: 'p1', 
-            client: 'c1',
-            startTime: new Date('2024-05-01 09:00'),
-            endTime: new Date('2024-05-01 10:00')
-          }
-        ]
-      }
-    }
+  test("should update date picker's time on updating start time", async () => {
+  
+    renderWithProviders(
+      <AddTask isSidebarShrunk={false}/>
+    )
 
-    expect(reducer(initialState, addTodayTask({ 
-      date: '2024-05-01',
-      id: 0,
-      text: 'task1',
-      totalTime: '01:00:00',
-      project: 'p1', 
-      client: 'c1',
-      startTime: new Date(dateString),
-      endTime: new Date('2024-05-01 10:00')
-    }))).toEqual(expectedState)
+    const startTime = screen.getByTestId("start-time")
     
+    fireEvent.change(startTime, {target: { value: "09:00"}})
+    fireEvent.blur(startTime)
+    const startTimeValue = startTime.value
+
+    expect(startTimeValue).toBe('09:00')
+
+    await waitFor(() => {
+      const updatedStartTime = new Date(2024, 4, 5, 9, 0) 
+      expect(store.getState().clockify.startTime.getHours()).toBe(updatedStartTime.getHours());
+      expect(store.getState().clockify.startTime.getMinutes()).toBe(updatedStartTime.getMinutes());
+    })
   })
 
 
