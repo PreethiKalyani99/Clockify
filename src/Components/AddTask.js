@@ -33,7 +33,8 @@ export function AddTask(props){
             dispatch(updateEndTime(timeEnd.toString()))
         }
         const {hours, minutes} = calculateTimeDifference(timeStart, timeEnd)
-        const totalTimeDuration = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:00`
+        const timeParts = previousDuration.split(':')
+        const totalTimeDuration = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${timeParts[2]}`
         const duration = (hours <= 999) ? totalTimeDuration : previousDuration
         dispatch(updateDuration(duration))
         totalDurationRef.current.value = duration
