@@ -1,30 +1,21 @@
 import { timeConversion } from "./timeConversion"
 import { convertToHoursAndMinutes } from "./convertToHoursAndMinutes"
 
-export function validateTime(time, date){
+export function validateTime(time){
     let {hours, minutes, isValid} = convertToHoursAndMinutes(time)
-    if(hours > 24 && minutes === 0) {
-        return {isValid: true, validatedHour: hours.toString()[0].padStart(2, '0'), validatedMins: hours.toString()[1].padStart(2, '0')}
+    if(hours > 24 || !isValid){
+        return {isValid: false, validatedHour: '', validatedMins: ''} 
     }
-    else if(hours < 24 && minutes >= 60){
+
+    if(hours < 24 && minutes >= 60){
         let {convertedHrs, convertedMins} = timeConversion(minutes)
         hours += convertedHrs
-        hours = (hours % 24).toString().padStart(2,'0')
-        minutes = convertedMins.toString().padStart(2, '0')
+        hours = (hours % 24)
+        minutes = convertedMins
 
-        return {isValid: true, validatedHour: hours, validatedMins: minutes}
+        return {isValid: true, validatedHour: hours.toString().padStart(2,'0'), validatedMins: minutes.toString().padStart(2,'0')}
     }
     else{
-        if(!isValid || hours > 24){
-            return {isValid: false, validatedHour: '', validatedMins: ''} 
-        }
-        const dateTime = new Date(`${date} ${hours}:${minutes}`)
-
-        if((typeof dateTime !== 'object')){
-            return {isValid: false, validatedHour: '', validatedMins: ''}
-        }
-        else{
-            return {isValid: true, validatedHour: hours, validatedMins: minutes}
-        }
+        return {isValid: true, validatedHour: hours.toString().padStart(2,'0'), validatedMins: minutes.toString().padStart(2,'0')}
     }
 }

@@ -58,7 +58,7 @@ test('should return false when timeDuration is invalid (12:-4:6)', () => {
     expect(calculateEndTime(new Date('2024-05-01 12:00'), '12:-4:6')).toStrictEqual({isValid: false})  
 })
 
-test('should return timeDuration as it is when hours, minutes and seconds are less than 60', () => {
+test('should return timeDuration as it is when minutes and seconds are less than 60', () => {
     const startDate = new Date('2024-05-01 12:00')
     startDate.setHours(12 + startDate.getHours(), 45 + startDate.getMinutes())
     expect(calculateEndTime(new Date('2024-05-01 12:00'),  '12:45:30')).toStrictEqual({isValid: true, newEndTime: startDate, timeDuration: '12:45:30'})  

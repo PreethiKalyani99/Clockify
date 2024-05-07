@@ -57,13 +57,13 @@ export function AddTask(props){
     }
 
     const handleStartTimeBlur = () => {
-        const {isValid, validatedHour, validatedMins} = validateTime(startTimeRef.current.value, getFormattedDate(timeStart))
+        const {isValid, validatedHour, validatedMins} = validateTime(startTimeRef.current.value)
         if(isValid){
             const start = new Date(timeStart)
             start.setHours(validatedHour, validatedMins)
             const isLimitExceeded = isDurationLimitExceeded(start, timeEnd)
             if(!isLimitExceeded){
-                startTimeRef.current.value = `${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`
+                startTimeRef.current.value = `${validatedHour}:${validatedMins}`
                 timeStart.setHours(validatedHour, validatedMins)
                 dispatch(updateStartTime(timeStart.toString()))
             }
@@ -77,13 +77,13 @@ export function AddTask(props){
     }
 
     const handleEndTimeBlur = () => {
-        const {isValid, validatedHour, validatedMins} = validateTime(endTimeRef.current.value, getFormattedDate(timeEnd))
+        const {isValid, validatedHour, validatedMins} = validateTime(endTimeRef.current.value)
         if(isValid){
             const end = new Date(timeEnd)
             end.setHours(validatedHour, validatedMins)
             const isLimitExceeded = isDurationLimitExceeded(timeStart, end)
             if(!isLimitExceeded){
-                endTimeRef.current.value = `${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`
+                endTimeRef.current.value = `${validatedHour}:${validatedMins}`
                 timeEnd.setHours(validatedHour, validatedMins)
                 dispatch(updateEndTime(timeEnd.toString()))
             }
