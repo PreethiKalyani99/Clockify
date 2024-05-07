@@ -70,6 +70,7 @@ ul{
     position: sticky;
     top: 30px;
     background-color: white;
+    justify-content: space-around;
 }
 
 .zIndex{
@@ -88,11 +89,11 @@ ul{
 }
 
 .expand-input-width{
-    width: 65%;
+    width: 42%;
 }
 
 .shrink-input-width{
-    width: 63%;
+    width: 40%;
 }
 
 .popup{
