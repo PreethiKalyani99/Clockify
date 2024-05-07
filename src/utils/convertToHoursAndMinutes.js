@@ -1,26 +1,18 @@
-export function convertToHoursAndMinutes(value){
-    let expectedLength = 4
+import { splitToHoursAndMinutes } from "./splitToHoursAndMinutes"
 
-    if(isNaN(value.replace(':', '')) || (value.replace(':', '').length > expectedLength || value[0] === ':' || value[value.length-1] === ':' || value === '' || Number(value) < 0)){
-        return {hours: 0, minutes: 0, isValid: false}
+export function convertToHoursAndMinutes(time) {
+    let { hours, minutes, isValid } = splitToHoursAndMinutes(time)
+    if (hours > 24 || !isValid) {
+        return { isValid: false, validatedHour: '', validatedMins: '' }
     }
-    else if(value[1] === ':'){
-        return {hours: Number(value.slice(0, 1)), minutes: Number(value.slice(2)), isValid: true}
+
+    if (minutes < 60) {
+        return { isValid: true, validatedHour: hours.toString().padStart(2, '0'), validatedMins: minutes.toString().padStart(2, '0') }
     }
-    else if(value[2] === ':'){
-        const hours = Number(value.slice(0, 2)) === 24 ? 0 : value.slice(0,2)
-        return {hours: Number(hours), minutes: Number(value.slice(3)), isValid: true}
-    }
-    else if(Number(value) === 24){
-        return {hours: 0, minutes: 0, isValid: true}
-    }
-    else if((Number(value) < 24) && (value.length === 1 || value.length === 2)){
-        return {hours: Number(value), minutes: 0, isValid: true}
-    }
-    else if((Number(value) > 24) && (value.length === 2 || value.length === 3)){
-        return {hours: Number(value.slice(0,1)), minutes: Number(value.slice(1)), isValid: true}
-    }
-    else{
-        return {hours: Number(value.slice(0,2)), minutes: Number(value.slice(2,4)), isValid: true}
-    }
+
+    hours = (hours + (Math.floor(minutes / 60))) % 24
+    minutes = minutes % 60 
+
+    return { isValid: true, validatedHour: hours.toString().padStart(2, '0'), validatedMins: minutes.toString().padStart(2, '0') }
+
 }

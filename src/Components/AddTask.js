@@ -3,7 +3,7 @@ import { addTodayTask, updateUniqueId, updateStartTime, updateEndTime, updateDur
 import { useDispatch, useSelector } from 'react-redux';
 import { AddProject } from "./AddProject";
 import DatePicker from "react-datepicker";
-import { validateTime } from "../utils/validateTime";
+import { convertToHoursAndMinutes } from "../utils/convertToHoursAndMinutes";
 import "react-datepicker/dist/react-datepicker.css";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import { getFormattedTime } from "../utils/getFormattedTime";
@@ -57,7 +57,7 @@ export function AddTask(props){
     }
 
     const handleStartTimeBlur = () => {
-        const {isValid, validatedHour, validatedMins} = validateTime(startTimeRef.current.value)
+        const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(startTimeRef.current.value)
         if(isValid){
             const start = new Date(timeStart)
             start.setHours(validatedHour, validatedMins)
@@ -77,7 +77,7 @@ export function AddTask(props){
     }
 
     const handleEndTimeBlur = () => {
-        const {isValid, validatedHour, validatedMins} = validateTime(endTimeRef.current.value)
+        const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(endTimeRef.current.value)
         if(isValid){
             const end = new Date(timeEnd)
             end.setHours(validatedHour, validatedMins)
