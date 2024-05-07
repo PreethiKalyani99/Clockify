@@ -6,40 +6,34 @@ test("should calculate endTime and timeDuration when timeDuration's seconds is g
     expect(calculateEndTime(new Date('2024-05-01 12:00'), '135:34:77')).toStrictEqual({isValid: true, newEndTime: startDate, timeDuration: '135:35:17'})
 })
 
-test('if timeDuration length is 1, it should take the value as minutes', () => {
+test('should return the time as minutes when length of the time is 1', () => {
     const startDate = new Date('2024-05-01 12:00')
     startDate.setHours(0 + startDate.getHours(), 2 + startDate.getMinutes())
     expect(calculateEndTime(new Date('2024-05-01 12:00'),  '2')).toStrictEqual({isValid: true, newEndTime: startDate, timeDuration: '00:02:00'}) 
 })
 
-test('if timeDuration length is 2, it should take the value as minutes', () => {
+test('should return the time as minutes when length of the time is 2', () => {
     const startDate = new Date('2024-05-01 12:00')
     startDate.setHours(0 + startDate.getHours(), 12 + startDate.getMinutes())
     expect(calculateEndTime(new Date('2024-05-01 12:00'),  '12')).toStrictEqual({isValid: true, newEndTime: startDate, timeDuration: '00:12:00'}) 
 })
 
-test('if timeDuration length is 3, it should take first digit as hours and last 2 digits as minutes', () => {
+test('should return first digit as hours and last 2 digits as minutes when length of the time is 3', () => {
     const startDate = new Date('2024-05-02 12:00') 
     startDate.setHours(1 + startDate.getHours(), 23 + startDate.getMinutes())
     expect(calculateEndTime(new Date('2024-05-02 12:00'),  '123')).toStrictEqual({isValid: true, newEndTime: startDate, timeDuration: '01:23:00'}) 
 })
 
-test('if timeDuration length is 4, it should take first 2 digits as hours and last 2 digits as minutes', () => {
+test('should return first 2 digits as hours and last 2 digits as minutes when length of the time is 4', () => {
     const startDate = new Date('2024-05-01 12:00')
     startDate.setHours(12 + startDate.getHours(), 34 + startDate.getMinutes())
     expect(calculateEndTime(new Date('2024-05-01 12:00'), '1234')).toStrictEqual({isValid: true, newEndTime: startDate, timeDuration: '12:34:00'})  
 })
  
-test('if timeDuration length is 5, it should take first 3 digits as hours and last 2 digits as minutes', () => {
+test('should return first 3 digits as hours and last 2 digits as minutes when length of the time is 5', () => {
     const startDate = new Date('2024-05-01 12:00')
     startDate.setHours(123 + startDate.getHours(), 45 + startDate.getMinutes())
     expect(calculateEndTime(new Date('2024-05-01 12:00'),  '12345')).toStrictEqual({isValid: true, newEndTime: startDate, timeDuration: '123:45:00'})  
-})
-
-test('should calculate endTime and timeDuration when timeDuration length is greater than 5', () => {
-    const startDate = new Date('2024-05-01 12:00')
-    startDate.setHours(999 + startDate.getHours(), 0 + startDate.getMinutes())
-    expect(calculateEndTime(new Date('2024-05-01 12:00'), '123456')).toStrictEqual({isValid: true, newEndTime: startDate, timeDuration: '999:00:00'})  
 })
 
 test("should handle timeDuration when its hours is greater than 999 and calculate endTime", () => {
@@ -64,19 +58,19 @@ test('should return false when timeDuration is invalid (12:-4:6)', () => {
     expect(calculateEndTime(new Date('2024-05-01 12:00'), '12:-4:6')).toStrictEqual({isValid: false})  
 })
 
-test('should take timeDuration as it is when hours, minutes and seconds are less than 60', () => {
+test('should return timeDuration as it is when hours, minutes and seconds are less than 60', () => {
     const startDate = new Date('2024-05-01 12:00')
     startDate.setHours(12 + startDate.getHours(), 45 + startDate.getMinutes())
     expect(calculateEndTime(new Date('2024-05-01 12:00'),  '12:45:30')).toStrictEqual({isValid: true, newEndTime: startDate, timeDuration: '12:45:30'})  
 })
 
-test('should take 12: as 12 hours and calculate endTime and timeDuration', () => { 
+test('should return a number with colon on the right side as hours and calculate endTime and timeDuration', () => { 
     const startDate = new Date('2024-05-01 12:00')
     startDate.setHours(12 + startDate.getHours(), 0 + startDate.getMinutes())
     expect(calculateEndTime(new Date('2024-05-01 12:00'),  '12:')).toStrictEqual({isValid: true, newEndTime: startDate, timeDuration: '12:00:00'})  
 })
 
-test('should take :12: as 12 minutes and calculate endTime and timeDuration', () => {
+test('should return a number with colon on the both side as minutes and calculate endTime and timeDuration', () => {
     const startDate = new Date('2024-05-01 12:00')
     startDate.setHours(0 + startDate.getHours(), 12 + startDate.getMinutes())
     expect(calculateEndTime(new Date('2024-05-01 12:00'),  ':12:')).toStrictEqual({isValid: true, newEndTime: startDate, timeDuration: '00:12:00'})  

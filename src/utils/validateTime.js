@@ -3,8 +3,6 @@ import { convertToHoursAndMinutes } from "./convertToHoursAndMinutes"
 
 export function validateTime(time, date){
     let {hours, minutes, isValid} = convertToHoursAndMinutes(time)
-    hours = Number(hours)
-    minutes = Number(minutes)
     if(hours > 24 && minutes === 0) {
         return {isValid: true, validatedHour: hours.toString()[0].padStart(2, '0'), validatedMins: hours.toString()[1].padStart(2, '0')}
     }
