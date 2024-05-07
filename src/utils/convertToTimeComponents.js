@@ -10,7 +10,7 @@ export function convertToTimeComponents(value){
     const newValue = value.replaceAll(/-/g, ':')
     const time =  newValue.split(':').map(Number) 
     if(time.length > 3){
-        return {hours: 999, minutes: 0, seconds: 0, isValid: false, type: 'number'}
+        return {hours: 999, minutes: 0, seconds: 0, isValid: false, type: 'string'}
     }
 
     if(time.length === 1){
