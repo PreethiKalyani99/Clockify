@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addTodayTask, updateTask, deleteTask, updateUniqueId } from "../redux/ClockifySlice";
 import DatePicker from "react-datepicker";
-import { validateTime } from "../utils/validateTime";
+import { convertToHoursAndMinutes } from "../utils/convertToHoursAndMinutes";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import { calculateEndTime } from "../utils/calculateEndTime";
 import { AddProject } from "./AddProject";
@@ -96,7 +96,7 @@ export function DisplaySingleTask(props){
     }
 
     const handleStartTimeBlur = (e) => {
-        const {isValid, validatedHour, validatedMins} = validateTime(e.target.value, getFormattedDate(startTime))
+        const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value, getFormattedDate(startTime))
         if(isValid){
             setFormattedStartTime(`${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`)
             setPreviousTime({...previousTime, start: `${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`})
@@ -119,7 +119,7 @@ export function DisplaySingleTask(props){
     }
 
     const handleEndTimeBlur = (e) => {
-        const {isValid, validatedHour, validatedMins} = validateTime(e.target.value, getFormattedDate(endTime))
+        const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value, getFormattedDate(endTime))
         if(isValid){
             setFormattedEndTime(`${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`)
             setPreviousTime({...previousTime, end: `${validatedHour.toString().padStart(2,'0')}:${validatedMins.toString().padStart(2,'0')}`})

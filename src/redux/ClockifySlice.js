@@ -10,7 +10,8 @@ export const ClockifySlice = createSlice({
         isModalOpen: false,
         startTime: new Date().toString(),
         endTime: new Date().toString(),
-        duration: '00:00:00'
+        duration: '00:00:00',
+        taskName: ''
     },
     reducers: {
         addTodayTask: (state, action) => {
@@ -68,6 +69,9 @@ export const ClockifySlice = createSlice({
         }, 
         updateDuration: (state, action) => {
             state.duration = action.payload
+        },
+        updateTaskName: (state, action) => {
+            state.taskName = action.payload
         }
     }
 })
@@ -81,6 +85,7 @@ export const {
     setIsModalOpen, 
     updateStartTime, 
     updateEndTime,
-    updateDuration
+    updateDuration,
+    updateTaskName
 } = ClockifySlice.actions
 export default ClockifySlice.reducer
