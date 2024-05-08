@@ -29,8 +29,9 @@ export function TimeTracker(props){
         const timeParts = previousDuration.split(':')
         const totalTimeDuration = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${timeParts[2]}`
         const timeDuration = (hours <= 999) ? totalTimeDuration : previousDuration
-        dispatch(updateDuration(timeDuration))
-        // totalDurationRef.current.value = duration
+        if (timeDuration !== previousDuration) {
+            dispatch(updateDuration(timeDuration))
+        }
     }, [startTime, endTime])
 
     const handleDateChange = (dateTime) => {
@@ -81,6 +82,9 @@ export function TimeTracker(props){
         }
 
     }
+    const handleTaskNameChange = (e) => {
+        dispatch(updateTaskName(e.target.value));
+    }
 
     const handleTotalDurationBlur = (e) => {
         const {isValid, newEndTime, timeDuration} = calculateEndTime(timeStart, e.target.value)
@@ -125,24 +129,25 @@ export function TimeTracker(props){
 
     return (
         <>
-            <AddTask 
+            <AddTask
                 isSidebarShrunk={props.isSidebarShrunk}
                 projectClient={projectClient}
                 uniqueId={uniqueId}
-                isModalOpen={isModalOpen}
+                taskName={taskName}
                 timeStart={new Date(startTime)}
                 timeEnd={new Date(endTime)}
+                duration={duration}
+                isModalOpen={isModalOpen}
+                onNameChange={handleTaskNameChange}
                 onStartBlur={handleStartTimeBlur}
                 onEndBlur={handleEndTimeBlur}
                 onDurationBlur={handleTotalDurationBlur}
                 onDateChange={handleDateChange}
                 onAddTask={addTask}
-                duration={duration}
-                taskName={taskName}
             />
             <DisplayTasks
                 isSidebarShrunk = {props.isSidebarShrunk}
-            /> 
+            />
         </>
     )
 }

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { AddProject } from "./AddProject";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -6,36 +6,53 @@ import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import { calculateDays } from "../utils/calculateDays";
 
-export function AddTask(props){
+export function AddTask(props) {
 
-    const startTimeRef = useRef()
-    const endTimeRef = useRef()
-    const totalDurationRef = useRef()
-    const taskNameRef = useRef()
+    const [startTime, setStartTime] = useState(getFormattedTime(props.timeStart));
+    const [endTime, setEndTime] = useState(getFormattedTime(props.timeEnd));
+    const [duration, setDuration] = useState(props.duration);
+    const [taskName, setTaskName] = useState(props.taskName);
 
-    // console.log(props.timeStart, props.timeEnd, props.duration, props.taskName, "props")
-    startTimeRef.current = `${(props.timeStart.getHours()).toString().padStart(2, '0')}:${(props.timeStart.getMinutes()).toString().padStart(2, '0')}`
-    endTimeRef.current = `${(props.timeEnd.getHours()).toString().padStart(2, '0')}:${(props.timeEnd.getMinutes()).toString().padStart(2, '0')}`
-    totalDurationRef.current = props.duration
-    taskNameRef.current = props.taskName
-   
-    const handleKey = (e) => {
-        if(e.key === 'Enter'){
+    const days = calculateDays(props.timeStart, props.timeEnd)
+
+    const handleEnter = (e) => {
+        if (e.key === 'Enter') {
             props.onAddTask()
         }
     }
-    const days = calculateDays(props.timeStart, props.timeEnd)
 
-    return(
+    useEffect(() => {
+        const formattedStartTime = getFormattedTime(props.timeStart);
+        if (startTime !== formattedStartTime) {
+            setStartTime(e => formattedStartTime);
+        }
+
+        const formattedEndime = getFormattedTime(props.timeEnd);
+        if (endTime !== formattedEndime) {
+            setEndTime(formattedEndime);
+        }
+
+        if (duration !== props.duration) {
+            setDuration(props.duration)
+        }
+
+        if (taskName !== props.taskName) {
+            setTaskName(props.taskName)
+        }
+    }, [props.timeStart, props.timeEnd, props.duration, props.taskName]);
+
+    return (
         <>
-            <div className={props.isModalOpen ? "add-task-container" : "add-task-container zIndex"} data-testid="container">
+            <div className={props.isModalOpen ? "add-task-container" : "add-task-container zIndex"}
+                 data-testid="container">
                 <input
                     data-testid="task-name"
                     type="text"
                     placeholder="What are you working on?"
-                    className={props.isSidebarShrunk ?  "input-box expand-input-width" : "input-box shrink-input-width"}
-                    onKeyDown={handleKey}
-                    ref={taskNameRef}
+                    className={props.isSidebarShrunk ? "input-box expand-input-width" : "input-box shrink-input-width"}
+                    onChange={(e) => setTaskName(e.target.value)}
+                    onBlur={props.onNameChange}
+                    onKeyDown={handleEnter}
                 ></input>
                 <AddProject
                     projectClient={props.projectClient}
@@ -43,32 +60,30 @@ export function AddTask(props){
                     project=''
                     client=''
                 />
-                
                 <input
                     data-testid="start-time"
                     type="text"
                     name="startTime"
-                    ref={startTimeRef}
                     onBlur={props.onStartBlur}
-                    defaultValue={getFormattedTime(props.timeStart)}
+                    onChange={e => setStartTime(e.target.value)}
+                    value={startTime}
                 ></input>
                 <input
                     data-testid="end-time"
                     type="text"
                     name="endTime"
-                    ref={endTimeRef}
                     onBlur={props.onEndBlur}
-                    defaultValue={getFormattedTime(props.timeEnd)}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    value={endTime}
                 ></input>
                 {days > 0 && <sup className="fs-6"><b>{'+' + days}</b></sup>}
-                
                 <input
                     data-testid="task-duration"
                     type='text'
                     className='duration'
-                    ref={totalDurationRef}
                     onBlur={props.onDurationBlur}
-                    defaultValue='00:00:00'
+                    onChange={(e) => setDuration(e.target.value)}
+                    value={duration}
                 />
                 <DatePicker
                     id="date-picker"
