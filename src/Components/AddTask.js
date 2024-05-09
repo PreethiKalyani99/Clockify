@@ -1,18 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { AddProject } from "./AddProject";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getFormattedDate } from "../utils/getFormattedDate";
-import { getFormattedTime } from "../utils/getFormattedTime";
 import { calculateDays } from "../utils/calculateDays";
 
 export function AddTask(props) {
-
-    const [startTime, setStartTime] = useState(getFormattedTime(props.timeStart));
-    const [endTime, setEndTime] = useState(getFormattedTime(props.timeEnd));
-    const [duration, setDuration] = useState(props.duration);
-    const [taskName, setTaskName] = useState(props.taskName);
-
     const days = calculateDays(props.timeStart, props.timeEnd)
 
     const handleEnter = (e) => {
@@ -21,37 +14,17 @@ export function AddTask(props) {
         }
     }
 
-    useEffect(() => {
-        const formattedStartTime = getFormattedTime(props.timeStart);
-        if (startTime !== formattedStartTime) {
-            setStartTime(e => formattedStartTime);
-        }
-
-        const formattedEndime = getFormattedTime(props.timeEnd);
-        if (endTime !== formattedEndime) {
-            setEndTime(formattedEndime);
-        }
-
-        if (duration !== props.duration) {
-            setDuration(props.duration)
-        }
-
-        if (taskName !== props.taskName) {
-            setTaskName(props.taskName)
-        }
-    }, [props.timeStart, props.timeEnd, props.duration, props.taskName]);
-
     return (
         <>
-            <div className={props.isModalOpen ? "add-task-container" : "add-task-container zIndex"}
-                 data-testid="container">
+            <div className={props.isModalOpen ? "add-task-container" : "add-task-container zIndex"} data-testid="container">
                 <input
                     data-testid="task-name"
                     type="text"
                     placeholder="What are you working on?"
                     className={props.isSidebarShrunk ? "input-box expand-input-width" : "input-box shrink-input-width"}
-                    onChange={(e) => setTaskName(e.target.value)}
-                    onBlur={props.onNameChange}
+                    onChange={props.onNameChange}
+                    onBlur={props.onTaskBlur}
+                    value={props.taskDescription}
                     onKeyDown={handleEnter}
                 ></input>
                 <AddProject
@@ -65,16 +38,16 @@ export function AddTask(props) {
                     type="text"
                     name="startTime"
                     onBlur={props.onStartBlur}
-                    onChange={e => setStartTime(e.target.value)}
-                    value={startTime}
+                    onChange={props.onStartChange}
+                    value={props.start}
                 ></input>
                 <input
                     data-testid="end-time"
                     type="text"
                     name="endTime"
                     onBlur={props.onEndBlur}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    value={endTime}
+                    onChange={props.onEndChange}
+                    value={props.end}
                 ></input>
                 {days > 0 && <sup className="fs-6"><b>{'+' + days}</b></sup>}
                 <input
@@ -82,8 +55,8 @@ export function AddTask(props) {
                     type='text'
                     className='duration'
                     onBlur={props.onDurationBlur}
-                    onChange={(e) => setDuration(e.target.value)}
-                    value={duration}
+                    onChange={props.onDurationChange}
+                    value={props.totalDuration}
                 />
                 <DatePicker
                     id="date-picker"

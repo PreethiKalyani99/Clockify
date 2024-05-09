@@ -9,16 +9,22 @@ import { convertToHoursAndMinutes } from "../utils/convertToHoursAndMinutes";
 import { calculateEndTime } from "../utils/calculateEndTime";
 import { isDurationLimitExceeded } from "../utils/isDurationLimitExceeded";
 import { getFormattedDate } from "../utils/getFormattedDate";
+import { getFormattedTime } from "../utils/getFormattedTime";
 
 export function TimeTracker(props){
     const {projectClient , uniqueId, isModalOpen, startTime, endTime, duration, taskName} = useSelector(state => state.clockify)
 
+    const timeStart = new Date(startTime)
+    const timeEnd = new Date(endTime)
+
+    const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart));
+    const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd));
+    const [totalDuration, setDuration] = useState(duration);
+    const [taskDescription, setTaskDescription] = useState(taskName);
+
     const [previousDuration, setPreviousDuration] = useState('00:00:00')
 
     const dispatch = useDispatch()
-
-    const timeStart = new Date(startTime)
-    const timeEnd = new Date(endTime)
 
     useEffect(() => {
         if(timeStart > timeEnd) {
@@ -31,6 +37,7 @@ export function TimeTracker(props){
         const timeDuration = (hours <= 999) ? totalTimeDuration : previousDuration
         if (timeDuration !== previousDuration) {
             dispatch(updateDuration(timeDuration))
+            setDuration(timeDuration)
         }
     }, [startTime, endTime])
 
@@ -42,68 +49,65 @@ export function TimeTracker(props){
 
     const handleStartTimeBlur = (e) => {
         const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
-        console.log("start time blur")
         if(isValid){
             const start = new Date(timeStart)
             start.setHours(validatedHour, validatedMins)
             const isLimitExceeded = isDurationLimitExceeded(start, timeEnd)
             if(!isLimitExceeded){
-                // startTimeRef.current.value = `${validatedHour}:${validatedMins}`
                 timeStart.setHours(validatedHour, validatedMins)
                 dispatch(updateStartTime(timeStart.toString()))
+                setStartDateTime(`${validatedHour}:${validatedMins}`)
             }
             else{
-                // startTimeRef.current.value = `${timeStart.getHours().toString().padStart(2,'0')}:${timeStart.getMinutes().toString().padStart(2,'0')}`
+                setStartDateTime(`${timeStart.getHours().toString().padStart(2,'0')}:${timeStart.getMinutes().toString().padStart(2,'0')}`)
             }
         }
         else{
-            // startTimeRef.current.value = `${timeStart.getHours().toString().padStart(2,'0')}:${timeStart.getMinutes().toString().padStart(2,'0')}`
+            setStartDateTime(`${timeStart.getHours().toString().padStart(2,'0')}:${timeStart.getMinutes().toString().padStart(2,'0')}`)
         }
     }
 
     const handleEndTimeBlur = (e) => {
         const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
-        console.log("end time blur")
         if(isValid){
             const end = new Date(timeEnd)
             end.setHours(validatedHour, validatedMins)
             const isLimitExceeded = isDurationLimitExceeded(timeStart, end)
             if(!isLimitExceeded){
-                // endTimeRef.current.value = `${validatedHour}:${validatedMins}`
                 timeEnd.setHours(validatedHour, validatedMins)
                 dispatch(updateEndTime(timeEnd.toString()))
+                setEndDateTime(`${validatedHour}:${validatedMins}`)
             }
             else{
-                // endTimeRef.current.value = `${timeEnd.getHours().toString().padStart(2,'0')}:${timeEnd.getMinutes().toString().padStart(2,'0')}`
+                setEndDateTime(`${timeEnd.getHours().toString().padStart(2,'0')}:${timeEnd.getMinutes().toString().padStart(2,'0')}`)
             }
         }
         else{
-            // endTimeRef.current.value = `${timeEnd.getHours().toString().padStart(2,'0')}:${timeEnd.getMinutes().toString().padStart(2,'0')}`
+            setEndDateTime(`${timeEnd.getHours().toString().padStart(2,'0')}:${timeEnd.getMinutes().toString().padStart(2,'0')}`)
         }
 
     }
-    const handleTaskNameChange = (e) => {
+    const handleTaskNameBlur = (e) => {
         dispatch(updateTaskName(e.target.value));
     }
 
     const handleTotalDurationBlur = (e) => {
         const {isValid, newEndTime, timeDuration} = calculateEndTime(timeStart, e.target.value)
-        console.log("duration blur")
         if(isValid){
-            // endTimeRef.current.value = `${(newEndTime.getHours()).toString().padStart(2,'0')}:${(newEndTime.getMinutes()).toString().padStart(2,'0')}`
             dispatch(updateEndTime(newEndTime.toString()))
             dispatch(updateDuration(timeDuration))
             setPreviousDuration(timeDuration)
-            // totalDurationRef.current.value = timeDuration
+            setEndDateTime(`${newEndTime.getHours().toString().padStart(2,'0')}:${newEndTime.getMinutes().toString().padStart(2,'0')}`)
+            setDuration(timeDuration)
         }
         else{
             dispatch(updateDuration(previousDuration))
-            // totalDurationRef.current.value = previousDuration
+            setDuration(previousDuration)
         }
     }
 
     const addTask = () => {
-        // if(taskName !== ''){
+        if(taskName !== ''){
                 dispatch(addTodayTask({
                 date: getFormattedDate(timeStart),
                 id: uniqueId,
@@ -119,12 +123,14 @@ export function TimeTracker(props){
             dispatch(updateStartTime(new Date().toString()))
             dispatch(updateEndTime(new Date().toString()))
             dispatch(updateDuration('00:00:00'))
-            // startTimeRef.current.value = `${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`
-            // endTimeRef.current.value = `${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`
-        // }
-        // else{
-            // alert('Please enter task description')
-        // }
+            setStartDateTime(`${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`)
+            setEndDateTime(`${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`)
+            setDuration('00:00:00')
+            setTaskDescription('')
+        }
+        else{
+            alert('Please enter task description')
+        }
     }
 
     return (
@@ -133,12 +139,18 @@ export function TimeTracker(props){
                 isSidebarShrunk={props.isSidebarShrunk}
                 projectClient={projectClient}
                 uniqueId={uniqueId}
-                taskName={taskName}
                 timeStart={new Date(startTime)}
                 timeEnd={new Date(endTime)}
-                duration={duration}
                 isModalOpen={isModalOpen}
-                onNameChange={handleTaskNameChange}
+                taskDescription={taskDescription}
+                start={startDateTime}
+                end={endDateTime}
+                totalDuration={totalDuration}
+                onNameChange={(e) =>  setTaskDescription(e.target.value)}
+                onStartChange={(e) =>  setStartDateTime(e.target.value)}
+                onEndChange={(e) =>  setEndDateTime(e.target.value)}
+                onDurationChange={(e) =>  setDuration(e.target.value)}
+                onTaskBlur={handleTaskNameBlur}
                 onStartBlur={handleStartTimeBlur}
                 onEndBlur={handleEndTimeBlur}
                 onDurationBlur={handleTotalDurationBlur}
