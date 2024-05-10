@@ -4,7 +4,7 @@ export const ClockifySlice = createSlice({
     name: 'clockify',
     initialState: {
         projectClient: {},
-        tasks: {},
+        tasks: [],
         uniqueId: JSON.parse(localStorage.getItem('uniqueId')) || 0,
         tasksByWeek: {},
         isModalOpen: false,
@@ -15,11 +15,7 @@ export const ClockifySlice = createSlice({
     },
     reducers: {
         addTodayTask: (state, action) => {
-            const { date, id, ...task } = action.payload
-            if (!state.tasks[date]) {
-                state.tasks[date] = []
-            }
-            state.tasks[date].push({date, id, ...task})
+            state.tasks.push(action.payload)
             // localStorage.setItem('tasks', JSON.stringify(state.tasks))
         },
         addProjectClient: (state, action) => {
@@ -30,30 +26,18 @@ export const ClockifySlice = createSlice({
             state.isModalOpen = action.payload
         }, 
         updateTask: (state, action) => {
-            const {id, date, ...updatedTasks} = action.payload
-            if(!state.tasks[date]){
-                state.tasks[date] = []
-                state.tasks[date].push({...updatedTasks, date, id})
-            }
-            else{
-                const index = state.tasks[date].findIndex(task => task.id === id)
-                if (index !== -1) {
-                    state.tasks[date][index] = {
-                        ...state.tasks[date][index],
-                        ...updatedTasks
-                    }             
-                }
-            }
+            const {id,...updatedTasks} = action.payload
+            const index = state.tasks.findIndex(task => task.id === id)
+            state.tasks = [
+                ...state.tasks.slice(0, index),
+                { ...state.tasks[index], ...updatedTasks },
+                ...state.tasks.slice(index + 1)
+            ]
             // localStorage.setItem('tasks', JSON.stringify(state.tasks))
         },
         deleteTask: (state, action) => {
-            const {id, date} = action.payload
-            if(state.tasks[date]){
-                state.tasks[date] = state.tasks[date].filter(task => task.id !== id)
-            }
-            if (state.tasks[date].length === 0) {
-                delete state.tasks[date]
-            }
+            const {id} = action.payload
+            state.tasks = state.tasks.filter(task => task.id !== id)
             // localStorage.setItem('tasks', JSON.stringify(state.tasks))
         },
         updateUniqueId: (state) => {

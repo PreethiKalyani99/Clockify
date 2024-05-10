@@ -2,67 +2,67 @@ import React from "react";
 import { Task } from "./Task";
 
 export function Tasks(props){
+    // console.log("display", props.tasks)
     let tasksByWeek = {}
+    // console.log(props.tasks, "tasks")
 
-    Object.entries(props.tasks).forEach(([key, task]) => {
-        task.forEach(task => {
-            let taskDate = new Date(task.date)
+    props.tasks.forEach(task => {
+        let taskDate = new Date(task.date)
 
-            let taskDay = taskDate.getDate()
-            let taskYear = taskDate.getFullYear()
-            let taskMonth = taskDate.getMonth() + 1
+        let taskDay = taskDate.getDate()
+        let taskYear = taskDate.getFullYear()
+        let taskMonth = taskDate.getMonth() + 1
 
-            let first = taskDate.getDate() - taskDate.getDay()
-            let last = first + 6
+        let first = taskDate.getDate() - taskDate.getDay()
+        let last = first + 6
 
-            let firstday = new Date(taskDate.setDate(first))
-            let lastday = new Date(taskDate.setDate(last))
+        let firstday = new Date(taskDate.setDate(first))
+        let lastday = new Date(taskDate.setDate(last))
 
-            let startDate = firstday.getDate() //
-            let startMonth = firstday.getMonth() + 1
-            let startYear = firstday.getFullYear()
+        let startDate = firstday.getDate() //
+        let startMonth = firstday.getMonth() + 1
+        let startYear = firstday.getFullYear()
 
-            let endDate = lastday.getDate()
-            let endMonth = lastday.getMonth() + 1 //
-            let endYear = lastday.getFullYear() //
+        let endDate = lastday.getDate()
+        let endMonth = lastday.getMonth() + 1 //
+        let endYear = lastday.getFullYear() //
 
-            if((endMonth === 12 && taskMonth < endMonth) || (taskDay < startDate && taskMonth > endMonth)){
-                endMonth = taskMonth
-                if(taskYear > endYear){
-                    endYear += 1
-                }
+        if((endMonth === 12 && taskMonth < endMonth) || (taskDay < startDate && taskMonth > endMonth)){
+            endMonth = taskMonth
+            if(taskYear > endYear){
+                endYear += 1
             }
-            else{
-                endYear = lastday.getFullYear()
-                endMonth = lastday.getMonth() + 1
+        }
+        else{
+            endYear = lastday.getFullYear()
+            endMonth = lastday.getMonth() + 1
+        }
+
+        let weekRange = `${startYear}-${startMonth}-${startDate} to ${endYear}-${endMonth}-${endDate}`
+
+        let found = false
+        for (const range in tasksByWeek) {
+            let [start, end] = range.split(' to ').map(dateStr => new Date(dateStr))
+            if (taskDate >= start && taskDate <= end) {
+                if (!tasksByWeek[range][task.date]) {
+                    tasksByWeek[range][task.date] = []
+                }
+                tasksByWeek[range][task.date].push(task)
+                found = true
+                break
+            }
+        }
+
+        if (!found) {
+            if (!tasksByWeek[weekRange]) {
+                tasksByWeek[weekRange] = {}
             }
 
-            let weekRange = `${startYear}-${startMonth}-${startDate} to ${endYear}-${endMonth}-${endDate}`
-
-            let found = false
-            for (const range in tasksByWeek) {
-                let [start, end] = range.split(' to ').map(dateStr => new Date(dateStr))
-                if (taskDate >= start && taskDate <= end) {
-                    if (!tasksByWeek[range][task.date]) {
-                        tasksByWeek[range][task.date] = []
-                    }
-                    tasksByWeek[range][task.date].push(task)
-                    found = true
-                    break
-                }
+            if (!tasksByWeek[weekRange][task.date]) {
+                tasksByWeek[weekRange][task.date] = []
             }
-
-            if (!found) {
-                if (!tasksByWeek[weekRange]) {
-                    tasksByWeek[weekRange] = {}
-                }
-
-                if (!tasksByWeek[weekRange][task.date]) {
-                    tasksByWeek[weekRange][task.date] = []
-                }
-                tasksByWeek[weekRange][task.date].push(task)
-            }
-        })
+            tasksByWeek[weekRange][task.date].push(task)
+        }
     })
 
     function formatDate(dateString) {
