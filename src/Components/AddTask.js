@@ -23,7 +23,6 @@ export function AddTask(props) {
                     placeholder="What are you working on?"
                     className={props.isSidebarShrunk ? "input-box expand-input-width" : "input-box shrink-input-width"}
                     onChange={props.onNameChange}
-                    onBlur={props.onTaskBlur}
                     value={props.taskDescription}
                     onKeyDown={handleEnter}
                 ></input>
@@ -76,7 +75,6 @@ export function AddTask(props) {
                 <button onClick={props.onAddTask} data-testid="add-task">
                     Add
                 </button>
-        
             </div>
         </>
     )

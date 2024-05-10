@@ -29,7 +29,6 @@ export function TimeTracker(props){
     const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart));
     const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd));
     const [totalDuration, setDuration] = useState(duration);
-    const [taskDescription, setTaskDescription] = useState(taskName);
 
     const [previousDuration, setPreviousDuration] = useState('00:00:00')
     const [showActionItems, setShowActionItems] = useState(false)
@@ -132,12 +131,6 @@ export function TimeTracker(props){
             setEndDateTime(`${timeEndProp.getHours().toString().padStart(2,'0')}:${timeEndProp.getMinutes().toString().padStart(2,'0')}`)
         }
     }
-    const handleTaskNameBlur = (e, updateProps = '') => {
-        dispatch(updateTaskName(e.target.value));
-
-        // const {id, date, text, startTime, endTime, project, client, totalTime} = updateProps
-        // dispatch(updateTask({id, date, text, startTime, endTime, project, client, totalTime}))
-    }
 
     const handleTotalDurationBlur = (e, timeStartProp = timeStart, updateProps = '') => {
         const {isValid, newEndTime, timeDuration} = calculateEndTime(timeStartProp, e.target.value)
@@ -177,7 +170,6 @@ export function TimeTracker(props){
             setStartDateTime(`${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`)
             setEndDateTime(`${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`)
             setDuration('00:00:00')
-            setTaskDescription('')
         }
         else{
             alert('Please enter task description')
@@ -193,15 +185,14 @@ export function TimeTracker(props){
                 timeStart={new Date(startTime)}
                 timeEnd={new Date(endTime)}
                 isModalOpen={isModalOpen}
-                taskDescription={taskDescription}
+                taskDescription={taskName}
                 start={startDateTime}
                 end={endDateTime}
                 totalDuration={totalDuration}
-                onNameChange={(e) =>  setTaskDescription(e.target.value)}
+                onNameChange={(e) =>  dispatch(updateTaskName(e.target.value))}
                 onStartChange={(e) =>  setStartDateTime(e.target.value)}
                 onEndChange={(e) =>  setEndDateTime(e.target.value)}
                 onDurationChange={(e) =>  setDuration(e.target.value)}
-                onTaskBlur={handleTaskNameBlur}
                 onStartBlur={handleStartTimeBlur}
                 onEndBlur={handleEndTimeBlur}
                 onDurationBlur={handleTotalDurationBlur}
@@ -217,7 +208,6 @@ export function TimeTracker(props){
                 uniqueId={uniqueId}
                 duration={duration}
                 taskName={taskName}
-                onTaskBlur={handleTaskNameBlur}
                 onStartBlur={handleStartTimeBlur}
                 onEndBlur={handleEndTimeBlur}
                 onDurationBlur={handleTotalDurationBlur}
