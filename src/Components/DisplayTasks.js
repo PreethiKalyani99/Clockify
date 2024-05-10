@@ -1,12 +1,10 @@
 import React from "react";
 import { DisplaySingleTask } from "./DisplaySingleTask";
-import { useSelector } from "react-redux";
 
 export function DisplayTasks(props){
-    const {tasks} = useSelector(state => state.clockify)
     let tasksByWeek = {}
     
-    Object.entries(tasks).forEach(([key, task]) => {
+    Object.entries(props.tasks).forEach(([key, task]) => {
         task.forEach(task => {
             let taskDate = new Date(task.date)
 
@@ -20,13 +18,13 @@ export function DisplayTasks(props){
             let firstday = new Date(taskDate.setDate(first))
             let lastday = new Date(taskDate.setDate(last))
     
-            let startDate = firstday.getDate()
+            let startDate = firstday.getDate() //
             let startMonth = firstday.getMonth() + 1
             let startYear = firstday.getFullYear()
     
             let endDate = lastday.getDate()
-            let endMonth = lastday.getMonth() + 1
-            let endYear = lastday.getFullYear()
+            let endMonth = lastday.getMonth() + 1 //
+            let endYear = lastday.getFullYear() //
 
             if((endMonth === 12 && taskMonth < endMonth) || (taskDay < startDate && taskMonth > endMonth)){
                 endMonth = taskMonth
@@ -87,6 +85,21 @@ export function DisplayTasks(props){
                                     <DisplaySingleTask
                                         key={index}
                                         task={task}
+                                        tasks={props.tasks}
+                                        timeStart={props.timeStart}
+                                        timeEnd={props.timeEnd}
+                                        projectClient={props.projectClient}
+                                        uniqueId={props.uniqueId}
+                                        onTaskBlur={props.onTaskBlur}
+                                        onStartBlur={props.onStartBlur}
+                                        onEndBlur={props.onEndBlur}
+                                        onDurationBlur={props.onDurationBlur}
+                                        onDateChange={props.onDateChange}
+                                        toggleAction={props.toggleAction}
+                                        showActionItems={props.showActionItems}
+                                        duration={props.duration}
+                                        taskName={props.taskName}
+                                        updateDurationRef={props.updateDurationRef}
                                     />
                                 </div> 
                             ))}

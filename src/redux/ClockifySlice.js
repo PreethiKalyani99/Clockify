@@ -30,17 +30,16 @@ export const ClockifySlice = createSlice({
             state.isModalOpen = action.payload
         }, 
         updateTask: (state, action) => {
-            const {id, date, text, ...updatedTasks} = action.payload
+            const {id, date, ...updatedTasks} = action.payload
             if(!state.tasks[date]){
                 state.tasks[date] = []
-                state.tasks[date].push({...updatedTasks,text, date, id})
+                state.tasks[date].push({...updatedTasks, date, id})
             }
             else{
                 const index = state.tasks[date].findIndex(task => task.id === id)
                 if (index !== -1) {
                     state.tasks[date][index] = {
                         ...state.tasks[date][index],
-                        text,
                         ...updatedTasks
                     }             
                 }

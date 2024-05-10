@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AddTask } from "./AddTask";
 import { DisplayTasks } from "./DisplayTasks";
 import { useSelector, useDispatch } from "react-redux";
-import { updateDuration, updateEndTime, updateStartTime, addTodayTask, updateUniqueId, updateTaskName } from "../redux/ClockifySlice";
+import { 
+    updateDuration, 
+    updateEndTime, 
+    updateStartTime, 
+    addTodayTask, 
+    updateUniqueId, 
+    updateTaskName,
+    updateTask,
+    deleteTask
+} from "../redux/ClockifySlice";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import { calculateEndDate } from "../utils/calculateEndDate";
 import { convertToHoursAndMinutes } from "../utils/convertToHoursAndMinutes";
@@ -12,7 +21,7 @@ import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 
 export function TimeTracker(props){
-    const {projectClient , uniqueId, isModalOpen, startTime, endTime, duration, taskName} = useSelector(state => state.clockify)
+    const {projectClient , uniqueId, isModalOpen, startTime, endTime, duration, taskName, tasks} = useSelector(state => state.clockify)
 
     const timeStart = new Date(startTime)
     const timeEnd = new Date(endTime)
@@ -23,8 +32,21 @@ export function TimeTracker(props){
     const [taskDescription, setTaskDescription] = useState(taskName);
 
     const [previousDuration, setPreviousDuration] = useState('00:00:00')
+    const [showActionItems, setShowActionItems] = useState(false)
 
+    const [displayStartDateTime, setDisplayStartDateTime] = useState({ ...tasks })
+    const [displayEndDateTime, setDisplayEndDateTime] = useState(tasks)
+    const [displayTotalDuration, setDisplayDuration] = useState(tasks)
+    const [displayTaskDescription, setDisplayTaskDescription] = useState(tasks)
+    const [displayPreviousDuration, setDisplayPreviousDuration] = useState(tasks)
+
+    console.log(tasks, "total tasks")
+    console.log(displayStartDateTime, "display start date time")
     const dispatch = useDispatch()
+
+    let updateStartRef = useRef('')
+    let updateEndRef = useRef('')
+    let updateDurationRef = useRef('')
 
     useEffect(() => {
         if(timeStart > timeEnd) {
@@ -38,61 +60,87 @@ export function TimeTracker(props){
         if (timeDuration !== previousDuration) {
             dispatch(updateDuration(timeDuration))
             setDuration(timeDuration)
+            // const {id, date, text, startTime, endTime, project, client, totalTime} = updateEndRef.current
+            // dispatch(updateTask({id, date, text, startTime, endTime, project, client, totalTime}))
+            // if(updateStartRef.current !== ''){
+            //     const {id, date, text, startTime, endTime, project, client, totalTime} = updateStartRef.current
+            //     dispatch(updateTask({id, date, text, startTime, endTime, project, client, totalTime}))
+            //     updateStartRef.current = ''
+            //     updateDurationRef.current = timeDuration
+            // }
+            // if(updateEndRef.current !== ''){
+            //     const {id, date, text, startTime, endTime, project, client, totalTime} = updateEndRef.current
+            //     dispatch(updateTask({id, date, text, startTime, endTime, project, client, totalTime}))
+            //     updateEndRef.current = ''
+            //     updateDurationRef.current = timeDuration
+            // }
         }
     }, [startTime, endTime])
 
-    const handleDateChange = (dateTime) => {
+    const handleDateChange = (dateTime, timeStartProp = new Date(timeStart), timeEndProp = new Date(timeEnd),updateProps = '') => {
         dispatch(updateStartTime(dateTime.toString()))
-        const newEndTime = calculateEndDate(dateTime, timeEnd, timeStart)
+        const newEndTime = calculateEndDate(dateTime, timeEndProp, timeStartProp)
         dispatch(updateEndTime(newEndTime.toString()))
+        // if(updateProps !== ''){
+        //     const {id, date, text, startTime, endTime, project, client, totalTime} = updateProps
+        //     dispatch(updateTask({id, date, text, startTime, endTime, project, client, totalTime}))
+        //     dispatch(deleteTask({id, date}))
+        // }
+        
     }
 
-    const handleStartTimeBlur = (e) => {
+    const handleStartTimeBlur = (e, timeStartProp = timeStart, updateProps = '') => {
+        updateStartRef.current = updateProps
+        updateDurationRef.current = updateProps
         const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
+        const start = new Date(timeStartProp)
         if(isValid){
-            const start = new Date(timeStart)
             start.setHours(validatedHour, validatedMins)
             const isLimitExceeded = isDurationLimitExceeded(start, timeEnd)
             if(!isLimitExceeded){
-                timeStart.setHours(validatedHour, validatedMins)
-                dispatch(updateStartTime(timeStart.toString()))
+                timeStartProp.setHours(validatedHour, validatedMins)
+                dispatch(updateStartTime(timeStartProp.toString()))
                 setStartDateTime(`${validatedHour}:${validatedMins}`)
-            }
+        }
             else{
-                setStartDateTime(`${timeStart.getHours().toString().padStart(2,'0')}:${timeStart.getMinutes().toString().padStart(2,'0')}`)
+                setStartDateTime(`${timeStartProp.getHours().toString().padStart(2,'0')}:${timeStartProp.getMinutes().toString().padStart(2,'0')}`)
             }
         }
         else{
-            setStartDateTime(`${timeStart.getHours().toString().padStart(2,'0')}:${timeStart.getMinutes().toString().padStart(2,'0')}`)
+            setStartDateTime(`${timeStartProp.getHours().toString().padStart(2,'0')}:${timeStartProp.getMinutes().toString().padStart(2,'0')}`)
         }
     }
 
-    const handleEndTimeBlur = (e) => {
+    const handleEndTimeBlur = (e, timeEndProp = timeEnd, updateProps = '') => {
+        updateEndRef = updateProps
+        updateDurationRef.current = updateProps
         const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
+        const end = new Date(timeEndProp)
         if(isValid){
-            const end = new Date(timeEnd)
             end.setHours(validatedHour, validatedMins)
             const isLimitExceeded = isDurationLimitExceeded(timeStart, end)
             if(!isLimitExceeded){
-                timeEnd.setHours(validatedHour, validatedMins)
-                dispatch(updateEndTime(timeEnd.toString()))
+                timeEndProp.setHours(validatedHour, validatedMins)
+                dispatch(updateEndTime(timeEndProp.toString()))
                 setEndDateTime(`${validatedHour}:${validatedMins}`)
             }
             else{
-                setEndDateTime(`${timeEnd.getHours().toString().padStart(2,'0')}:${timeEnd.getMinutes().toString().padStart(2,'0')}`)
+                setEndDateTime(`${timeEndProp.getHours().toString().padStart(2,'0')}:${timeEndProp.getMinutes().toString().padStart(2,'0')}`)
             }
         }
         else{
-            setEndDateTime(`${timeEnd.getHours().toString().padStart(2,'0')}:${timeEnd.getMinutes().toString().padStart(2,'0')}`)
+            setEndDateTime(`${timeEndProp.getHours().toString().padStart(2,'0')}:${timeEndProp.getMinutes().toString().padStart(2,'0')}`)
         }
-
     }
-    const handleTaskNameBlur = (e) => {
+    const handleTaskNameBlur = (e, updateProps = '') => {
         dispatch(updateTaskName(e.target.value));
+
+        // const {id, date, text, startTime, endTime, project, client, totalTime} = updateProps
+        // dispatch(updateTask({id, date, text, startTime, endTime, project, client, totalTime}))
     }
 
-    const handleTotalDurationBlur = (e) => {
-        const {isValid, newEndTime, timeDuration} = calculateEndTime(timeStart, e.target.value)
+    const handleTotalDurationBlur = (e, timeStartProp = timeStart, updateProps = '') => {
+        const {isValid, newEndTime, timeDuration} = calculateEndTime(timeStartProp, e.target.value)
         if(isValid){
             dispatch(updateEndTime(newEndTime.toString()))
             dispatch(updateDuration(timeDuration))
@@ -104,11 +152,14 @@ export function TimeTracker(props){
             dispatch(updateDuration(previousDuration))
             setDuration(previousDuration)
         }
+
+        // const {id, date, text, startTime, endTime, project, client, totalTime} = updateProps
+        // dispatch(updateTask({id, date, text, startTime, endTime, project, client, totalTime}))
     }
 
     const addTask = () => {
         if(taskName !== ''){
-                dispatch(addTodayTask({
+            dispatch(addTodayTask({
                 date: getFormattedDate(timeStart),
                 id: uniqueId,
                 text: taskName,
@@ -158,7 +209,21 @@ export function TimeTracker(props){
                 onAddTask={addTask}
             />
             <DisplayTasks
-                isSidebarShrunk = {props.isSidebarShrunk}
+                isSidebarShrunk={props.isSidebarShrunk}
+                tasks={tasks}
+                timeStart={new Date(startTime)}
+                timeEnd={new Date(endTime)}
+                projectClient={projectClient}
+                uniqueId={uniqueId}
+                duration={duration}
+                taskName={taskName}
+                onTaskBlur={handleTaskNameBlur}
+                onStartBlur={handleStartTimeBlur}
+                onEndBlur={handleEndTimeBlur}
+                onDurationBlur={handleTotalDurationBlur}
+                onDateChange={handleDateChange}
+                toggleAction={() => setShowActionItems(!showActionItems)}
+                showActionItems={showActionItems}
             />
         </>
     )
