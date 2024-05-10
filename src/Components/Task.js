@@ -12,7 +12,6 @@ export function Task(props){
     const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd));
     const [totalDuration, setDuration] = useState(props.task.totalTime);
     const [taskDescription, setTaskDescription] = useState(props.task.text);
-    const [previousDuration, setPreviousDuration] = useState(props.task.totalTime)
 
     useEffect(() => {
         setStartDateTime(getFormattedTime(timeStart))
@@ -28,7 +27,6 @@ export function Task(props){
                 type="text"
                 name="task-name"
                 value={taskDescription}
-                defaultValue={props.task.text}
                 onChange={(e) => setTaskDescription(e.target.value)}
                 onBlur={(e) => props.onTaskBlur(e, {
                     id: props.task.id,
@@ -55,7 +53,6 @@ export function Task(props){
                 type="text"
                 name="startTime"
                 value={startDateTime}
-                // defaultValue={getFormattedTime(props.task.startTime)}
                 onChange={(e) => setStartDateTime(e.target.value)}
                 onBlur={(e) => props.onStartBlur(e, timeStart, {
                     id: props.task.id,
@@ -73,7 +70,6 @@ export function Task(props){
                 type="text"
                 name="endTime"
                 value={endDateTime}
-                // defaultValue={getFormattedTime(props.task.endTime)}
                 onChange={(e) => setEndDateTime(e.target.value)}
                 onBlur={(e) => props.onEndBlur(e, timeEnd, {
                     id: props.task.id,
@@ -92,7 +88,6 @@ export function Task(props){
                 type='text'
                 className='duration'
                 value={totalDuration}
-                // defaultValue={props.task.totalTime}
                 onChange={(e) => setDuration(e.target.value)}
                 onBlur={(e) => props.onDurationBlur(e, timeStart, {
                     id: props.task.id,
