@@ -5,7 +5,7 @@ import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import "react-datepicker/dist/react-datepicker.css";
 
-export function DisplaySingleTask(props){
+export function Task(props){
     const timeStart = new Date(props.task.startTime)
     const timeEnd = new Date(props.task.endTime)
     const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart));
@@ -24,7 +24,7 @@ export function DisplaySingleTask(props){
 
     return(
         <div className="task-container">
-            <input 
+            <input
                 type="text"
                 name="task-name"
                 value={taskDescription}
@@ -51,8 +51,8 @@ export function DisplaySingleTask(props){
             {!isRunning && <input type='text' className='time' value={duration} onChange={(e) => setDuration(e.target.value)} onBlur={handleDurationBlur} />}
             <button className={`${isRunning ? 'hide' : "track-btns start"}`} onClick={handleStart}><i className ="bi bi-play"></i></button>
             <button className={`${!isRunning ? 'hide' : "track-btns stop"}`} onClick={handleStop}><i className="bi bi-pause"></i></button> */}
-            <input 
-                type="text" 
+            <input
+                type="text"
                 name="startTime"
                 value={startDateTime}
                 // defaultValue={getFormattedTime(props.task.startTime)}
@@ -69,8 +69,8 @@ export function DisplaySingleTask(props){
                 })}
             ></input>
             <p>{getFormattedDate(timeStart)}</p>
-            <input 
-                type="text" 
+            <input
+                type="text"
                 name="endTime"
                 value={endDateTime}
                 // defaultValue={getFormattedTime(props.task.endTime)}
@@ -88,12 +88,12 @@ export function DisplaySingleTask(props){
             ></input>
             <p>{getFormattedDate(timeEnd)}</p>
 
-            <input 
-                type='text' 
-                className='duration' 
-                value={totalDuration} 
+            <input
+                type='text'
+                className='duration'
+                value={totalDuration}
                 // defaultValue={props.task.totalTime}
-                onChange={(e) => setDuration(e.target.value)} 
+                onChange={(e) => setDuration(e.target.value)}
                 onBlur={(e) => props.onDurationBlur(e, timeStart, {
                     id: props.task.id,
                     date: props.task.date,
@@ -103,7 +103,7 @@ export function DisplaySingleTask(props){
                     project: props.task.project,
                     client: props.task.client,
                     totalTime: props.task.totalTime
-                })} 
+                })}
             />
             <DatePicker
                 selected={timeStart}
@@ -134,11 +134,11 @@ export function DisplaySingleTask(props){
                     <button>Duplicate</button>
                     </li>
                     <li>
-                    <button>Delete</button>               
+                    <button>Delete</button>
                     </li>
                 </ul>
             </div>
-            
+
         </div>
     )
 }

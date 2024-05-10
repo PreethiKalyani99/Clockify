@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AddTask } from "./AddTask";
-import { DisplayTasks } from "./DisplayTasks";
+import { Tasks } from "./Tasks";
 import { useSelector, useDispatch } from "react-redux";
-import { 
-    updateDuration, 
-    updateEndTime, 
-    updateStartTime, 
-    addTodayTask, 
-    updateUniqueId, 
+import {
+    updateDuration,
+    updateEndTime,
+    updateStartTime,
+    addTodayTask,
+    updateUniqueId,
     updateTaskName,
     updateTask,
     deleteTask
@@ -199,7 +199,7 @@ export function TimeTracker(props){
                 onDateChange={handleDateChange}
                 onAddTask={addTask}
             />
-            <DisplayTasks
+            <Tasks
                 isSidebarShrunk={props.isSidebarShrunk}
                 tasks={tasks}
                 timeStart={new Date(startTime)}

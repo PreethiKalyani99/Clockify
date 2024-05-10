@@ -1,9 +1,9 @@
 import React from "react";
-import { DisplaySingleTask } from "./DisplaySingleTask";
+import { Task } from "./Task";
 
-export function DisplayTasks(props){
+export function Tasks(props){
     let tasksByWeek = {}
-    
+
     Object.entries(props.tasks).forEach(([key, task]) => {
         task.forEach(task => {
             let taskDate = new Date(task.date)
@@ -14,14 +14,14 @@ export function DisplayTasks(props){
 
             let first = taskDate.getDate() - taskDate.getDay()
             let last = first + 6
-    
+
             let firstday = new Date(taskDate.setDate(first))
             let lastday = new Date(taskDate.setDate(last))
-    
+
             let startDate = firstday.getDate() //
             let startMonth = firstday.getMonth() + 1
             let startYear = firstday.getFullYear()
-    
+
             let endDate = lastday.getDate()
             let endMonth = lastday.getMonth() + 1 //
             let endYear = lastday.getFullYear() //
@@ -36,7 +36,7 @@ export function DisplayTasks(props){
                 endYear = lastday.getFullYear()
                 endMonth = lastday.getMonth() + 1
             }
-    
+
             let weekRange = `${startYear}-${startMonth}-${startDate} to ${endYear}-${endMonth}-${endDate}`
 
             let found = false
@@ -51,12 +51,12 @@ export function DisplayTasks(props){
                     break
                 }
             }
-    
+
             if (!found) {
                 if (!tasksByWeek[weekRange]) {
                     tasksByWeek[weekRange] = {}
                 }
-    
+
                 if (!tasksByWeek[weekRange][task.date]) {
                     tasksByWeek[weekRange][task.date] = []
                 }
@@ -69,7 +69,7 @@ export function DisplayTasks(props){
         const date = new Date(dateString)
         return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     }
-    
+
     return(
         <div className="parent-container" >
            {Object.entries(tasksByWeek).map(([range, total_tasks]) => {
@@ -82,7 +82,7 @@ export function DisplayTasks(props){
                         {tasks.length > 0 && <div className="display-container" key={key}>
                             <div> {tasks.map((task, index) => (
                                 <div className={(tasks.length > 0 && tasks.length-1 !== index) ? props.isSidebarShrunk ? "sub-container border-style expand-width" : "sub-container border-style shrink-width" : "sub-container"} key={index}>
-                                    <DisplaySingleTask
+                                    <Task
                                         key={index}
                                         task={task}
                                         tasks={props.tasks}
@@ -101,7 +101,7 @@ export function DisplayTasks(props){
                                         taskName={props.taskName}
                                         updateDurationRef={props.updateDurationRef}
                                     />
-                                </div> 
+                                </div>
                             ))}
                             </div>
                         </div>}
