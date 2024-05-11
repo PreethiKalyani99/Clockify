@@ -26,25 +26,17 @@ export function TimeTracker(props){
     const timeStart = new Date(startTime)
     const timeEnd = new Date(endTime)
 
-    const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart));
-    const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd));
+    const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart))
+    const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd))
     const [totalDuration, setDuration] = useState(duration);
 
     const [showActionItems, setShowActionItems] = useState(false)
 
-    const [displayStartDateTime, setDisplayStartDateTime] = useState({ ...tasks })
-    const [displayEndDateTime, setDisplayEndDateTime] = useState(tasks)
-    const [displayTotalDuration, setDisplayDuration] = useState(tasks)
-    const [displayTaskDescription, setDisplayTaskDescription] = useState(tasks)
-    const [displayPreviousDuration, setDisplayPreviousDuration] = useState(tasks)
-
-    console.log(tasks, "total tasks")
-    console.log(displayStartDateTime, "display start date time")
     const dispatch = useDispatch()
 
     function updateEndDateIfNeeded() {
         if (timeStart > timeEnd) {
-            let date = new Date(timeEnd);
+            let date = new Date(timeEnd)
             date.setDate(date.getDate() + 1)
             dispatch(updateEndTime(date.toString()))
         }
@@ -57,23 +49,19 @@ export function TimeTracker(props){
         const timeDuration = (hours <= 999) ? totalTimeDuration : duration
         if (timeDuration !== duration) {
             dispatch(updateDuration(timeDuration))
-            // setDuration(timeDuration)
+            setDuration(timeDuration)
         }
     }
 
     useEffect(() => {
-        updateEndDateIfNeeded();
-        updateDurationIfNeeded();
+        updateEndDateIfNeeded()
+        updateDurationIfNeeded()
 
-        setStartDateTime(getFormattedTime(timeStart))
-        setEndDateTime(getFormattedTime(timeEnd))
-        setDuration(duration)
+    }, [startTime, endTime])
 
-    }, [startTime, endTime, duration])
-
-    const handleDateChange = (dateTime, timeStartProp = new Date(timeStart), timeEndProp = new Date(timeEnd),updateProps = '') => {
+    const handleDateChange = (dateTime) => {
         dispatch(updateStartTime(dateTime.toString()))
-        const newEndTime = calculateEndDate(dateTime, timeEndProp, timeStartProp)
+        const newEndTime = calculateEndDate(dateTime, timeEnd, timeStart)
         dispatch(updateEndTime(newEndTime.toString()))
     }
 
@@ -88,7 +76,7 @@ export function TimeTracker(props){
         }
 
         dispatch(updateStartTime(newStart.toString()))
-        // setStartDateTime(getFormattedTime(newStart))
+        setStartDateTime(getFormattedTime(newStart))
     }
 
     const handleEndTimeBlur = (e) => {
@@ -102,16 +90,16 @@ export function TimeTracker(props){
         }
 
         dispatch(updateEndTime(newEnd.toString()))
-        // setEndDateTime(getFormattedTime(newEnd))
+        setEndDateTime(getFormattedTime(newEnd))
     }
 
-    const handleTotalDurationBlur = (e, timeStartProp = timeStart, updateProps = '') => {
-        const {isValid, newEndTime, timeDuration} = calculateEndTime(timeStartProp, e.target.value)
+    const handleTotalDurationBlur = (e) => {
+        const {isValid, newEndTime, timeDuration} = calculateEndTime(timeStart, e.target.value)
         if(isValid){
             dispatch(updateEndTime(newEndTime.toString()))
             dispatch(updateDuration(timeDuration))
-            // setEndDateTime(`${newEndTime.getHours().toString().padStart(2,'0')}:${newEndTime.getMinutes().toString().padStart(2,'0')}`)
-            // setDuration(timeDuration)
+            setEndDateTime(getFormattedTime(newEndTime))
+            setDuration(timeDuration)
         }
         else{
             setDuration(duration)
