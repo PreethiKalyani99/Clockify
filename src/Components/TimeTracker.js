@@ -9,8 +9,6 @@ import {
     addTodayTask,
     updateUniqueId,
     updateTaskName,
-    updateTask,
-    deleteTask
 } from "../redux/ClockifySlice";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import { calculateEndDate } from "../utils/calculateEndDate";
@@ -122,7 +120,7 @@ export function TimeTracker(props){
             dispatch(updateTaskName(''))
             dispatch(updateStartTime(new Date().toString()))
             dispatch(updateEndTime(new Date().toString()))
-            dispatch(updateDuration('00:00:00'))
+            // dispatch(updateDuration('00:00:00'))
             setStartDateTime(`${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`)
             setEndDateTime(`${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`)
             setDuration('00:00:00')
@@ -170,6 +168,13 @@ export function TimeTracker(props){
                 onDateChange={handleDateChange}
                 toggleAction={() => setShowActionItems(!showActionItems)}
                 showActionItems={showActionItems}
+                convertToHoursAndMinutes={convertToHoursAndMinutes}
+                isDurationLimitExceeded={isDurationLimitExceeded}
+                calculateEndTime={calculateEndTime}
+                calculateEndDate={calculateEndDate}
+                getFormattedTime={getFormattedTime}
+                addTodayTask={addTodayTask}
+                dispatch={dispatch}
             />
         </>
     )
