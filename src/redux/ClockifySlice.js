@@ -26,13 +26,15 @@ export const ClockifySlice = createSlice({
             state.isModalOpen = action.payload
         }, 
         updateTask: (state, action) => {
-            const {id,...updatedTasks} = action.payload
+            const {id,...updateData} = action.payload
             const index = state.tasks.findIndex(task => task.id === id)
-            state.tasks = [
-                ...state.tasks.slice(0, index),
-                { ...state.tasks[index], ...updatedTasks },
-                ...state.tasks.slice(index + 1)
-            ]
+            if(index === -1){
+                return state
+            }
+            const totalTasks = [...state.tasks]
+            totalTasks[index] = {...totalTasks[index], ...updateData}
+            
+            return {...state, tasks: totalTasks}
             // localStorage.setItem('tasks', JSON.stringify(state.tasks))
         },
         deleteTask: (state, action) => {
