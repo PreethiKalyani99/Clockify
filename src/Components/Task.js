@@ -7,24 +7,7 @@ import { getFormattedTime } from "../utils/getFormattedTime";
 import "react-datepicker/dist/react-datepicker.css";
 import { updateTask } from "../redux/ClockifySlice";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
-
-
-let useClickOutside = (toggleState) => {
-    let inputRef = useRef()
-
-    useEffect(() => {
-        let handler = (e) => {
-            if(!inputRef.current.contains(e.target)){
-                toggleState()
-            }
-        }
-        document.addEventListener("mousedown", handler)
-        
-        return () => document.removeEventListener("mousedown", handler)
-    })
-
-    return inputRef
-}
+import useClickOutside from "../utils/useClickOutside";
 
 export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, projectClient}){
     const dispatch = useDispatch()
