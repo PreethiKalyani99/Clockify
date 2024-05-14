@@ -9,6 +9,7 @@ import {
     addTodayTask,
     updateUniqueId,
     updateTaskName,
+    resetState,
 } from "../redux/ClockifySlice";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import { calculateEndDate } from "../utils/calculateEndDate";
@@ -50,6 +51,11 @@ export function TimeTracker(props){
     }
 
     useEffect(() => {
+        if (startDateTime !== getFormattedTime(timeStart) || endDateTime !== getFormattedDate(timeEnd)){
+            setStartDateTime(getFormattedTime(timeStart))
+            setEndDateTime(getFormattedTime(timeEnd))
+            setDuration(duration)
+        }
         updateEndDateIfNeeded()
         updateDurationIfNeeded()
 
@@ -115,13 +121,7 @@ export function TimeTracker(props){
                 endTime:  new Date(timeEnd).toString()
             }))
             dispatch(updateUniqueId())
-            dispatch(updateTaskName(''))
-            dispatch(updateStartTime(new Date().toString()))
-            dispatch(updateEndTime(new Date().toString()))
-            // dispatch(updateDuration('00:00:00'))
-            setStartDateTime(`${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`)
-            setEndDateTime(`${(new Date().getHours()).toString().padStart(2,'0')}:${(new Date().getMinutes()).toString().padStart(2,'0')}`)
-            setDuration('00:00:00')
+            dispatch(resetState())
         }
         else{
             alert('Please enter task description')

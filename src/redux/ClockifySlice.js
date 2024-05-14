@@ -57,6 +57,12 @@ export const ClockifySlice = createSlice({
         },
         updateTaskName: (state, action) => {
             state.taskName = action.payload
+        },
+        resetState: (state) => {
+            state.taskName = ''
+            state.startTime = new Date().toString()
+            state.endTime = new Date().toString()
+            state.duration = '00:00:00'
         }
     }
 })
@@ -71,6 +77,7 @@ export const {
     updateStartTime, 
     updateEndTime,
     updateDuration,
-    updateTaskName
+    updateTaskName,
+    resetState
 } = ClockifySlice.actions
 export default ClockifySlice.reducer
