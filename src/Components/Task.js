@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { useDispatch } from "react-redux";
 import DatePicker from "react-datepicker";
 import { AddProject } from "./AddProject";
@@ -7,6 +7,24 @@ import { getFormattedTime } from "../utils/getFormattedTime";
 import "react-datepicker/dist/react-datepicker.css";
 import { updateTask } from "../redux/ClockifySlice";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
+
+
+let useClickOutside = (toggleState) => {
+    let inputRef = useRef()
+
+    useEffect(() => {
+        let handler = (e) => {
+            if(!inputRef.current.contains(e.target)){
+                toggleState()
+            }
+        }
+        document.addEventListener("mousedown", handler)
+        
+        return () => document.removeEventListener("mousedown", handler)
+    })
+
+    return inputRef
+}
 
 export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, projectClient}){
     const dispatch = useDispatch()
@@ -45,6 +63,10 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
         setDuration(task.totalTime)
         setTaskDescription(task.text)
     }, [task.startTime, task.endTime])
+
+    const actionItem = useClickOutside(() => {
+        setShowActionItems(false)
+    })
 
     return(
         <div className="task-container">
@@ -103,13 +125,19 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
 
             <p className="ms-2">{getFormattedDate(timeStart)}</p>
             <button className="three-dots" onClick={() => setShowActionItems(!showActionItems)}><i className="bi bi-three-dots-vertical"></i></button>
-            <div className={showActionItems ? "action-items-container": "hide"}>
+            <div className={showActionItems ? "action-items-container": "hide"} ref={actionItem}>
                 <ul>
                     <li>
-                    <button onClick={() => onDuplicate(task.id)}>Duplicate</button>
+                    <button onClick={() => {
+                        onDuplicate(task.id)
+                        setShowActionItems(false)
+                    }}>Duplicate</button>
                     </li>
                     <li>
-                    <button onClick={() => onDelete(task.id)}>Delete</button>
+                    <button onClick={() => {
+                        onDelete(task.id)
+                        setShowActionItems(false)
+                    }}>Delete</button>
                     </li>
                 </ul>
             </div>
