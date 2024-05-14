@@ -8,21 +8,21 @@ import "react-datepicker/dist/react-datepicker.css";
 import { updateTask } from "../redux/ClockifySlice";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 
-export function Task(props){
+export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, projectClient}){
     const dispatch = useDispatch()
-    const timeStart = new Date(props.task.startTime)
-    const timeEnd = new Date(props.task.endTime)
+    const timeStart = new Date(task.startTime)
+    const timeEnd = new Date(task.endTime)
     const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart))
     const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd))
-    const [totalDuration, setDuration] = useState(props.task.totalTime)
-    const [taskDescription, setTaskDescription] = useState(props.task.text)
+    const [totalDuration, setDuration] = useState(task.totalTime)
+    const [taskDescription, setTaskDescription] = useState(task.text)
     const [showActionItems, setShowActionItems] = useState(false)
 
     function updateEndDateIfNeeded() {
         if (timeStart > timeEnd) {
             let date = new Date(timeEnd)
             date.setDate(date.getDate() + 1)
-            dispatch(updateTask({...props.task, endTime: date.toString()}))
+            dispatch(updateTask({...task, endTime: date.toString()}))
         }
     }
 
@@ -30,9 +30,9 @@ export function Task(props){
         const {hours, minutes} = calculateTimeDifference(timeStart, timeEnd)
         const timeParts = totalDuration.split(':')
         const totalTimeDuration = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${timeParts[2]}`
-        const timeDuration = (hours <= 999) ? totalTimeDuration : props.task.totalTime
+        const timeDuration = (hours <= 999) ? totalTimeDuration : task.totalTime
         if (timeDuration !== totalDuration) {
-            dispatch(updateTask({...props.task, totalTime: timeDuration}))
+            dispatch(updateTask({...task, totalTime: timeDuration}))
         }
     }
 
@@ -42,9 +42,9 @@ export function Task(props){
         
         setStartDateTime(getFormattedTime(timeStart))
         setEndDateTime(getFormattedTime(timeEnd))
-        setDuration(props.task.totalTime)
-        setTaskDescription(props.task.text)
-    }, [props.task.startTime, props.task.endTime])
+        setDuration(task.totalTime)
+        setTaskDescription(task.text)
+    }, [task.startTime, task.endTime])
 
     return(
         <div className="task-container">
@@ -53,13 +53,13 @@ export function Task(props){
                 name="task-name"
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
-                onBlur={() => props.onTaskBlur(taskDescription, props.task.id)}
+                onBlur={() => onTaskBlur(taskDescription, task.id)}
             ></input>
             <AddProject
-                projectClient={props.projectClient}
-                project= {props.projectClient[props.task.id]?.project || ''}
-                client={props.projectClient[props.task.id]?.client || ''}
-                id={props.task.id}
+                projectClient={projectClient}
+                project= {projectClient[task.id]?.project || ''}
+                client={projectClient[task.id]?.client || ''}
+                id={task.id}
             />
             {/* {isRunning && <input disabled className="time" value={totalTime}></input>}
             {!isRunning && <input type='text' className='time' value={duration} onChange={(e) => setDuration(e.target.value)} onBlur={handleDurationBlur} />}
@@ -70,7 +70,7 @@ export function Task(props){
                 name="startTime"
                 value={startDateTime}
                 onChange={(e) => setStartDateTime(e.target.value)}
-                onBlur={(e) => props.onStartBlur(e, props.task.id)}
+                onBlur={(e) => onStartBlur(e, task.id)}
             ></input>
             <p>{getFormattedDate(timeStart)}</p>
             <input
@@ -78,7 +78,7 @@ export function Task(props){
                 name="endTime"
                 value={endDateTime}
                 onChange={(e) => setEndDateTime(e.target.value)}
-                onBlur={(e) => props.onEndBlur(e, props.task.id)}
+                onBlur={(e) => onEndBlur(e, task.id)}
             ></input>
             <p>{getFormattedDate(timeEnd)}</p>
 
@@ -87,11 +87,11 @@ export function Task(props){
                 className='duration'
                 value={totalDuration}
                 onChange={(e) => setDuration(e.target.value)}
-                onBlur={(e) => props.onDurationBlur(e, props.task.id)}
+                onBlur={(e) => onDurationBlur(e, task.id)}
             />
             <DatePicker
                 selected={timeStart}
-                onChange={(e) => props.onDateChange(e, props.task.id)}
+                onChange={(e) => onDateChange(e, task.id)}
                 showTimeSelect={false}
                 dateFormat="yyyy-MM-dd"
                 customInput={
@@ -106,10 +106,10 @@ export function Task(props){
             <div className={showActionItems ? "action-items-container": "hide"}>
                 <ul>
                     <li>
-                    <button onClick={() => props.onDuplicate(props.task.id)}>Duplicate</button>
+                    <button onClick={() => onDuplicate(task.id)}>Duplicate</button>
                     </li>
                     <li>
-                    <button onClick={() => props.onDelete(props.task.id)}>Delete</button>
+                    <button onClick={() => onDelete(task.id)}>Delete</button>
                     </li>
                 </ul>
             </div>

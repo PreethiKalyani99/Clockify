@@ -1,69 +1,73 @@
-import React, {useEffect} from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { Task } from "./Task";
 import { deleteTask, updateTask } from "../redux/ClockifySlice";
+import { getTaskById } from "../utils/getTaskById";
+import { convertToHoursAndMinutes } from "../utils/convertToHoursAndMinutes";
+import { isDurationLimitExceeded } from "../utils/isDurationLimitExceeded";
+import { calculateEndDate } from "../utils/calculateEndDate";
+import { calculateEndTime } from "../utils/calculateEndTime";
 
-export function Tasks(props){
+export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, timeStart, timeEnd, uniqueId}){
     const dispatch = useDispatch()
+
     function formatDate(dateString) {
         const date = new Date(dateString)
         return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     }
 
     function handleTaskNameBlur(taskDescription, id){
-        const updateTaskName = props.tasks.find(task => task.id === id)
-        dispatch(updateTask({...updateTaskName, text: taskDescription}))
+        const task = getTaskById(tasks, id)
+        dispatch(updateTask({...task, text: taskDescription}))
     }
 
     function handleStartTimeBlur(e, id){
-        const updateStartTime = props.tasks.find(task => task.id === id)
-
-        const {isValid, validatedHour, validatedMins} = props.convertToHoursAndMinutes(e.target.value)
-        const newStart = new Date(updateStartTime.startTime)
+        const task = getTaskById(tasks, id)
+        const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
+        const newStart = new Date(task.startTime)
         newStart.setHours(validatedHour, validatedMins)
 
-        if (!isValid || props.isDurationLimitExceeded(newStart, updateStartTime.endTime)) {
-            dispatch(updateTask(updateStartTime))
+        if (!isValid || isDurationLimitExceeded(newStart, task.endTime)) {
+            dispatch(updateTask(task))
             return
         }
-        dispatch(updateTask({...updateStartTime, startTime: newStart.toString()}))
+        dispatch(updateTask({...task, startTime: newStart.toString()}))
     }
 
     function handleEndTimeBlur(e, id){
-        const updateEndTime = props.tasks.find(task => task.id === id)
-
-        const {isValid, validatedHour, validatedMins} = props.convertToHoursAndMinutes(e.target.value)
-        const newEnd = new Date(updateEndTime.endTime)
+        const task = getTaskById(tasks, id)
+        const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
+        const newEnd = new Date(task.endTime)
         newEnd.setHours(validatedHour, validatedMins)
 
-        if(!isValid || props.isDurationLimitExceeded(updateEndTime.startTime, newEnd)) {
-            dispatch(updateTask(updateEndTime))
+        if(!isValid || isDurationLimitExceeded(task.startTime, newEnd)) {
+            dispatch(updateTask(task))
             return
         }
 
-        dispatch(updateTask({...updateEndTime, endTime: newEnd.toString()}))
+        dispatch(updateTask({...task, endTime: newEnd.toString()}))
     }
 
     function handleDurationBlur(e, id){
-        const updateDuration = props.tasks.find(task => task.id === id)
+        const task = getTaskById(tasks, id)
 
-        const {isValid, newEndTime, timeDuration} = props.calculateEndTime(updateDuration.startTime, e.target.value)
+        const {isValid, newEndTime, timeDuration} = calculateEndTime(task.startTime, e.target.value)
         if(isValid){
-            dispatch(updateTask({...updateDuration, endTime: newEndTime.toString(), totalTime: timeDuration}))
+            dispatch(updateTask({...task, endTime: newEndTime.toString(), totalTime: timeDuration}))
         }
     }
 
     function handleDateChange(dateTime, id){
-        const updateDate = props.tasks.find(task => task.id === id)
+        const task = getTaskById(tasks, id)
         
-        const newEndTime = props.calculateEndDate(dateTime, new Date(updateDate.endTime), new Date(updateDate.startTime))
-        dispatch(updateTask({...updateDate, startTime: dateTime.toString(), endTime: newEndTime.toString()}))
+        const newEndTime = calculateEndDate(dateTime, new Date(task.endTime), new Date(task.startTime))
+        dispatch(updateTask({...task, startTime: dateTime.toString(), endTime: newEndTime.toString()}))
     }
 
     function handleDuplicateTask(id){
-        const duplicateTask = props.tasks.find(task => task.id === id)
+        const task = getTaskById(tasks, id)
 
-        dispatch(props.addTodayTask({...duplicateTask, id: props.uniqueId}))
+        dispatch(addTodayTask({...task, id: uniqueId}))
     }
 
     function handleDeleteTask(id){
@@ -71,16 +75,15 @@ export function Tasks(props){
     }
     return(
         <div className="parent-container mt-5" >
-            {props.tasks.length > 0 && <div className="display-container">
-                <div> {props.tasks.map((task, index) => (
-                    <div className={(props.tasks.length > 0 && props.tasks.length-1 !== index) ? props.isSidebarShrunk ? "sub-container border-style expand-width" : "sub-container border-style shrink-width" : "sub-container"} key={index}>
+            {tasks.length > 0 && <div className="display-container">
+                <div> {tasks.map((task, index) => (
+                    <div className={(tasks.length > 0 && tasks.length-1 !== index) ? isSidebarShrunk ? "sub-container border-style expand-width" : "sub-container border-style shrink-width" : "sub-container"} key={index}>
                         <Task
                             key={index}
                             task={task}
-                            timeStart={props.timeStart}
-                            timeEnd={props.timeEnd}
-                            projectClient={props.projectClient}
-                            uniqueId={props.uniqueId}
+                            timeStart={timeStart}
+                            timeEnd={timeEnd}
+                            projectClient={projectClient}
                             onTaskBlur={handleTaskNameBlur}
                             onStartBlur={handleStartTimeBlur}
                             onEndBlur={handleEndTimeBlur}
@@ -88,8 +91,6 @@ export function Tasks(props){
                             onDateChange={handleDateChange}
                             onDuplicate={handleDuplicateTask}
                             onDelete={handleDeleteTask}
-                            toggleAction={props.toggleAction}
-                            showActionItems={props.showActionItems}
                         />
                     </div>
                 ))}
