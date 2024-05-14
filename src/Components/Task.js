@@ -16,6 +16,7 @@ export function Task(props){
     const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd))
     const [totalDuration, setDuration] = useState(props.task.totalTime)
     const [taskDescription, setTaskDescription] = useState(props.task.text)
+    const [showActionItems, setShowActionItems] = useState(false)
 
     function updateEndDateIfNeeded() {
         if (timeStart > timeEnd) {
@@ -101,8 +102,8 @@ export function Task(props){
             />
 
             <p className="ms-2">{getFormattedDate(timeStart)}</p>
-            <button className="three-dots" onClick={() => props.toggleAction(props.task.id)}><i className="bi bi-three-dots-vertical"></i></button>
-            <div className={props.showActionItems ? "action-items-container": "hide"}>
+            <button className="three-dots" onClick={() => setShowActionItems(!showActionItems)}><i className="bi bi-three-dots-vertical"></i></button>
+            <div className={showActionItems ? "action-items-container": "hide"}>
                 <ul>
                     <li>
                     <button onClick={() => props.onDuplicate(props.task.id)}>Duplicate</button>

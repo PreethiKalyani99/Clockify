@@ -28,8 +28,6 @@ export function TimeTracker(props){
     const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd))
     const [totalDuration, setDuration] = useState(duration);
 
-    const [showActionItems, setShowActionItems] = useState(false)
-
     const dispatch = useDispatch()
 
     function updateEndDateIfNeeded() {
@@ -166,8 +164,6 @@ export function TimeTracker(props){
                 onEndBlur={handleEndTimeBlur}
                 onDurationBlur={handleTotalDurationBlur}
                 onDateChange={handleDateChange}
-                toggleAction={() => setShowActionItems(!showActionItems)}
-                showActionItems={showActionItems}
                 convertToHoursAndMinutes={convertToHoursAndMinutes}
                 isDurationLimitExceeded={isDurationLimitExceeded}
                 calculateEndTime={calculateEndTime}
