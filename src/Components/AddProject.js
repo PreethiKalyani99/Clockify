@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { addProjectClient, setIsModalOpen } from "../redux/ClockifySlice";
+import { addProjectClient, setIsModalOpen, updateTask } from "../redux/ClockifySlice";
 
 export function AddProject(props){
     const [isOpen, setIsOpen] = useState(false)
@@ -29,6 +29,14 @@ export function AddProject(props){
     
     function createProject(){
       dispatch(addProjectClient({id:props.id, project: inputvalues.project, client: inputvalues.client}))
+      dispatch(updateTask({
+        id: props.id, 
+        project: {
+            projectId: props.id, 
+            projectName: inputvalues.project, 
+            clientId: props.id, 
+            client: inputvalues.client
+        }}))
       setInputvalues({
         project: '',
         client: ''

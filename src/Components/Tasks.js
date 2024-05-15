@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Task } from "./Task";
-import { deleteTask, updateTask } from "../redux/ClockifySlice";
+import { deleteTask, updateTask, addProjectClient, updateUniqueId } from "../redux/ClockifySlice";
 import { getTaskById } from "../utils/getTaskById";
 import { convertToHoursAndMinutes } from "../utils/convertToHoursAndMinutes";
 import { isDurationLimitExceeded } from "../utils/isDurationLimitExceeded";
@@ -65,7 +65,9 @@ export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, time
 
     function handleDuplicateTask(id){
         const task = getTaskById(tasks, id)
+        dispatch(addProjectClient({id: uniqueId, project: task.project.projectName, client: task.project.client}))
         dispatch(addTodayTask({...task, id: uniqueId}))
+        dispatch(updateUniqueId())
     }
 
     function handleDeleteTask(id){

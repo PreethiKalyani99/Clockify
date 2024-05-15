@@ -111,14 +111,17 @@ export function TimeTracker(props){
     const addTask = () => {
         if(taskName !== ''){
             dispatch(addTodayTask({
-                date: getFormattedDate(timeStart),
                 id: uniqueId,
                 text: taskName,
-                totalTime: duration,
-                project: projectClient?.[uniqueId]?.project,
-                client: projectClient?.[uniqueId]?.client,
                 startTime: new Date(timeStart).toString(),
-                endTime:  new Date(timeEnd).toString()
+                endTime:  new Date(timeEnd).toString(),
+                totalTime: duration,
+                project: {
+                    projectId: uniqueId,
+                    projectName: projectClient?.[uniqueId]?.project,
+                    clientId: uniqueId,
+                    client: projectClient?.[uniqueId]?.client
+                }
             }))
             dispatch(updateUniqueId())
             dispatch(resetState())
