@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect} from "react";
 import { useDispatch } from "react-redux";
 import DatePicker from "react-datepicker";
 import { AddProject } from "./AddProject";
@@ -23,29 +23,30 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
         if (timeStart > timeEnd) {
             let date = new Date(timeEnd)
             date.setDate(date.getDate() + 1)
-            dispatch(updateTask({...task, endTime: date.toString()}))
+            dispatch(updateTask({id: task.id, endTime: date.toString()}))
         }
     }
 
     function updateDurationIfNeeded() {
         const {hours, minutes} = calculateTimeDifference(timeStart, timeEnd)
-        const timeParts = totalDuration.split(':')
+        const timeParts = task.totalTime.split(':')
         const totalTimeDuration = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${timeParts[2]}`
         const timeDuration = (hours <= 999) ? totalTimeDuration : task.totalTime
         if (timeDuration !== totalDuration) {
-            dispatch(updateTask({...task, totalTime: timeDuration}))
+            dispatch(updateTask({id: task.id, totalTime: timeDuration}))
         }
     }
 
     useEffect(() => {
+        if(getFormattedTime(timeStart) !== startDateTime || getFormattedTime(timeEnd) !== endDateTime){
+            setStartDateTime(getFormattedTime(timeStart))
+            setEndDateTime(getFormattedTime(timeEnd))
+            setDuration(task.totalTime)
+        }
         updateEndDateIfNeeded()
         updateDurationIfNeeded()
         
-        setStartDateTime(getFormattedTime(timeStart))
-        setEndDateTime(getFormattedTime(timeEnd))
-        setDuration(task.totalTime)
-        setTaskDescription(task.text)
-    }, [task.startTime, task.endTime])
+    }, [task.startTime, task.endTime, task.totalTime])
 
     const actionItem = useClickOutside(() => {
         setShowActionItems(false)

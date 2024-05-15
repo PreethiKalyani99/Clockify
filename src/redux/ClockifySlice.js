@@ -27,15 +27,8 @@ export const ClockifySlice = createSlice({
         }, 
         updateTask: (state, action) => {
             const {id,...updateData} = action.payload
-            const index = state.tasks.findIndex(task => task.id === id)
-            if(index === -1){
-                return state
-            }
-            const totalTasks = [...state.tasks]
-            totalTasks[index] = {...totalTasks[index], ...updateData}
-            
-            return {...state, tasks: totalTasks}
-            // localStorage.setItem('tasks', JSON.stringify(state.tasks))
+            const updatedTasks = state.tasks.map(task => task.id === id ? {...task, ...updateData} : task)
+            return {...state, tasks: updatedTasks}
         },
         deleteTask: (state, action) => {
             const {id} = action.payload

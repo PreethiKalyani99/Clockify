@@ -17,8 +17,7 @@ export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, time
     }
 
     function handleTaskNameBlur(taskDescription, id){
-        const task = getTaskById(tasks, id)
-        dispatch(updateTask({...task, text: taskDescription}))
+        dispatch(updateTask({id, text: taskDescription}))
     }
 
     function handleStartTimeBlur(e, id){
@@ -28,10 +27,10 @@ export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, time
         newStart.setHours(validatedHour, validatedMins)
 
         if (!isValid || isDurationLimitExceeded(newStart, task.endTime)) {
-            dispatch(updateTask(task))
+            dispatch(updateTask(id, task))
             return
         }
-        dispatch(updateTask({...task, startTime: newStart.toString()}))
+        dispatch(updateTask({id, startTime: newStart.toString()}))
     }
 
     function handleEndTimeBlur(e, id){
@@ -41,11 +40,11 @@ export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, time
         newEnd.setHours(validatedHour, validatedMins)
 
         if(!isValid || isDurationLimitExceeded(task.startTime, newEnd)) {
-            dispatch(updateTask(task))
+            dispatch(updateTask(id, task))
             return
         }
 
-        dispatch(updateTask({...task, endTime: newEnd.toString()}))
+        dispatch(updateTask({id, endTime: newEnd.toString()}))
     }
 
     function handleDurationBlur(e, id){
@@ -53,7 +52,7 @@ export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, time
 
         const {isValid, newEndTime, timeDuration} = calculateEndTime(task.startTime, e.target.value)
         if(isValid){
-            dispatch(updateTask({...task, endTime: newEndTime.toString(), totalTime: timeDuration}))
+            dispatch(updateTask({id, endTime: newEndTime.toString(), totalTime: timeDuration}))
         }
     }
 
@@ -61,12 +60,11 @@ export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, time
         const task = getTaskById(tasks, id)
         
         const newEndTime = calculateEndDate(dateTime, new Date(task.endTime), new Date(task.startTime))
-        dispatch(updateTask({...task, startTime: dateTime.toString(), endTime: newEndTime.toString()}))
+        dispatch(updateTask({id, startTime: dateTime.toString(), endTime: newEndTime.toString()}))
     }
 
     function handleDuplicateTask(id){
         const task = getTaskById(tasks, id)
-
         dispatch(addTodayTask({...task, id: uniqueId}))
     }
 
