@@ -8,6 +8,7 @@ import { isDurationLimitExceeded } from "../utils/isDurationLimitExceeded";
 import { calculateEndDate } from "../utils/calculateEndDate";
 import { calculateEndTime } from "../utils/calculateEndTime";
 import { groupTasksByWeek } from "../utils/groupTasksByWeek";
+import { addTotalTime } from "../utils/addTotalTime";
 
 export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, timeStart, timeEnd, uniqueId}){
     const dispatch = useDispatch()
@@ -85,6 +86,7 @@ export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, time
                 {Object.entries(total_tasks).map(([key, tasks]) => (
                     <div className="week-container mb-3" key={key}>
                         <p>{new Date(key).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})}</p>
+                        <p>Total: {addTotalTime(tasks)}</p>
                         {tasks.length > 0 && <div className="display-container" key={key}>
                             <div> {tasks.map((task, index) => (
                                 <div className={(tasks.length > 0 && tasks.length-1 !== index) ? isSidebarShrunk ? "sub-container border-style expand-width" : "sub-container border-style shrink-width" : "sub-container"} key={index}>
