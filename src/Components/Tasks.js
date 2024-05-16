@@ -81,8 +81,10 @@ export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, time
         <div className="parent-container" >
            {Object.entries(tasksByWeek).map(([range, total_tasks]) => {
              const result = range.split(' to ').map(date => formatDate(date))
+             const weekTasks = Object.values(total_tasks).flat(1)
              return (<div key={range} className="mt-3">
                 <p><b>{result.join(' - ')}</b></p>
+                <p>Week total: {addTotalTime(weekTasks)}</p>
                 {Object.entries(total_tasks).map(([key, tasks]) => (
                     <div className="week-container mb-3" key={key}>
                         <p>{new Date(key).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})}</p>
