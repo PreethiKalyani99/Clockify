@@ -3,14 +3,13 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { SideBar } from './Components/SideBar';
 import { Header } from './Components/Header';
-import { AddTask } from './Components/AddTask';
 import {TimeTracker} from './Components/TimeTracker'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 function App() {
   const {isModalOpen} = useSelector(state => state.clockify)
-  const [isSidebarShrunk, setIsSidebarShrunk] = useState(false)
+  const [isSidebarShrunk, setIsSidebarShrunk] = useState(true)
 
   function toggleSidebar(){
     setIsSidebarShrunk(!isSidebarShrunk)
