@@ -8,10 +8,14 @@ export const ClockifySlice = createSlice({
         uniqueId: JSON.parse(localStorage.getItem('uniqueId')) || 0,
         tasksByWeek: {},
         isModalOpen: false,
-        startTime: new Date().toString(),
-        endTime: new Date().toString(),
-        duration: '00:00:00',
-        taskName: ''
+        currentTask: {
+            startTime: new Date().toString(),
+            endTime: new Date().toString(),
+            duration: '00:00:00',
+            taskName: '',
+            project: '',
+            client: '' 
+        }
     },
     reducers: {
         addTodayTask: (state, action) => {
@@ -19,8 +23,10 @@ export const ClockifySlice = createSlice({
             // localStorage.setItem('tasks', JSON.stringify(state.tasks))
         },
         addProjectClient: (state, action) => {
-            const {id, ...props} = action.payload
-            state.projectClient[id] = {...props, id}
+            const {id, project, client} = action.payload
+            state.projectClient[id] = {project, client, id}
+            state.currentTask.project = project
+            state.currentTask.client = client
         },
         setIsModalOpen: (state, action) => {
             state.isModalOpen = action.payload
@@ -40,22 +46,28 @@ export const ClockifySlice = createSlice({
             localStorage.setItem('uniqueId', JSON.stringify(state.uniqueId))
         },
         updateStartTime: (state, action) => {
-            state.startTime = (action.payload).toString()
+            state.currentTask.startTime = (action.payload).toString()
         },
         updateEndTime: (state, action) => {
-            state.endTime = (action.payload).toString()
+            state.currentTask.endTime = (action.payload).toString()
         }, 
         updateDuration: (state, action) => {
-            state.duration = action.payload
+            state.currentTask.duration = action.payload
         },
         updateTaskName: (state, action) => {
-            state.taskName = action.payload
+            state.currentTask.taskName = action.payload
         },
         resetState: (state) => {
-            state.taskName = ''
-            state.startTime = new Date().toString()
-            state.endTime = new Date().toString()
-            state.duration = '00:00:00'
+            state.currentTask.taskName = ''
+            state.currentTask.startTime = new Date().toString()
+            state.currentTask.endTime = new Date().toString()
+            state.currentTask.duration = '00:00:00'
+        },
+        updateTimer: (state, action) => {
+            const {name, project, client} = action.payload
+            state.currentTask.taskName = name
+            state.currentTask.project = project
+            state.currentTask.client = client
         }
     }
 })
@@ -71,6 +83,7 @@ export const {
     updateEndTime,
     updateDuration,
     updateTaskName,
-    resetState
+    resetState,
+    updateTimer
 } = ClockifySlice.actions
 export default ClockifySlice.reducer

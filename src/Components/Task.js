@@ -5,11 +5,11 @@ import { AddProject } from "./AddProject";
 import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import "react-datepicker/dist/react-datepicker.css";
-import { updateTask } from "../redux/ClockifySlice";
+import { updateTimer, updateTask, addProjectClient } from "../redux/ClockifySlice";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import useClickOutside from "../utils/useClickOutside";
 
-export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, projectClient}){
+export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, projectClient, uniqueId, toggleTimer}){
     const dispatch = useDispatch()
     const timeStart = new Date(task.startTime)
     const timeEnd = new Date(task.endTime)
@@ -67,10 +67,11 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
                 client={projectClient[task.id]?.client || ''}
                 id={task.id}
             />
-            {/* {isRunning && <input disabled className="time" value={totalTime}></input>}
-            {!isRunning && <input type='text' className='time' value={duration} onChange={(e) => setDuration(e.target.value)} onBlur={handleDurationBlur} />}
-            <button className={`${isRunning ? 'hide' : "track-btns start"}`} onClick={handleStart}><i className ="bi bi-play"></i></button>
-            <button className={`${!isRunning ? 'hide' : "track-btns stop"}`} onClick={handleStop}><i className="bi bi-pause"></i></button> */}
+            <button onClick={() => {
+                toggleTimer()
+                dispatch(updateTimer({name: task.text, project: task.project, client: task.client}))
+                dispatch(addProjectClient({id: uniqueId, project: task.project.projectName, client: task.project.client}))
+            }}><i className ="bi bi-play"></i></button>
             <input
                 type="text"
                 name="startTime"

@@ -10,7 +10,7 @@ import { calculateEndTime } from "../utils/calculateEndTime";
 import { groupTasksByWeek } from "../utils/groupTasksByWeek";
 import { addTotalTime } from "../utils/addTotalTime";
 
-export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, timeStart, timeEnd, uniqueId}){
+export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, timeStart, timeEnd, uniqueId, isTimerOn, toggleTimer}){
     const dispatch = useDispatch()
 
     const tasksByWeek = groupTasksByWeek({ tasks })
@@ -97,7 +97,10 @@ export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, time
                                         task={task}
                                         timeStart={timeStart}
                                         timeEnd={timeEnd}
+                                        uniqueId={uniqueId}
                                         projectClient={projectClient}
+                                        isTimerOn={isTimerOn}
+                                        toggleTimer={toggleTimer}
                                         onTaskBlur={handleTaskNameBlur}
                                         onStartBlur={handleStartTimeBlur}
                                         onEndBlur={handleEndTimeBlur}

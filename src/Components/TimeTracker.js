@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AddTask } from "./AddTask";
 import { Tasks } from "./Tasks";
+import { Timer } from "./Timer";
 import { useSelector, useDispatch } from "react-redux";
 import {
     updateDuration,
@@ -18,18 +19,38 @@ import { calculateEndTime } from "../utils/calculateEndTime";
 import { isDurationLimitExceeded } from "../utils/isDurationLimitExceeded";
 import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
+import { formatTime } from "../utils/formatTime";
 
 export function TimeTracker(props){
-    const {projectClient , uniqueId, isModalOpen, startTime, endTime, duration, taskName, tasks} = useSelector(state => state.clockify)
+    const {projectClient , uniqueId, isModalOpen, currentTask, tasks} = useSelector(state => state.clockify)
+    const {startTime, endTime, duration, taskName, project, client} = currentTask
 
     const timeStart = new Date(startTime)
     const timeEnd = new Date(endTime)
 
     const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart))
     const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd))
-    const [totalDuration, setDuration] = useState(duration);
+    const [totalDuration, setDuration] = useState(duration)
+    const [isTimerOn, setIsTimerOn] = useState(false)
+    const [elapsedTime, setElapsedTime] = useState(0)
 
     const dispatch = useDispatch()
+    const intervalIdRef = useRef()
+    const timerStart = Date.now()
+    useEffect(() => {
+        if(isTimerOn){
+            intervalIdRef.current = setInterval(() => {
+                const currentTimeInMs = Date.now() - timerStart
+                setElapsedTime(currentTimeInMs)
+            }, 1000)
+        }
+        else{
+            clearInterval(intervalIdRef.current)
+            intervalIdRef.current = null
+        }
+        return () => clearInterval(intervalIdRef.current)
+
+    }, [isTimerOn])
 
     function updateEndDateIfNeeded() {
         if (timeStart > timeEnd) {
@@ -60,6 +81,34 @@ export function TimeTracker(props){
         updateDurationIfNeeded()
 
     }, [startTime, endTime])
+
+    const handleStart = () => {
+        setIsTimerOn(true)
+        setElapsedTime(0)
+    }
+
+    const handleStop = () => {
+        const start = new Date()
+        const {isValid, newEndTime, timeDuration} = calculateEndTime(start, formatTime(elapsedTime))
+        if(isValid) {
+            dispatch(addTodayTask({
+              id: uniqueId,
+              text: taskName,
+              startTime: start.toString(),
+              endTime:  newEndTime.toString(),
+              totalTime: timeDuration,
+              project: {
+                projectId: uniqueId,
+                projectName: project,
+                clientId: uniqueId,
+                client: client
+              } 
+            }))
+            setIsTimerOn(false)
+            dispatch(updateUniqueId())
+            dispatch(resetState())
+        }
+    }
 
     const handleDateChange = (dateTime) => {
         dispatch(updateStartTime(dateTime.toString()))
@@ -108,6 +157,9 @@ export function TimeTracker(props){
         }
     }
 
+    const toggleTimer = () => { 
+        setIsTimerOn(true)
+    }
     const addTask = () => {
         if(taskName !== ''){
             dispatch(addTodayTask({
@@ -133,27 +185,42 @@ export function TimeTracker(props){
 
     return (
         <>
-            <AddTask
-                isSidebarShrunk={props.isSidebarShrunk}
-                projectClient={projectClient}
-                uniqueId={uniqueId}
-                timeStart={new Date(startTime)}
-                timeEnd={new Date(endTime)}
-                isModalOpen={isModalOpen}
-                taskDescription={taskName}
-                start={startDateTime}
-                end={endDateTime}
-                totalDuration={totalDuration}
-                onNameChange={(e) =>  dispatch(updateTaskName(e.target.value))}
-                onStartChange={(e) =>  setStartDateTime(e.target.value)}
-                onEndChange={(e) =>  setEndDateTime(e.target.value)}
-                onDurationChange={(e) =>  setDuration(e.target.value)}
-                onStartBlur={handleStartTimeBlur}
-                onEndBlur={handleEndTimeBlur}
-                onDurationBlur={handleTotalDurationBlur}
-                onDateChange={handleDateChange}
-                onAddTask={addTask}
-            />
+            {isTimerOn ? 
+                <Timer
+                    isSidebarShrunk={props.isSidebarShrunk}
+                    tasks={tasks}
+                    isTimerOn={isTimerOn}
+                    elapsedTime={elapsedTime}
+                    taskName={taskName}
+                    project={project}
+                    client={client}
+                    projectClient={projectClient}
+                    uniqueId={uniqueId}
+                    onNameChange={(e) =>  dispatch(updateTaskName(e.target.value))}
+                    onTimerStop={handleStop}
+                /> : 
+                <AddTask
+                    isSidebarShrunk={props.isSidebarShrunk}
+                    projectClient={projectClient}
+                    uniqueId={uniqueId}
+                    timeStart={new Date(startTime)}
+                    timeEnd={new Date(endTime)}
+                    isModalOpen={isModalOpen}
+                    taskDescription={taskName}
+                    start={startDateTime}
+                    end={endDateTime}
+                    totalDuration={totalDuration}
+                    onNameChange={(e) =>  dispatch(updateTaskName(e.target.value))}
+                    onStartChange={(e) =>  setStartDateTime(e.target.value)}
+                    onEndChange={(e) =>  setEndDateTime(e.target.value)}
+                    onDurationChange={(e) =>  setDuration(e.target.value)}
+                    onStartBlur={handleStartTimeBlur}
+                    onEndBlur={handleEndTimeBlur}
+                    onDurationBlur={handleTotalDurationBlur}
+                    onDateChange={handleDateChange}
+                    onAddTask={addTask}
+                />
+            }
             <Tasks
                 isSidebarShrunk={props.isSidebarShrunk}
                 tasks={tasks}
@@ -167,11 +234,14 @@ export function TimeTracker(props){
                 onEndBlur={handleEndTimeBlur}
                 onDurationBlur={handleTotalDurationBlur}
                 onDateChange={handleDateChange}
+                onTimerStart={handleStart}
                 convertToHoursAndMinutes={convertToHoursAndMinutes}
                 isDurationLimitExceeded={isDurationLimitExceeded}
                 calculateEndTime={calculateEndTime}
                 calculateEndDate={calculateEndDate}
                 getFormattedTime={getFormattedTime}
+                isTimerOn={isTimerOn}
+                toggleTimer={toggleTimer}
                 addTodayTask={addTodayTask}
                 dispatch={dispatch}
             />
