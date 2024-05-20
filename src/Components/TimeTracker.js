@@ -20,6 +20,7 @@ import { isDurationLimitExceeded } from "../utils/isDurationLimitExceeded";
 import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import { formatTime } from "../utils/formatTime";
+import useClickOutside from "../utils/useClickOutside";
 
 export function TimeTracker(props){
     const {projectClient , uniqueId, isModalOpen, currentTask, tasks} = useSelector(state => state.clockify)
@@ -33,6 +34,7 @@ export function TimeTracker(props){
     const [totalDuration, setDuration] = useState(duration)
     const [isTimerOn, setIsTimerOn] = useState(false)
     const [elapsedTime, setElapsedTime] = useState(0)
+    const [showActionItems, setShowActionItems] = useState(false)
 
     const dispatch = useDispatch()
     const intervalIdRef = useRef()
@@ -81,6 +83,19 @@ export function TimeTracker(props){
         updateDurationIfNeeded()
 
     }, [startTime, endTime])
+
+    const toggleActionItem = () => {
+        setShowActionItems(!showActionItems)
+    }
+
+    const actionItem = useClickOutside(() => {
+        setShowActionItems(false)
+    })
+
+    const handleDiscard = () => {
+        setIsTimerOn(false)
+        setShowActionItems(false)
+    }
 
     const handleStart = () => {
         setIsTimerOn(true)
@@ -194,10 +209,14 @@ export function TimeTracker(props){
                     taskName={taskName}
                     project={project}
                     client={client}
+                    actionItem={actionItem}
+                    showActionItems={showActionItems}
                     projectClient={projectClient}
                     uniqueId={uniqueId}
                     onNameChange={(e) =>  dispatch(updateTaskName(e.target.value))}
                     onTimerStop={handleStop}
+                    onToggle={toggleActionItem}
+                    onDiscard={handleDiscard}
                 /> : 
                 <AddTask
                     isSidebarShrunk={props.isSidebarShrunk}

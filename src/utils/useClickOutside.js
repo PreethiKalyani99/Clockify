@@ -5,7 +5,7 @@ export default function useClickOutside(toggleState){
 
     useEffect(() => {
         let handler = (e) => {
-            if(!inputRef.current.contains(e.target)){
+            if(inputRef.current && !inputRef.current.contains(e.target)){
                 toggleState()
             }
         }
