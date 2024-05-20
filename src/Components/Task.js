@@ -43,6 +43,7 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
             setEndDateTime(getFormattedTime(timeEnd))
             setDuration(task.totalTime)
         }
+        setTaskDescription(task.text)
         updateEndDateIfNeeded()
         updateDurationIfNeeded()
         
