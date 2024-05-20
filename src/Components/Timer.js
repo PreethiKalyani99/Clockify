@@ -5,7 +5,6 @@ export function Timer(props){
     const totalTime = formatTime(props.elapsedTime)
     return (
         <>
-            {props.isTimerOn && <input disabled className="time" value={totalTime}></input>}
             <div className={props.isModalOpen ? "add-task-container" : "add-task-container zIndex"} data-testid="container">
                 <input
                     data-testid="task-name"
@@ -14,13 +13,14 @@ export function Timer(props){
                     className={props.isSidebarShrunk ? "input-box expand-input-width" : "input-box shrink-input-width"}
                     onChange={props.onNameChange}
                     value={props.taskName}
-                ></input>
+                    ></input>
                 <AddProject
                     projectClient={props.projectClient}
                     id={props.uniqueId}
                     project={props.project}
                     client={props.client}
                 />
+                {props.isTimerOn && <input disabled className="time" value={totalTime}></input>}
                 <button onClick={props.onTimerStop}><i className="bi bi-pause"></i></button>
             </div>
         </>
