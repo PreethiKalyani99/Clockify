@@ -8,6 +8,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { updateTimer, updateTask, addProjectClient } from "../redux/ClockifySlice";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import useClickOutside from "../utils/useClickOutside";
+import { calculateDays } from "../utils/calculateDays";
 
 export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, projectClient, uniqueId, toggleTimer}){
     const dispatch = useDispatch()
@@ -38,7 +39,7 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
     }
 
     useEffect(() => {
-        if(getFormattedTime(timeStart) !== startDateTime || getFormattedTime(timeEnd) !== endDateTime){
+        if(getFormattedTime(timeStart) !== startDateTime || getFormattedTime(timeEnd) !== endDateTime || task.totalTime !== totalDuration){
             setStartDateTime(getFormattedTime(timeStart))
             setEndDateTime(getFormattedTime(timeEnd))
             setDuration(task.totalTime)
@@ -46,12 +47,13 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
         setTaskDescription(task.text)
         updateEndDateIfNeeded()
         updateDurationIfNeeded()
-        
     }, [task.startTime, task.endTime, task.totalTime])
 
     const actionItem = useClickOutside(() => {
         setShowActionItems(false)
     })
+
+    const days = calculateDays(timeStart, timeEnd)
 
     return(
         <div className="task-container">
@@ -68,11 +70,6 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
                 client={projectClient[task.id]?.client || ''}
                 id={task.id}
             />
-            <button onClick={() => {
-                toggleTimer()
-                dispatch(updateTimer({name: task.text, project: task.project, client: task.client}))
-                dispatch(addProjectClient({id: uniqueId, project: task.project.projectName, client: task.project.client}))
-            }}><i className ="bi bi-play"></i></button>
             <input
                 type="text"
                 name="startTime"
@@ -80,7 +77,6 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
                 onChange={(e) => setStartDateTime(e.target.value)}
                 onBlur={(e) => onStartBlur(e, task.id)}
             ></input>
-            <p>{getFormattedDate(timeStart)}</p>
             <input
                 type="text"
                 name="endTime"
@@ -88,15 +84,7 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
                 onChange={(e) => setEndDateTime(e.target.value)}
                 onBlur={(e) => onEndBlur(e, task.id)}
             ></input>
-            <p>{getFormattedDate(timeEnd)}</p>
-
-            <input
-                type='text'
-                className='duration'
-                value={totalDuration}
-                onChange={(e) => setDuration(e.target.value)}
-                onBlur={(e) => onDurationBlur(e, task.id)}
-            />
+            {days > 0 && <sup className="fs-6"><b>{'+' + days}</b></sup>}
             <DatePicker
                 selected={timeStart}
                 onChange={(e) => onDateChange(e, task.id)}
@@ -108,8 +96,19 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
                     </button>
                 }
             />
-
             <p className="ms-2">{getFormattedDate(timeStart)}</p>
+            <input
+                type='text'
+                className='duration'
+                value={totalDuration}
+                onChange={(e) => setDuration(e.target.value)}
+                onBlur={(e) => onDurationBlur(e, task.id)}
+            />
+            <button onClick={() => {
+                toggleTimer()
+                dispatch(updateTimer({name: task.text, project: task.project, client: task.client}))
+                dispatch(addProjectClient({id: uniqueId, project: task.project.projectName, client: task.project.client}))
+            }}><i className ="bi bi-play"></i></button>
             <button className="three-dots" onClick={() => setShowActionItems(!showActionItems)}><i className="bi bi-three-dots-vertical"></i></button>
             <div className={showActionItems ? "action-items-container": "hide"} ref={actionItem}>
                 <ul>
