@@ -39,15 +39,15 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
     }
 
     useEffect(() => {
-        if(getFormattedTime(timeStart) !== startDateTime || getFormattedTime(timeEnd) !== endDateTime || task.totalTime !== totalDuration){
+        if(getFormattedTime(timeStart) !== startDateTime || getFormattedTime(timeEnd) !== endDateTime || task.totalTime !== totalDuration || taskDescription !== task.text){
             setStartDateTime(getFormattedTime(timeStart))
             setEndDateTime(getFormattedTime(timeEnd))
             setDuration(task.totalTime)
+            setTaskDescription(task.text)
         }
-        setTaskDescription(task.text)
         updateEndDateIfNeeded()
         updateDurationIfNeeded()
-    }, [task.startTime, task.endTime, task.totalTime])
+    }, [task.startTime, task.endTime, task.totalTime, task.text])
 
     const actionItem = useClickOutside(() => {
         setShowActionItems(false)
