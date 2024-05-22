@@ -5,56 +5,66 @@ import { AddProject } from "./AddProject";
 import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import "react-datepicker/dist/react-datepicker.css";
-import { updateTimer, updateTask, addProjectClient } from "../redux/ClockifySlice";
+import { updateTimer, addProjectClient, updateTimeEntry } from "../redux/ClockifySlice";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import useClickOutside from "../utils/useClickOutside";
 import { calculateDays } from "../utils/calculateDays";
+import { parseISODuration } from "../utils/parseISODuration";
 
 export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, projectClient, uniqueId, toggleTimer}){
     const dispatch = useDispatch()
-    const timeStart = new Date(task.startTime)
-    const timeEnd = new Date(task.endTime)
+    const timeStart = new Date(task.timeInterval.start)
+    const timeEnd = new Date(task.timeInterval.end)
     const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart))
     const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd))
-    const [totalDuration, setDuration] = useState(task.totalTime)
-    const [taskDescription, setTaskDescription] = useState(task.text)
+    const [totalDuration, setDuration] = useState(parseISODuration(task.timeInterval.duration))
+    const [taskDescription, setTaskDescription] = useState(task.description)
     const [showActionItems, setShowActionItems] = useState(false)
 
     function updateEndDateIfNeeded() {
         if (timeStart > timeEnd) {
             let date = new Date(timeEnd)
             date.setDate(date.getDate() + 1)
-            dispatch(updateTask({id: task.id, endTime: date.toString()}))
+            dispatch(updateTimeEntry({
+                start: timeStart.toISOString().split('.')[0] + 'Z',
+                end: date.toISOString().split('.')[0] + 'Z',
+                id: task.id
+            }))
         }
     }
 
     function updateDurationIfNeeded() {
-        const {hours, minutes} = calculateTimeDifference(timeStart, timeEnd)
-        const timeParts = task.totalTime.split(':')
+        const {hours, minutes} = calculateTimeDifference(new Date(task.timeInterval.start), new Date(task.timeInterval.end))
+        const timeParts = parseISODuration(task.timeInterval.duration).split(':')
         const totalTimeDuration = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${timeParts[2]}`
-        const timeDuration = (hours <= 999) ? totalTimeDuration : task.totalTime
+        const timeDuration = (hours <= 999) ? totalTimeDuration : parseISODuration(task.timeInterval.duration)
+        console.log(timeDuration, totalDuration, "time duration total durationn")
         if (timeDuration !== totalDuration) {
-            dispatch(updateTask({id: task.id, totalTime: timeDuration}))
+            dispatch(updateTimeEntry({
+                start: task.timeInterval.start,
+                end: task.timeInterval.end,
+                id: task.id
+            }))
         }
     }
 
     useEffect(() => {
-        if(getFormattedTime(timeStart) !== startDateTime || getFormattedTime(timeEnd) !== endDateTime || task.totalTime !== totalDuration || taskDescription !== task.text){
+        // console.log("inside useeffect")
+        // console.log(timeStart, task.timeInterval.start, "start times-----------------", startDateTime)
+        if(getFormattedTime(timeStart) !== startDateTime || getFormattedTime(timeEnd) !== endDateTime || parseISODuration(task.timeInterval.duration) !== totalDuration || taskDescription !== task.description){
             setStartDateTime(getFormattedTime(timeStart))
             setEndDateTime(getFormattedTime(timeEnd))
-            setDuration(task.totalTime)
-            setTaskDescription(task.text)
+            setDuration(parseISODuration(task.timeInterval.duration))
+            setTaskDescription(task.description)
         }
         updateEndDateIfNeeded()
-        updateDurationIfNeeded()
-    }, [task.startTime, task.endTime, task.totalTime, task.text])
+        // updateDurationIfNeeded()
+    }, [task.timeInterval.start, task.timeInterval.end, task.timeInterval.duration, task.description])
 
     const actionItem = useClickOutside(() => {
         setShowActionItems(false)
     })
-
     const days = calculateDays(timeStart, timeEnd)
-
     return(
         <div className="task-container">
             <input
@@ -75,14 +85,14 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
                 name="startTime"
                 value={startDateTime}
                 onChange={(e) => setStartDateTime(e.target.value)}
-                onBlur={(e) => onStartBlur(e, task.id)}
+                onBlur={(e) => onStartBlur(e, task.id, task.timeInterval.end)}
             ></input>
             <input
                 type="text"
                 name="endTime"
                 value={endDateTime}
                 onChange={(e) => setEndDateTime(e.target.value)}
-                onBlur={(e) => onEndBlur(e, task.id)}
+                onBlur={(e) => onEndBlur(e, task.id, task.timeInterval.start)}
             ></input>
             {days > 0 && <sup className="fs-6"><b>{'+' + days}</b></sup>}
             <DatePicker
@@ -106,8 +116,8 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
             />
             <button onClick={() => {
                 toggleTimer()
-                dispatch(updateTimer({name: task.text, project: task.project, client: task.client}))
-                dispatch(addProjectClient({id: uniqueId, project: task.project.projectName, client: task.project.client}))
+                dispatch(updateTimer({name: task.description, project: task?.project, client: task?.client}))
+                dispatch(addProjectClient({id: uniqueId, project: task?.project?.projectName, client: task?.project?.client}))
             }}><i className ="bi bi-play"></i></button>
             <button className="three-dots" onClick={() => setShowActionItems(!showActionItems)}><i className="bi bi-three-dots-vertical"></i></button>
             <div className={showActionItems ? "action-items-container": "hide"} ref={actionItem}>

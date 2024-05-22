@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Task } from "./Task";
-import { deleteTask, updateTask, addProjectClient, updateUniqueId } from "../redux/ClockifySlice";
+import { deleteTask, addProjectClient, updateUniqueId, updateTimeEntry, deleteTimeEntry, duplicateTimeEntry } from "../redux/ClockifySlice";
 import { getTaskById } from "../utils/getTaskById";
 import { convertToHoursAndMinutes } from "../utils/convertToHoursAndMinutes";
 import { isDurationLimitExceeded } from "../utils/isDurationLimitExceeded";
@@ -10,10 +10,10 @@ import { calculateEndTime } from "../utils/calculateEndTime";
 import { groupTasksByWeek } from "../utils/groupTasksByWeek";
 import { addTotalTime } from "../utils/addTotalTime";
 
-export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, timeStart, timeEnd, uniqueId, isTimerOn, toggleTimer}){
+export function Tasks({isSidebarShrunk, data, addTodayTask, projectClient, timeStart, timeEnd, uniqueId, isTimerOn, toggleTimer}){
     const dispatch = useDispatch()
 
-    const tasksByWeek = groupTasksByWeek({ tasks })
+    const tasksByWeek = groupTasksByWeek(data)
 
     function formatDate(dateString) {
         const date = new Date(dateString)
@@ -21,61 +21,65 @@ export function Tasks({isSidebarShrunk, tasks, addTodayTask, projectClient, time
     }
 
     function handleTaskNameBlur(taskDescription, id){
-        dispatch(updateTask({id, text: taskDescription}))
+        const task = getTaskById(data, id)
+        dispatch(updateTimeEntry({start: task.timeInterval.start, end: task.timeInterval.end, description: taskDescription, id: id}))
     }
 
-    function handleStartTimeBlur(e, id){
-        const task = getTaskById(tasks, id)
+    function handleStartTimeBlur(e, id, endTime){
+        const task = getTaskById(data, id)
+        
         const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
-        const newStart = new Date(task.startTime)
+        const newStart = new Date(task.timeInterval.start)
         newStart.setHours(validatedHour, validatedMins)
 
-        if (!isValid || isDurationLimitExceeded(newStart, task.endTime)) {
-            dispatch(updateTask(id, task))
+        if (!isValid || isDurationLimitExceeded(newStart, new Date(task.timeInterval.end))) {
+            dispatch(updateTimeEntry({task, id}))
             return
         }
-        dispatch(updateTask({id, startTime: newStart.toString()}))
+        console.log(new Date(endTime), "start Blur end time")
+        dispatch(updateTimeEntry({start: newStart.toISOString().split('.')[0] + 'Z', end: task.timeInterval.end, id: id}))
     }
 
-    function handleEndTimeBlur(e, id){
-        const task = getTaskById(tasks, id)
+    function handleEndTimeBlur(e, id, startTime){
+        const task = getTaskById(data, id)
         const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
-        const newEnd = new Date(task.endTime)
+        const newEnd = new Date(task.timeInterval.end)
         newEnd.setHours(validatedHour, validatedMins)
 
-        if(!isValid || isDurationLimitExceeded(task.startTime, newEnd)) {
-            dispatch(updateTask(id, task))
+        console.log(new Date(startTime), "end blur start time")
+        if(!isValid || isDurationLimitExceeded(new Date(task.timeInterval.start), newEnd)) {
+            dispatch(updateTimeEntry({task, id: id}))
             return
         }
 
-        dispatch(updateTask({id, endTime: newEnd.toString()}))
+        dispatch(updateTimeEntry({start: task.timeInterval.start, end: newEnd.toISOString().split('.')[0] + 'Z', id: id}))
     }
 
     function handleDurationBlur(e, id){
-        const task = getTaskById(tasks, id)
+        const task = getTaskById(data, id)
 
-        const {isValid, newEndTime, timeDuration} = calculateEndTime(task.startTime, e.target.value)
+        const {isValid, newEndTime, timeDuration} = calculateEndTime(new Date(task.timeInterval.start), e.target.value)
         if(isValid){
-            dispatch(updateTask({id, endTime: newEndTime.toString(), totalTime: timeDuration}))
+            dispatch(updateTimeEntry({start: task.timeInterval.start, end: newEndTime.toISOString().split('.')[0] + 'Z', id: id}))
         }
     }
 
     function handleDateChange(dateTime, id){
-        const task = getTaskById(tasks, id)
+        const task = getTaskById(data, id)
         
-        const newEndTime = calculateEndDate(dateTime, new Date(task.endTime), new Date(task.startTime))
-        dispatch(updateTask({id, startTime: dateTime.toString(), endTime: newEndTime.toString()}))
+        const newEndTime = calculateEndDate(dateTime, new Date(task.timeInterval.end), new Date(task.timeInterval.start))
+        dispatch(updateTimeEntry({start: dateTime.toISOString().split('.')[0] + 'Z', end: newEndTime.toISOString().split('.')[0] + 'Z', id: id}))
     }
 
     function handleDuplicateTask(id){
-        const task = getTaskById(tasks, id)
-        dispatch(addProjectClient({id: uniqueId, project: task.project.projectName, client: task.project.client}))
-        dispatch(addTodayTask({...task, id: uniqueId}))
+        const task = getTaskById(data, id)
+        // dispatch(addProjectClient({id: uniqueId, project: task.project.projectName, client: task.project.client}))
+        dispatch(duplicateTimeEntry({id}))
         dispatch(updateUniqueId())
     }
 
     function handleDeleteTask(id){
-        dispatch(deleteTask({id}))
+        dispatch(deleteTimeEntry({id}))
     }
     return(
         <div className="parent-container" >

@@ -1,6 +1,8 @@
+import { parseISODuration } from "./parseISODuration"
+
 export function addTotalTime(tasks){
     const totalTimeInMS = tasks.reduce((acc, cur) => {
-       const [hours, minutes, seconds] = (cur.totalTime).split(':').map(Number)
+       const [hours, minutes, seconds] = (parseISODuration(cur.timeInterval.duration)).split(':').map(Number)
        acc += (hours * 60 * 60 + minutes * 60 + seconds) * 1000
        return acc
     }, 0)

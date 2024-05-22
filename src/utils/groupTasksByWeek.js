@@ -1,10 +1,10 @@
 import { getFormattedDate } from "./getFormattedDate"
 
-export function groupTasksByWeek({ tasks }){
+export function groupTasksByWeek(tasks){
     let tasksByWeek = {}
     tasks && tasks.forEach(task => {
-        const date = getFormattedDate(new Date(task.startTime))
-        let taskDate = new Date(task.startTime)
+        const date = getFormattedDate(new Date(task.timeInterval.start))
+        let taskDate = new Date(task.timeInterval.start)
 
         let taskDay = taskDate.getDate()
         let taskYear = taskDate.getFullYear()

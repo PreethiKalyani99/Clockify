@@ -11,7 +11,8 @@ import {
     updateUniqueId,
     updateTaskName,
     resetState,
-    fetchUser
+    getUserTimeEntries,
+    createTimeEntry
 } from "../redux/ClockifySlice";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import { calculateEndDate } from "../utils/calculateEndDate";
@@ -24,7 +25,7 @@ import { formatTime } from "../utils/formatTime";
 import useClickOutside from "../utils/useClickOutside";
 
 export function TimeTracker(props){
-    const {projectClient , uniqueId, isModalOpen, currentTask, tasks} = useSelector(state => state.clockify)
+    const {projectClient , uniqueId, isModalOpen, currentTask, data} = useSelector(state => state.clockify)
     const {startTime, endTime, duration, taskName, project, client} = currentTask
 
     const timeStart = new Date(startTime)
@@ -42,8 +43,9 @@ export function TimeTracker(props){
     const timerStart = Date.now()
 
     useEffect(() => {
-        dispatch(fetchUser())
+        dispatch(getUserTimeEntries())
     }, [])
+    
     useEffect(() => {
         if(isTimerOn){
             intervalIdRef.current = setInterval(() => {
@@ -182,20 +184,11 @@ export function TimeTracker(props){
     }
     const addTask = () => {
         if(taskName !== ''){
-            dispatch(addTodayTask({
-                id: uniqueId,
-                text: taskName,
-                startTime: new Date(timeStart).toString(),
-                endTime:  new Date(timeEnd).toString(),
-                totalTime: duration,
-                project: {
-                    projectId: uniqueId,
-                    projectName: projectClient?.[uniqueId]?.project,
-                    clientId: uniqueId,
-                    client: projectClient?.[uniqueId]?.client
-                }
+            dispatch(createTimeEntry({
+                description: taskName,
+                start: new Date(timeStart).toISOString().split('.')[0] + 'Z',
+                end:  new Date(timeEnd).toISOString().split('.')[0] + 'Z',
             }))
-            dispatch(updateUniqueId())
             dispatch(resetState())
         }
         else{
@@ -208,7 +201,7 @@ export function TimeTracker(props){
             {isTimerOn ? 
                 <Timer
                     isSidebarShrunk={props.isSidebarShrunk}
-                    tasks={tasks}
+                    data={data}
                     isTimerOn={isTimerOn}
                     elapsedTime={elapsedTime}
                     taskName={taskName}
@@ -247,7 +240,7 @@ export function TimeTracker(props){
             }
             <Tasks
                 isSidebarShrunk={props.isSidebarShrunk}
-                tasks={tasks}
+                data={data}
                 timeStart={new Date(startTime)}
                 timeEnd={new Date(endTime)}
                 projectClient={projectClient}
