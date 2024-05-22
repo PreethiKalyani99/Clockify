@@ -37,7 +37,6 @@ export const createTimeEntry = createAsyncThunk("createTimeEntry", async (timeEn
 })
 
 export const updateTimeEntry = createAsyncThunk("updateTimeEntry", async ({id, ...timeEntryData}) => {
-    console.log(timeEntryData, id, "time entry data , id================")
     const response = await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/time-entries/${id}`, {
         method: "PUT",
         headers: {
@@ -60,7 +59,7 @@ export const deleteTimeEntry = createAsyncThunk("deleteTimeEntry", async ({id}) 
         headers: {
             'X-Api-Key':AUTH_TOKEN,
             'Content-Type': 'application/json'
-        },
+        }
     })
 })
 

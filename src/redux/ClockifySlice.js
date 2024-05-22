@@ -83,7 +83,11 @@ export const ClockifySlice = createSlice({
         })
         builder.addCase(updateTimeEntry.fulfilled, (state, action) => {
             state.isLoading = false
-            state.data = [action.payload, ...state.data]
+            const id = action.payload.id
+            const timeEntry = state.data.find(entry => entry.id === id)
+            if (timeEntry) {
+                Object.assign(timeEntry, action.payload)
+            }
         })
         builder.addCase(duplicateTimeEntry.pending, (state) => {
             state.isLoading = true
