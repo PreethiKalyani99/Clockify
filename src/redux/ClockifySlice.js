@@ -1,5 +1,10 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { AUTH_TOKEN, WORKSPACE_ID, USER_ID } from "../config";
+import { createSlice } from "@reduxjs/toolkit";
+import { 
+    getUserTimeEntries, 
+    createTimeEntry, 
+    updateTimeEntry, 
+    duplicateTimeEntry
+} from "./clockifyThunk";
 
 export const ClockifySlice = createSlice({
     name: 'clockify',
@@ -7,7 +12,6 @@ export const ClockifySlice = createSlice({
         isLoading: false,
         data: [],
         projectClient: {},
-        tasks: [],
         uniqueId: JSON.parse(localStorage.getItem('uniqueId')) || 0,
         tasksByWeek: {},
         isModalOpen: false,
@@ -21,10 +25,6 @@ export const ClockifySlice = createSlice({
         }
     },
     reducers: {
-        addTodayTask: (state, action) => {
-            state.tasks.push(action.payload)
-            // localStorage.setItem('tasks', JSON.stringify(state.tasks))
-        },
         addProjectClient: (state, action) => {
             const {id, project, client} = action.payload
             state.projectClient[id] = {project, client, id}
@@ -34,16 +34,6 @@ export const ClockifySlice = createSlice({
         setIsModalOpen: (state, action) => {
             state.isModalOpen = action.payload
         }, 
-        updateTask: (state, action) => {
-            const {id,...updateData} = action.payload
-            const updatedTasks = state.tasks.map(task => task.id === id ? {...task, ...updateData} : task)
-            return {...state, tasks: updatedTasks}
-        },
-        deleteTask: (state, action) => {
-            const {id} = action.payload
-            state.tasks = state.tasks.filter(task => task.id !== id)
-            // localStorage.setItem('tasks', JSON.stringify(state.tasks))
-        },
         updateUniqueId: (state) => {
             state.uniqueId = state.uniqueId + 1
             localStorage.setItem('uniqueId', JSON.stringify(state.uniqueId))
@@ -120,82 +110,3 @@ export const {
     updateTimer
 } = ClockifySlice.actions
 export default ClockifySlice.reducer
-
-export const getUserTimeEntries = createAsyncThunk("getUserTimeEntries", async () => {
-    const response = await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/user/${USER_ID}/time-entries`, {
-            method: "GET",
-            headers: {
-                'X-Api-Key':AUTH_TOKEN,
-                'Content-Type': 'application/json'
-            }
-        },
-    )
-    if (!response.ok) {
-        throw new Error('Failed to get time entries')
-    }
-
-    const data = await response.json();
-    return data
-})
-
-export const createTimeEntry = createAsyncThunk("createTimeEntry", async (timeEntryData) => {
-    const response = await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/time-entries`, {
-        method: "POST",
-        headers: {
-            'X-Api-Key':AUTH_TOKEN,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(timeEntryData)
-    })
-
-    if (!response.ok) {
-        throw new Error('Failed to create time entry')
-    }
-
-    const data = await response.json();
-    return data
-})
-
-export const updateTimeEntry = createAsyncThunk("updateTimeEntry", async ({id, ...timeEntryData}) => {
-    console.log(timeEntryData, id, "time entry data , id================")
-    const response = await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/time-entries/${id}`, {
-        method: "PUT",
-        headers: {
-            'X-Api-Key':AUTH_TOKEN,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(timeEntryData)
-    })
-    if (!response.ok) {
-        throw new Error('Failed to update time entry')
-    }
-
-    const data = await response.json();
-    return data
-})
-
-export const deleteTimeEntry = createAsyncThunk("deleteTimeEntry", async ({id}) => {
-    await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/time-entries/${id}`, {
-        method: "DELETE",
-        headers: {
-            'X-Api-Key':AUTH_TOKEN,
-            'Content-Type': 'application/json'
-        },
-    })
-})
-
-export const duplicateTimeEntry = createAsyncThunk("duplicateTimeEntry", async ({id}) => {
-    const response = await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/user/${USER_ID}/time-entries/${id}/duplicate`, {
-        method: "POST",
-        headers: {
-            'X-Api-Key':AUTH_TOKEN,
-            'Content-Type': 'application/json'
-        }
-    })
-    if (!response.ok) {
-        throw new Error('Failed to update time entry')
-    }
-
-    const data = await response.json();
-    return data
-})

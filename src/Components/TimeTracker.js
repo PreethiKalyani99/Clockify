@@ -11,9 +11,11 @@ import {
     updateUniqueId,
     updateTaskName,
     resetState,
-    getUserTimeEntries,
-    createTimeEntry
 } from "../redux/ClockifySlice";
+import {
+    createTimeEntry,
+    getUserTimeEntries
+} from "../redux/clockifyThunk"
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import { calculateEndDate } from "../utils/calculateEndDate";
 import { convertToHoursAndMinutes } from "../utils/convertToHoursAndMinutes";

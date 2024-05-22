@@ -1,7 +1,8 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Task } from "./Task";
-import { deleteTask, addProjectClient, updateUniqueId, updateTimeEntry, deleteTimeEntry, duplicateTimeEntry } from "../redux/ClockifySlice";
+import { updateUniqueId } from "../redux/ClockifySlice";
+import { updateTimeEntry, deleteTimeEntry, duplicateTimeEntry } from "../redux/clockifyThunk";
 import { getTaskById } from "../utils/getTaskById";
 import { convertToHoursAndMinutes } from "../utils/convertToHoursAndMinutes";
 import { isDurationLimitExceeded } from "../utils/isDurationLimitExceeded";
@@ -10,7 +11,7 @@ import { calculateEndTime } from "../utils/calculateEndTime";
 import { groupTasksByWeek } from "../utils/groupTasksByWeek";
 import { addTotalTime } from "../utils/addTotalTime";
 
-export function Tasks({isSidebarShrunk, data, addTodayTask, projectClient, timeStart, timeEnd, uniqueId, isTimerOn, toggleTimer}){
+export function Tasks({isSidebarShrunk, data, projectClient, timeStart, timeEnd, uniqueId, isTimerOn, toggleTimer}){
     const dispatch = useDispatch()
 
     const tasksByWeek = groupTasksByWeek(data)
