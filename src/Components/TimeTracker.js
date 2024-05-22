@@ -11,6 +11,7 @@ import {
     updateUniqueId,
     updateTaskName,
     resetState,
+    fetchUser
 } from "../redux/ClockifySlice";
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import { calculateEndDate } from "../utils/calculateEndDate";
@@ -39,6 +40,10 @@ export function TimeTracker(props){
     const dispatch = useDispatch()
     const intervalIdRef = useRef()
     const timerStart = Date.now()
+
+    useEffect(() => {
+        dispatch(fetchUser())
+    }, [])
     useEffect(() => {
         if(isTimerOn){
             intervalIdRef.current = setInterval(() => {

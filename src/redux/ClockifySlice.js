@@ -1,8 +1,29 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { AUTH_TOKEN } from "../config/authToken";
+
+export const fetchUser = createAsyncThunk("fetchUser", async () => {
+    const requestBody = {
+        description: "api integration",
+        start: new Date().toISOString(),
+        end: new Date().toISOString(),
+    }
+    const data = await fetch("https://api.clockify.me/api/v1/workspaces/661786edcfbf234a51091a64/time-entries",{
+            method: "POST",
+            headers: {
+                'X-Api-Key':AUTH_TOKEN,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        }
+    )
+    return data.json()
+})
 
 export const ClockifySlice = createSlice({
     name: 'clockify',
     initialState: {
+        isLoading: false,
+        data: [],
         projectClient: {},
         tasks: [],
         uniqueId: JSON.parse(localStorage.getItem('uniqueId')) || 0,
@@ -16,6 +37,15 @@ export const ClockifySlice = createSlice({
             project: '',
             client: '' 
         }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(fetchUser.pending, (state) => {
+            state.isLoading = true
+        })
+        builder.addCase(fetchUser.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.data = action.payload
+        })
     },
     reducers: {
         addTodayTask: (state, action) => {
