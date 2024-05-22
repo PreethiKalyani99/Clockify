@@ -3,7 +3,8 @@ import {
     getUserTimeEntries, 
     createTimeEntry, 
     updateTimeEntry, 
-    duplicateTimeEntry
+    duplicateTimeEntry,
+    deleteTimeEntry
 } from "./clockifyThunk";
 
 export const ClockifySlice = createSlice({
@@ -95,6 +96,14 @@ export const ClockifySlice = createSlice({
         builder.addCase(duplicateTimeEntry.fulfilled, (state, action) => {
             state.isLoading = false
             state.data = [action.payload, ...state.data]
+        })
+        builder.addCase(deleteTimeEntry.pending, (state) => {
+            state.isLoading = true
+        })
+        builder.addCase(deleteTimeEntry.fulfilled, (state, action) => {
+            const id = action.payload
+            const newData = state.data.filter(entry => entry.id !== id)
+            state.data = newData
         })
     }
 })

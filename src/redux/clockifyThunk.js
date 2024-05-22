@@ -61,6 +61,7 @@ export const deleteTimeEntry = createAsyncThunk("deleteTimeEntry", async ({id}) 
             'Content-Type': 'application/json'
         }
     })
+    return id
 })
 
 export const duplicateTimeEntry = createAsyncThunk("duplicateTimeEntry", async ({id}) => {
