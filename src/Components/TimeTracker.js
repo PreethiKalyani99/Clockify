@@ -115,18 +115,10 @@ export function TimeTracker(props){
         const start = new Date()
         const {isValid, newEndTime, timeDuration} = calculateEndTime(start, formatTime(elapsedTime))
         if(isValid) {
-            dispatch(addTodayTask({
-              id: uniqueId,
-              text: taskName,
-              startTime: start.toString(),
-              endTime:  newEndTime.toString(),
-              totalTime: timeDuration,
-              project: {
-                projectId: uniqueId,
-                projectName: project,
-                clientId: uniqueId,
-                client: client
-              } 
+            dispatch(createTimeEntry({
+                description: taskName,
+                start: new Date(timeStart).toISOString().split('.')[0] + 'Z',
+                end:  new Date(newEndTime).toISOString().split('.')[0] + 'Z',
             }))
             setIsTimerOn(false)
             dispatch(updateUniqueId())
