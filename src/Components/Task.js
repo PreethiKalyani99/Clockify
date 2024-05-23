@@ -16,9 +16,9 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
     const dispatch = useDispatch()
     const timeStart = new Date(task.timeInterval.start)
     const timeEnd = new Date(task.timeInterval.end)
-    const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart))
-    const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd))
-    const [totalDuration, setDuration] = useState(parseISODuration(task.timeInterval.duration))
+    const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart) || '00:00')
+    const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd) || '00:00')
+    const [totalDuration, setDuration] = useState(parseISODuration(task.timeInterval.duration || '00:00:00'))
     const [taskDescription, setTaskDescription] = useState(task.description)
     const [showActionItems, setShowActionItems] = useState(false)
 
@@ -71,7 +71,7 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
             <input
                 type="text"
                 name="task-name"
-                value={taskDescription}
+                value={taskDescription || ''}
                 onChange={(e) => setTaskDescription(e.target.value)}
                 onBlur={() => onTaskBlur(taskDescription, task.id)}
             ></input>
@@ -84,14 +84,14 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
             <input
                 type="text"
                 name="startTime"
-                value={startDateTime}
+                value={startDateTime || '00:00'}
                 onChange={(e) => setStartDateTime(e.target.value)}
                 onBlur={(e) => onStartBlur(e, task.id, task.timeInterval.end)}
             ></input>
             <input
                 type="text"
                 name="endTime"
-                value={endDateTime}
+                value={endDateTime || '00:00'}
                 onChange={(e) => setEndDateTime(e.target.value)}
                 onBlur={(e) => onEndBlur(e, task.id, task.timeInterval.start)}
             ></input>
@@ -111,7 +111,7 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
             <input
                 type='text'
                 className='duration'
-                value={totalDuration}
+                value={totalDuration || '00:00:00'}
                 onChange={(e) => setDuration(e.target.value)}
                 onBlur={(e) => onDurationBlur(e, task.id)}
             />

@@ -38,7 +38,7 @@ export function Tasks({isSidebarShrunk, data, projectClient, timeStart, timeEnd,
             return
         }
         console.log(new Date(endTime), "start Blur end time")
-        dispatch(updateTimeEntry({start: newStart.toISOString().split('.')[0] + 'Z', end: task.timeInterval.end, id: id}))
+        dispatch(updateTimeEntry({description: task.description, start: newStart.toISOString().split('.')[0] + 'Z', end: task.timeInterval.end, id: id}))
     }
 
     function handleEndTimeBlur(e, id, startTime){
@@ -53,15 +53,15 @@ export function Tasks({isSidebarShrunk, data, projectClient, timeStart, timeEnd,
             return
         }
 
-        dispatch(updateTimeEntry({start: task.timeInterval.start, end: newEnd.toISOString().split('.')[0] + 'Z', id: id}))
+        dispatch(updateTimeEntry({description: task.description, start: task.timeInterval.start, end: newEnd.toISOString().split('.')[0] + 'Z', id: id}))
     }
 
     function handleDurationBlur(e, id){
         const task = getTaskById(data, id)
 
-        const {isValid, newEndTime, timeDuration} = calculateEndTime(new Date(task.timeInterval.start), e.target.value)
+        const {isValid, newEndTime} = calculateEndTime(new Date(task.timeInterval.start), e.target.value)
         if(isValid){
-            dispatch(updateTimeEntry({start: task.timeInterval.start, end: newEndTime.toISOString().split('.')[0] + 'Z', id: id}))
+            dispatch(updateTimeEntry({description: task.description, start: task.timeInterval.start, end: newEndTime.toISOString().split('.')[0] + 'Z', id: id}))
         }
     }
 
@@ -73,7 +73,7 @@ export function Tasks({isSidebarShrunk, data, projectClient, timeStart, timeEnd,
     }
 
     function handleDuplicateTask(id){
-        const task = getTaskById(data, id)
+        // const task = getTaskById(data, id)
         // dispatch(addProjectClient({id: uniqueId, project: task.project.projectName, client: task.project.client}))
         dispatch(duplicateTimeEntry({id}))
         dispatch(updateUniqueId())

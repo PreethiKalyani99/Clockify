@@ -113,11 +113,11 @@ export function TimeTracker(props){
 
     const handleStop = () => {
         const start = new Date()
-        const {isValid, newEndTime, timeDuration} = calculateEndTime(start, formatTime(elapsedTime))
+        const {isValid, newEndTime} = calculateEndTime(start, formatTime(elapsedTime))
         if(isValid) {
             dispatch(createTimeEntry({
                 description: taskName,
-                start: new Date(timeStart).toISOString().split('.')[0] + 'Z',
+                start: new Date(start).toISOString().split('.')[0] + 'Z',
                 end:  new Date(newEndTime).toISOString().split('.')[0] + 'Z',
             }))
             setIsTimerOn(false)
