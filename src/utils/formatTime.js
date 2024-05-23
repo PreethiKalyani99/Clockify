@@ -5,3 +5,7 @@ export function formatTime(timeInMs){
 
     return `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`
 }
+
+export function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+}

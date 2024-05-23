@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { 
-    getUserTimeEntries, 
-    createTimeEntry, 
-    updateTimeEntry, 
+import {
+    getUserTimeEntries,
+    createTimeEntry,
+    updateTimeEntry,
     duplicateTimeEntry,
     deleteTimeEntry
 } from "./clockifyThunk";
@@ -22,7 +22,7 @@ export const ClockifySlice = createSlice({
             duration: '00:00:00',
             taskName: '',
             project: '',
-            client: '' 
+            client: ''
         }
     },
     reducers: {
@@ -34,7 +34,7 @@ export const ClockifySlice = createSlice({
         },
         setIsModalOpen: (state, action) => {
             state.isModalOpen = action.payload
-        }, 
+        },
         updateUniqueId: (state) => {
             state.uniqueId = state.uniqueId + 1
             localStorage.setItem('uniqueId', JSON.stringify(state.uniqueId))
@@ -44,7 +44,7 @@ export const ClockifySlice = createSlice({
         },
         updateEndTime: (state, action) => {
             state.currentTask.endTime = (action.payload).toString()
-        }, 
+        },
         updateDuration: (state, action) => {
             state.currentTask.duration = action.payload
         },
@@ -109,13 +109,13 @@ export const ClockifySlice = createSlice({
 })
 
 export const {
-    addTodayTask, 
-    addProjectClient, 
-    updateUniqueId, 
-    updateTask, 
-    deleteTask, 
-    setIsModalOpen, 
-    updateStartTime, 
+    addTodayTask,
+    addProjectClient,
+    updateUniqueId,
+    updateTask,
+    deleteTask,
+    setIsModalOpen,
+    updateStartTime,
     updateEndTime,
     updateDuration,
     updateTaskName,
