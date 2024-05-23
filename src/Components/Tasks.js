@@ -69,7 +69,7 @@ export function Tasks({isSidebarShrunk, data, projectClient, timeStart, timeEnd,
         const task = getTaskById(data, id)
         
         const newEndTime = calculateEndDate(dateTime, new Date(task.timeInterval.end), new Date(task.timeInterval.start))
-        dispatch(updateTimeEntry({start: dateTime.toISOString().split('.')[0] + 'Z', end: newEndTime.toISOString().split('.')[0] + 'Z', id: id}))
+        dispatch(updateTimeEntry({description: task.description, start: dateTime.toISOString().split('.')[0] + 'Z', end: newEndTime.toISOString().split('.')[0] + 'Z', id: id}))
     }
 
     function handleDuplicateTask(id){
