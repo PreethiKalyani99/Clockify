@@ -1,5 +1,5 @@
 import { formatTime } from "../utils/formatTime"
-import { AddProject } from "./AddProject"
+import { CreateNewProject } from "./CreateNewProject"
 
 export function Timer(props){
     const totalTime = formatTime(props.elapsedTime)
@@ -14,7 +14,7 @@ export function Timer(props){
                     onChange={props.onNameChange}
                     value={props.taskName}
                     ></input>
-                <AddProject
+                <CreateNewProject
                     projectClient={props.projectClient}
                     id={props.uniqueId}
                     project={props.project}

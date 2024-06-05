@@ -1,13 +1,12 @@
 import React, {useState, useEffect} from "react";
 import { useDispatch } from "react-redux";
 import DatePicker from "react-datepicker";
-import { AddProject } from "./AddProject";
+import { CreateNewProject } from "./CreateNewProject";
 import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import "react-datepicker/dist/react-datepicker.css";
 import { updateTimer, addProjectClient } from "../redux/ClockifySlice";
 import { updateTimeEntry } from "../redux/clockifyThunk";
-import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import useClickOutside from "../utils/useClickOutside";
 import { calculateDays } from "../utils/calculateDays";
 import { parseISODuration } from "../utils/parseISODuration";
@@ -34,24 +33,7 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
         }
     }
 
-    function updateDurationIfNeeded() {
-        const {hours, minutes} = calculateTimeDifference(new Date(task.timeInterval.start), new Date(task.timeInterval.end))
-        const timeParts = parseISODuration(task.timeInterval.duration).split(':')
-        const totalTimeDuration = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${timeParts[2]}`
-        const timeDuration = (hours <= 999) ? totalTimeDuration : parseISODuration(task.timeInterval.duration)
-        console.log(timeDuration, totalDuration, "time duration total durationn")
-        if (timeDuration !== totalDuration) {
-            dispatch(updateTimeEntry({
-                start: task.timeInterval.start,
-                end: task.timeInterval.end,
-                id: task.id
-            }))
-        }
-    }
-
     useEffect(() => {
-        // console.log("inside useeffect")
-        // console.log(timeStart, task.timeInterval.start, "start times-----------------", startDateTime)
         if(getFormattedTime(timeStart) !== startDateTime || getFormattedTime(timeEnd) !== endDateTime || parseISODuration(task.timeInterval.duration) !== totalDuration || taskDescription !== task.description){
             setStartDateTime(getFormattedTime(timeStart))
             setEndDateTime(getFormattedTime(timeEnd))
@@ -59,7 +41,6 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
             setTaskDescription(task.description)
         }
         updateEndDateIfNeeded()
-        // updateDurationIfNeeded()
     }, [task.timeInterval.start, task.timeInterval.end, task.timeInterval.duration, task.description])
 
     const actionItem = useClickOutside(() => {
@@ -75,7 +56,7 @@ export function Task({task, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, 
                 onChange={(e) => setTaskDescription(e.target.value)}
                 onBlur={() => onTaskBlur(taskDescription, task.id)}
             ></input>
-            <AddProject
+            <CreateNewProject
                 projectClient={projectClient}
                 project= {projectClient[task.id]?.project || ''}
                 client={projectClient[task.id]?.client || ''}

@@ -1,5 +1,5 @@
 import React from "react";
-import { AddProject } from "./AddProject";
+import { CreateNewProject } from "./CreateNewProject";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getFormattedDate } from "../utils/getFormattedDate";
@@ -26,7 +26,7 @@ export function AddTask(props) {
                     value={props.taskDescription}
                     onKeyDown={handleEnter}
                 ></input>
-                <AddProject
+                <CreateNewProject
                     projectClient={props.projectClient}
                     id={props.uniqueId}
                     project=''
