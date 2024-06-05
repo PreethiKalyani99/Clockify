@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { AUTH_TOKEN, WORKSPACE_ID, USER_ID } from "../config";
+import { AUTH_TOKEN, USER_ID, WORKSPACE_ID } from "../config";
 
 export const getUserTimeEntries = createAsyncThunk("getUserTimeEntries", async () => {
     const response = await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/user/${USER_ID}/time-entries`, {
@@ -14,8 +14,7 @@ export const getUserTimeEntries = createAsyncThunk("getUserTimeEntries", async (
         throw new Error('Failed to get time entries')
     }
 
-    const data = await response.json();
-    return data
+    return await response.json()
 })
 
 export const createTimeEntry = createAsyncThunk("createTimeEntry", async (timeEntryData) => {
@@ -32,8 +31,7 @@ export const createTimeEntry = createAsyncThunk("createTimeEntry", async (timeEn
         throw new Error('Failed to create time entry')
     }
 
-    const data = await response.json();
-    return data
+    return await response.json()
 })
 
 export const updateTimeEntry = createAsyncThunk("updateTimeEntry", async ({id, ...timeEntryData}) => {
@@ -45,12 +43,12 @@ export const updateTimeEntry = createAsyncThunk("updateTimeEntry", async ({id, .
         },
         body: JSON.stringify(timeEntryData)
     })
+    console.log('after await')
     if (!response.ok) {
         throw new Error('Failed to update time entry')
     }
 
-    const data = await response.json();
-    return data
+    return await response.json()
 })
 
 export const deleteTimeEntry = createAsyncThunk("deleteTimeEntry", async ({id}) => {
@@ -76,6 +74,5 @@ export const duplicateTimeEntry = createAsyncThunk("duplicateTimeEntry", async (
         throw new Error('Failed to update time entry')
     }
 
-    const data = await response.json();
-    return data
+    return await response.json()
 })

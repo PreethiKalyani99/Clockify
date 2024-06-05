@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { Task } from "./Task";
 import { updateUniqueId } from "../redux/ClockifySlice";
-import { updateTimeEntry, deleteTimeEntry, duplicateTimeEntry } from "../redux/clockifyThunk";
+import { deleteTimeEntry, duplicateTimeEntry, updateTimeEntry } from "../redux/clockifyThunk";
 import { getTaskById } from "../utils/getTaskById";
 import { convertToHoursAndMinutes } from "../utils/convertToHoursAndMinutes";
 import { isDurationLimitExceeded } from "../utils/isDurationLimitExceeded";
@@ -10,16 +10,12 @@ import { calculateEndDate } from "../utils/calculateEndDate";
 import { calculateEndTime } from "../utils/calculateEndTime";
 import { groupTasksByWeek } from "../utils/groupTasksByWeek";
 import { addTotalTime } from "../utils/addTotalTime";
+import { formatDate } from "../utils/formatTime";
 
 export function Tasks({isSidebarShrunk, data, projectClient, timeStart, timeEnd, uniqueId, isTimerOn, toggleTimer}){
     const dispatch = useDispatch()
 
     const tasksByWeek = groupTasksByWeek(data)
-
-    function formatDate(dateString) {
-        const date = new Date(dateString)
-        return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-    }
 
     function handleTaskNameBlur(taskDescription, id){
         const task = getTaskById(data, id)
@@ -28,7 +24,7 @@ export function Tasks({isSidebarShrunk, data, projectClient, timeStart, timeEnd,
 
     function handleStartTimeBlur(e, id, endTime){
         const task = getTaskById(data, id)
-        
+
         const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
         const newStart = new Date(task.timeInterval.start)
         newStart.setHours(validatedHour, validatedMins)
@@ -67,7 +63,7 @@ export function Tasks({isSidebarShrunk, data, projectClient, timeStart, timeEnd,
 
     function handleDateChange(dateTime, id){
         const task = getTaskById(data, id)
-        
+
         const newEndTime = calculateEndDate(dateTime, new Date(task.timeInterval.end), new Date(task.timeInterval.start))
         dispatch(updateTimeEntry({description: task.description, start: dateTime.toISOString().split('.')[0] + 'Z', end: newEndTime.toISOString().split('.')[0] + 'Z', id: id}))
     }

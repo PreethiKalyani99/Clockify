@@ -1,41 +1,39 @@
 import { getFormattedDate } from "./getFormattedDate"
 
+export function splitToDateComponents(taskDate) {
+    const date = taskDate.getDate()
+    const year = taskDate.getFullYear()
+    const month = taskDate.getMonth() + 1
+    return {date, year, month};
+}
+
 export function groupTasksByWeek(tasks){
     let tasksByWeek = {}
     tasks && tasks.forEach(task => {
         const date = getFormattedDate(new Date(task.timeInterval.start))
         let taskDate = new Date(task.timeInterval.start)
 
-        let taskDay = taskDate.getDate()
-        let taskYear = taskDate.getFullYear()
-        let taskMonth = taskDate.getMonth() + 1
+        const { date: taskStartDate, year: taskYear, month: taskMonth} = splitToDateComponents(taskDate);
 
         let first = taskDate.getDate() - taskDate.getDay()
         let last = first + 6
 
-        let weekStartDate = new Date(taskDate.setDate(first))
-        let weekEndDate = new Date(taskDate.setDate(last))
+        const { date: weekStartDate, year: weekStartYear, month: weekStartMonth} = splitToDateComponents(new Date(taskDate.setDate(first)));
 
-        let startDate = weekStartDate.getDate() 
-        let startMonth = weekStartDate.getMonth() + 1
-        let startYear = weekStartDate.getFullYear()
+        let { date: weekEndDate, year: weekEndYear, month: weekEndMonth} = splitToDateComponents(new Date(taskDate.setDate(last)));
 
-        let endDate = weekEndDate.getDate()
-        let endMonth = weekEndDate.getMonth() + 1 
-        let endYear = weekEndDate.getFullYear() 
-
-        if((endMonth === 12 && taskMonth < endMonth) || (taskDay < startDate && taskMonth > endMonth)){
-            endMonth = taskMonth
-            if(taskYear > endYear){
-                endYear += 1
+        if((weekEndMonth === 12 && taskMonth < weekEndMonth) || (taskStartDate < weekStartDate && taskMonth > weekEndMonth)){
+            if(taskYear > weekEndYear){
+                weekEndMonth = taskMonth
+                weekEndYear += 1
             }
         }
         else{
-            endYear = weekEndDate.getFullYear()
-            endMonth = weekEndDate.getMonth() + 1
+            weekEndYear = new Date(taskDate.setDate(last)).getFullYear()
+            weekEndMonth = new Date(taskDate.setDate(last)).getMonth() + 1
         }
 
-        let weekRange = `${startYear}-${startMonth}-${startDate} to ${endYear}-${endMonth}-${endDate}`
+        let weekRange = `${weekStartYear}-${weekStartMonth}-${weekStartDate} to ${weekEndYear}-${weekEndMonth}-${weekEndDate}`
 
         let found = false
         for (const range in tasksByWeek) {
