@@ -14,7 +14,8 @@ import {
 } from "../redux/ClockifySlice";
 import {
     createTimeEntry,
-    getUserTimeEntries
+    getUserTimeEntries,
+    getProjects
 } from "../redux/clockifyThunk"
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import { calculateEndDate } from "../utils/calculateEndDate";
@@ -27,7 +28,7 @@ import { formatTime } from "../utils/formatTime";
 import useClickOutside from "../utils/useClickOutside";
 
 export function TimeTracker(props){
-    const {projectClient , uniqueId, isModalOpen, currentTask, data} = useSelector(state => state.clockify)
+    const {projectClient , uniqueId, isModalOpen, currentTask, data, projects} = useSelector(state => state.clockify)
     const {startTime, endTime, duration, taskName, project, client} = currentTask
 
     const timeStart = new Date(startTime)
@@ -39,6 +40,7 @@ export function TimeTracker(props){
     const [isTimerOn, setIsTimerOn] = useState(false)
     const [elapsedTime, setElapsedTime] = useState(0)
     const [showActionItems, setShowActionItems] = useState(false)
+    const [showProjects, setShowProjects] = useState(false)
 
     const dispatch = useDispatch()
     const intervalIdRef = useRef()
@@ -46,6 +48,7 @@ export function TimeTracker(props){
 
     useEffect(() => {
         dispatch(getUserTimeEntries())
+        dispatch(getProjects())
     }, [])
     
     useEffect(() => {
@@ -70,7 +73,6 @@ export function TimeTracker(props){
             dispatch(updateEndTime(date.toString()))
         }
     }
-
     function updateDurationIfNeeded() {
         const {hours, minutes} = calculateTimeDifference(timeStart, timeEnd)
         const timeParts = duration.split(':')
@@ -95,6 +97,10 @@ export function TimeTracker(props){
 
     const toggleActionItem = () => {
         setShowActionItems(!showActionItems)
+    }
+
+    const toggleProject = () => {
+        setShowProjects(!showProjects)
     }
 
     const actionItem = useClickOutside(() => {
@@ -213,6 +219,9 @@ export function TimeTracker(props){
                 <AddTask
                     isSidebarShrunk={props.isSidebarShrunk}
                     projectClient={projectClient}
+                    onToggle={toggleProject}
+                    showProjects={showProjects}
+                    projects={projects}
                     uniqueId={uniqueId}
                     timeStart={new Date(startTime)}
                     timeEnd={new Date(endTime)}

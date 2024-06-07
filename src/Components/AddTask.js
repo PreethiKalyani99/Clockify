@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getFormattedDate } from "../utils/getFormattedDate";
 import { calculateDays } from "../utils/calculateDays";
+import { Project } from "./Project";
 
 export function AddTask(props) {
     const days = calculateDays(props.timeStart, props.timeEnd)
@@ -13,7 +14,6 @@ export function AddTask(props) {
             props.onAddTask()
         }
     }
-
     return (
         <>
             <div className={props.isModalOpen ? "add-task-container" : "add-task-container zIndex"} data-testid="container">
@@ -26,12 +26,14 @@ export function AddTask(props) {
                     value={props.taskDescription}
                     onKeyDown={handleEnter}
                 ></input>
-                <CreateNewProject
+                <button onClick={props.onToggle}>Project</button>
+                {props.showProjects && <Project projects={props.projects}/>}
+                {/* <CreateNewProject
                     projectClient={props.projectClient}
                     id={props.uniqueId}
                     project=''
                     client=''
-                />
+                /> */}
                 <input
                     data-testid="start-time"
                     type="text"

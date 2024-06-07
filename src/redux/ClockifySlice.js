@@ -4,7 +4,8 @@ import {
     createTimeEntry,
     updateTimeEntry,
     duplicateTimeEntry,
-    deleteTimeEntry
+    deleteTimeEntry,
+    getProjects
 } from "./clockifyThunk";
 
 export const ClockifySlice = createSlice({
@@ -16,6 +17,7 @@ export const ClockifySlice = createSlice({
         uniqueId: JSON.parse(localStorage.getItem('uniqueId')) || 0,
         tasksByWeek: {},
         isModalOpen: false,
+        projects: [],
         currentTask: {
             startTime: new Date().toString(),
             endTime: new Date().toString(),
@@ -68,21 +70,21 @@ export const ClockifySlice = createSlice({
         builder.addCase(getUserTimeEntries.pending, (state) => {
             state.isLoading = true
         })
-        builder.addCase(getUserTimeEntries.fulfilled, (state, action) => {
+        .addCase(getUserTimeEntries.fulfilled, (state, action) => {
             state.isLoading = false
             state.data = action.payload
         })
-        builder.addCase(createTimeEntry.pending, (state) => {
+        .addCase(createTimeEntry.pending, (state) => {
             state.isLoading = true
         })
-        builder.addCase(createTimeEntry.fulfilled, (state, action) => {
+        .addCase(createTimeEntry.fulfilled, (state, action) => {
             state.isLoading = false
             state.data = [action.payload, ...state.data]
         })
-        builder.addCase(updateTimeEntry.pending, (state) => {
+        .addCase(updateTimeEntry.pending, (state) => {
             state.isLoading = true
         })
-        builder.addCase(updateTimeEntry.fulfilled, (state, action) => {
+        .addCase(updateTimeEntry.fulfilled, (state, action) => {
             state.isLoading = false
             const id = action.payload.id
             const timeEntry = state.data.find(entry => entry.id === id)
@@ -90,20 +92,23 @@ export const ClockifySlice = createSlice({
                 Object.assign(timeEntry, action.payload)
             }
         })
-        builder.addCase(duplicateTimeEntry.pending, (state) => {
+        .addCase(duplicateTimeEntry.pending, (state) => {
             state.isLoading = true
         })
-        builder.addCase(duplicateTimeEntry.fulfilled, (state, action) => {
+        .addCase(duplicateTimeEntry.fulfilled, (state, action) => {
             state.isLoading = false
             state.data = [action.payload, ...state.data]
         })
-        builder.addCase(deleteTimeEntry.pending, (state) => {
+        .addCase(deleteTimeEntry.pending, (state) => {
             state.isLoading = true
         })
-        builder.addCase(deleteTimeEntry.fulfilled, (state, action) => {
+        .addCase(deleteTimeEntry.fulfilled, (state, action) => {
             const id = action.payload
             const newData = state.data.filter(entry => entry.id !== id)
             state.data = newData
+        })
+        .addCase(getProjects.fulfilled, (state, action) => {
+            state.projects = action.payload
         })
     }
 })
