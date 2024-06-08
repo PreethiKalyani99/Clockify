@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import { Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { addProjectClient, setIsModalOpen, updateTask } from "../redux/ClockifySlice";
+import { createProject } from "../redux/clockifyThunk";
 import Select from 'react-select';
 
 export function CreateNewProject(props){
@@ -33,16 +34,8 @@ export function CreateNewProject(props){
         setSelectedValue(value)
     }
 
-    function createProject(){
-      dispatch(addProjectClient({id:props.id, project: inputvalues.project, client: inputvalues.client}))
-      dispatch(updateTask({
-        id: props.id, 
-        project: {
-            projectId: props.id, 
-            projectName: inputvalues.project, 
-            clientId: props.id, 
-            client: inputvalues.client
-        }}))
+    function addProject(){
+      dispatch(createProject({name: inputvalues.project}))
       setInputvalues({
         project: '',
         client: ''
@@ -94,7 +87,7 @@ export function CreateNewProject(props){
                 </ModalBody>
                 <ModalFooter>
                     <Button variant="secondary" onClick={handleClose}>Close</Button>
-                    <Button variant="primary" onClick={createProject}>CREATE</Button>
+                    <Button variant="primary" onClick={addProject}>CREATE</Button>
                 </ModalFooter>
             </Modal>
         </>

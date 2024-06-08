@@ -106,3 +106,19 @@ export const getClients = createAsyncThunk("getClients", async() => {
 
     return await response.json()
 })
+
+export const createProject = createAsyncThunk("createProject", async(data) => {
+    const response = await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/projects`, {
+        method: "POST",
+        headers: {
+            'X-Api-Key':AUTH_TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    if (!response.ok) {
+        throw new Error('Failed to create project from workspace')
+    }
+
+    return await response.json() 
+})

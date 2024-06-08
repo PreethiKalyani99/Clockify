@@ -23,7 +23,7 @@ export function Timer(props){
                 {props.isTimerOn && <input disabled className="time" value={totalTime}></input>}
                 <button onClick={props.onTimerStop}><i className="bi bi-pause"></i></button>
                 <button className="three-dots" onClick={props.onToggle}><i className="bi bi-three-dots-vertical"></i></button>
-                <div className={props.showActionItems ? "action-items-container": "hide"} ref={props.actionItem}>
+                <div className={props.showActionItems ? "action-items-container": "hide"} >
                 <ul>
                     <li>
                     <button onClick={props.onDiscard}>Discard</button>

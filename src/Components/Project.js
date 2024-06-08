@@ -9,11 +9,14 @@ function groupProjectsAndClients(projects) {
     projects.forEach(item => {
         let clientName = item.clientName || "No Client"
         if (!clientsAndProjects[clientName]) {
-            clientsAndProjects[clientName] = []
+            clientsAndProjects[clientName] = { projects: [], projectKeys: new Set() }
         }
-        
-        if (!clientsAndProjects[clientName].includes(item.name)) {
-            clientsAndProjects[clientName].push(item.name)
+
+        let projectKey = `${item.name}-${item.id}`
+
+        if (!clientsAndProjects[clientName].projectKeys.has(projectKey)) {
+            clientsAndProjects[clientName].projects.push({ name: item.name, id: item.id })
+            clientsAndProjects[clientName].projectKeys.add(projectKey)
         }
     })
     return clientsAndProjects
@@ -25,24 +28,19 @@ function customOptions(clientsAndProjects){
     }
     return Object.keys(clientsAndProjects).map(clientName => ({
         label: clientName,
-        options: clientsAndProjects[clientName].map(projectName => ({
-            value: projectName,
-            label: projectName
+        options: clientsAndProjects[clientName].projects.map(project => ({
+            value: project.id,
+            label: project.name
         }))
     }))
 }
 
 export function Project(props){
-    const [selected, setSelected] = useState('')
     const [showPopup, setShowPopup] = useState(false)
     const projectsAndClients = groupProjectsAndClients(props.projects)
     const options = customOptions(projectsAndClients)
     const [isOpen, setIsOpen] = useState(false)
     const dispatch = useDispatch()
-
-    function handleSelect(value){
-        setSelected(value)
-    }
 
     function componentMenuList(prop){
         return (
@@ -74,10 +72,9 @@ export function Project(props){
         <>
             <Select
                 className="react-selectcomponent"
-                onChange={handleSelect}
+                onChange={props.onSelect}
                 options={options}
                 isSearchable
-                isClearable
                 placeholder="Search project"
                 menuIsOpen
                 components={{ MenuList: componentMenuList }}

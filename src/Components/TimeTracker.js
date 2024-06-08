@@ -37,11 +37,13 @@ export function TimeTracker(props){
 
     const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart))
     const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd))
+    const [selected, setSelected] = useState({value: '', label: ''})
     const [totalDuration, setDuration] = useState(duration)
     const [isTimerOn, setIsTimerOn] = useState(false)
     const [elapsedTime, setElapsedTime] = useState(0)
     const [showActionItems, setShowActionItems] = useState(false)
     const [showProjects, setShowProjects] = useState(false)
+    const [selectedProject, setSelectedProject] = useState('Project')
 
     const dispatch = useDispatch()
     const intervalIdRef = useRef()
@@ -53,6 +55,18 @@ export function TimeTracker(props){
         dispatch(getClients())
     }, [])
     
+    useEffect(() => {
+        if(selected?.value){
+            const selectedProject = projects?.find(project => project.id === selected?.value);
+            if (selectedProject) {
+                setSelectedProject(`${selectedProject.name}${(selectedProject.name && selectedProject.clientName) && ' - '}${selectedProject.clientName}`);
+            }
+        }
+        else{
+            setSelectedProject('Project')
+        }
+    }, [selected?.value, projects])
+
     useEffect(() => {
         if(isTimerOn){
             intervalIdRef.current = setInterval(() => {
@@ -109,13 +123,18 @@ export function TimeTracker(props){
         setShowActionItems(false)
     })
 
-    const projectDropdowm = useClickOutside(() => {
-        setShowProjects(false)
-    })
+    // const projectDropdowm = useClickOutside(() => {
+    //     setShowProjects(false)
+    // })
     
     const handleDiscard = () => {
         setIsTimerOn(false)
         setShowActionItems(false)
+    }
+
+    const handleSelect = (value) => {
+        setSelected(value)
+        setShowProjects(false)
     }
 
     const handleStart = () => {
@@ -184,7 +203,7 @@ export function TimeTracker(props){
             setDuration(duration)
         }
     }
-
+    
     const toggleTimer = () => { 
         setIsTimerOn(true)
     }
@@ -194,8 +213,10 @@ export function TimeTracker(props){
                 description: taskName,
                 start: new Date(timeStart).toISOString().split('.')[0] + 'Z',
                 end:  new Date(timeEnd).toISOString().split('.')[0] + 'Z',
+                projectId: selected.value
             }))
             dispatch(resetState())
+            setSelected({value: '', label: ''})
         }
         else{
             alert('Please enter task description')
@@ -226,8 +247,12 @@ export function TimeTracker(props){
                     isSidebarShrunk={props.isSidebarShrunk}
                     projectClient={projectClient}
                     onToggle={toggleProject}
+                    selectedProject={selectedProject}
+                    selectedValue={selected?.value}
+                    onSelect={handleSelect}
                     showProjects={showProjects}
-                    projectDropdowm={projectDropdowm}
+                    setShowProjects={setShowProjects}
+                    // projectDropdowm={projectDropdowm}
                     projects={projects}
                     clients={clients}
                     uniqueId={uniqueId}

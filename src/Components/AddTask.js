@@ -25,7 +25,7 @@ export function AddTask(props) {
                     value={props.taskDescription}
                     onKeyDown={handleEnter}
                 ></input>
-                <button onClick={props.onToggle}>Project</button>
+                <button onClick={props.onToggle}>{props.selectedProject}</button>
                 <input
                     data-testid="start-time"
                     type="text"
@@ -70,9 +70,11 @@ export function AddTask(props) {
                     Add
                 </button>
             </div>
-            <div className="project-dropdown" ref={props.projectDropdowm}>
+            <div className= {props.showProjects ? "project-dropdown" : ''} ref={props.projectDropdowm}>
                 {props.showProjects && 
                     <Project 
+                        onSelect={props.onSelect}
+                        selectedValue={props.selectedValue}
                         projects={props.projects} 
                         clients={props.clients}
                         projectClient={props.projectClient}
