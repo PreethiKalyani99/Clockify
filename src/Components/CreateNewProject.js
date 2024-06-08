@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from "react";
+import Creatable from 'react-select/creatable';
 import { Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { addProjectClient, setIsModalOpen, updateTask } from "../redux/ClockifySlice";
-import { createProject } from "../redux/clockifyThunk";
-import Select from 'react-select';
+import { setIsModalOpen } from "../redux/ClockifySlice";
+import { createClient, createProject } from "../redux/clockifyThunk";
 
 export function CreateNewProject(props){
     const [inputvalues, setInputvalues] = useState({
@@ -34,12 +34,22 @@ export function CreateNewProject(props){
         setSelectedValue(value)
     }
 
+    function handleCreateOption(input){
+        dispatch(createClient({name: input}))
+        setSelectedValue(input)
+    }
+
     function addProject(){
-      dispatch(createProject({name: inputvalues.project}))
-      setInputvalues({
-        project: '',
-        client: ''
-      })
+        const clientvalue = typeof selectedValue === 'object' ? selectedValue.label : selectedValue
+        const clientInfo = props?.clients?.find(item => item.name === clientvalue)
+        dispatch(createProject({
+            name: inputvalues.project,
+            clientId: clientInfo.id
+        }))
+        setInputvalues({
+            project: '',
+            client: ''
+        })
       props.setIsOpen(false)
       dispatch(setIsModalOpen(false))
       props.setShowPopup(false)
@@ -72,16 +82,18 @@ export function CreateNewProject(props){
                         value={inputvalues.project} 
                         onChange={handleInputChange}
                     ></input>
-                     <Select
+                     <Creatable
                         className="react-selectcomponent"
                         onChange={handleSelect}
+                        onCreateOption={handleCreateOption}
                         options={props?.clients?.map(client => {
                             return ({
                                 label: client.name,
-                                value: client.name
+                                value: client.id
                             })
                         })}
                         isSearchable
+                        value={typeof selectedValue === 'object' ? selectedValue.value : selectedValue}
                         placeholder="Select client"
                     />
                 </ModalBody>

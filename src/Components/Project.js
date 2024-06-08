@@ -83,6 +83,7 @@ export function Project(props){
                 <CreateNewProject
                     isOpen={isOpen}
                     setIsOpen={setIsOpen}
+                    projects={props.projects}
                     clients={props.clients}
                     projectClient={props.projectClient}
                     id={props.id}

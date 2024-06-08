@@ -7,7 +7,8 @@ import {
     deleteTimeEntry,
     getProjects,
     getClients,
-    createProject
+    createProject,
+    createClient
 } from "./clockifyThunk";
 
 export const ClockifySlice = createSlice({
@@ -117,7 +118,10 @@ export const ClockifySlice = createSlice({
             state.clients = action.payload
         })
         .addCase(createProject.fulfilled, (state, action) => {
-            state.projects = [action.payload, ...state.projects]
+            state.projects = [...state.projects, action.payload]
+        })
+        .addCase(createClient.fulfilled, (state, action) => {
+            state.clients = [action.payload, ...state.clients]
         })
     }
 })

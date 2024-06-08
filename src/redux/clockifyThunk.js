@@ -43,7 +43,6 @@ export const updateTimeEntry = createAsyncThunk("updateTimeEntry", async ({id, .
         },
         body: JSON.stringify(timeEntryData)
     })
-    console.log('after await')
     if (!response.ok) {
         throw new Error('Failed to update time entry')
     }
@@ -117,7 +116,24 @@ export const createProject = createAsyncThunk("createProject", async(data) => {
         body: JSON.stringify(data)
     })
     if (!response.ok) {
-        throw new Error('Failed to create project from workspace')
+        throw new Error('Failed to create project in workspace')
+    }
+
+    return await response.json() 
+})
+
+
+export const createClient = createAsyncThunk("createClient", async(data) => {
+    const response = await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/clients`, {
+        method: "POST",
+        headers: {
+            'X-Api-Key':AUTH_TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    if (!response.ok) {
+        throw new Error('Failed to create client in workspace')
     }
 
     return await response.json() 
