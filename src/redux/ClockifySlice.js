@@ -5,7 +5,8 @@ import {
     updateTimeEntry,
     duplicateTimeEntry,
     deleteTimeEntry,
-    getProjects
+    getProjects,
+    getClients
 } from "./clockifyThunk";
 
 export const ClockifySlice = createSlice({
@@ -18,6 +19,7 @@ export const ClockifySlice = createSlice({
         tasksByWeek: {},
         isModalOpen: false,
         projects: [],
+        clients: [],
         currentTask: {
             startTime: new Date().toString(),
             endTime: new Date().toString(),
@@ -109,6 +111,9 @@ export const ClockifySlice = createSlice({
         })
         .addCase(getProjects.fulfilled, (state, action) => {
             state.projects = action.payload
+        })
+        .addCase(getClients.fulfilled, (state, action) => {
+            state.clients = action.payload
         })
     }
 })

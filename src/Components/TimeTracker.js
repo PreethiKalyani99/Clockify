@@ -15,7 +15,8 @@ import {
 import {
     createTimeEntry,
     getUserTimeEntries,
-    getProjects
+    getProjects,
+    getClients
 } from "../redux/clockifyThunk"
 import { calculateTimeDifference } from "../utils/calculateTimeDifference";
 import { calculateEndDate } from "../utils/calculateEndDate";
@@ -28,7 +29,7 @@ import { formatTime } from "../utils/formatTime";
 import useClickOutside from "../utils/useClickOutside";
 
 export function TimeTracker(props){
-    const {projectClient , uniqueId, isModalOpen, currentTask, data, projects} = useSelector(state => state.clockify)
+    const {projectClient , uniqueId, isModalOpen, currentTask, data, projects, clients} = useSelector(state => state.clockify)
     const {startTime, endTime, duration, taskName, project, client} = currentTask
 
     const timeStart = new Date(startTime)
@@ -49,6 +50,7 @@ export function TimeTracker(props){
     useEffect(() => {
         dispatch(getUserTimeEntries())
         dispatch(getProjects())
+        dispatch(getClients())
     }, [])
     
     useEffect(() => {
@@ -222,6 +224,7 @@ export function TimeTracker(props){
                     onToggle={toggleProject}
                     showProjects={showProjects}
                     projects={projects}
+                    clients={clients}
                     uniqueId={uniqueId}
                     timeStart={new Date(startTime)}
                     timeEnd={new Date(endTime)}

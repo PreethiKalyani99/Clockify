@@ -91,3 +91,18 @@ export const getProjects = createAsyncThunk("getProjects", async() => {
 
     return await response.json()
 })
+
+export const getClients = createAsyncThunk("getClients", async() => {
+    const response = await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/clients`, {
+        method: "GET",
+        headers: {
+            'X-Api-Key':AUTH_TOKEN,
+            'Content-Type': 'application/json'
+        }
+    })
+    if (!response.ok) {
+        throw new Error('Failed to get clients from workspace')
+    }
+
+    return await response.json()
+})

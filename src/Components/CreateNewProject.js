@@ -2,13 +2,14 @@ import React, {useState, useEffect} from "react";
 import { Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { addProjectClient, setIsModalOpen, updateTask } from "../redux/ClockifySlice";
+import Select from 'react-select';
 
 export function CreateNewProject(props){
-    const [isOpen, setIsOpen] = useState(false)
     const [inputvalues, setInputvalues] = useState({
         project: props.project,
         client: props.client
     })
+    const [selectedValue, setSelectedValue] = useState('')
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -19,14 +20,19 @@ export function CreateNewProject(props){
     }, [props.project, props.client])
 
     function handleClose(){
-        setIsOpen(false)
+        props.setIsOpen(false)
         dispatch(setIsModalOpen(false))
+        props.setShowPopup(false)
     }
 
     function handleInputChange(e){
         setInputvalues({...inputvalues, [e.target.name]: e.target.value})
     }
-    
+
+    function handleSelect(value){
+        setSelectedValue(value)
+    }
+
     function createProject(){
       dispatch(addProjectClient({id:props.id, project: inputvalues.project, client: inputvalues.client}))
       dispatch(updateTask({
@@ -41,12 +47,13 @@ export function CreateNewProject(props){
         project: '',
         client: ''
       })
-      setIsOpen(false)
+      props.setIsOpen(false)
       dispatch(setIsModalOpen(false))
+      props.setShowPopup(false)
     }
     return (
         <>
-            <button
+            {/* <button
                 data-testid="add-project"
                 onClick={() => {
                 setIsOpen(!isOpen)
@@ -56,8 +63,8 @@ export function CreateNewProject(props){
                     `${props.projectClient?.[props.id]?.project || ''}${props.projectClient?.[props.id]?.client && props.projectClient?.[props.id]?.project ? ' - ' : ''} ${props.projectClient[props.id].client || ''}` 
                     : 'Project'
                 }
-            </button>
-            <Modal show={isOpen} onHide={handleClose}>
+            </button> */}
+            <Modal show={props.isOpen} onHide={handleClose}>
                 <ModalHeader closeButton>
                     <ModalTitle>
                         Create New Project
@@ -72,14 +79,18 @@ export function CreateNewProject(props){
                         value={inputvalues.project} 
                         onChange={handleInputChange}
                     ></input>
-                    <input 
-                        type="text" 
-                        placeholder="Enter Client" 
-                        name="client"
-                        required
-                        value={inputvalues.client} 
-                        onChange={handleInputChange}
-                    ></input>
+                     <Select
+                        className="react-selectcomponent"
+                        onChange={handleSelect}
+                        options={props?.clients?.map(client => {
+                            return ({
+                                label: client.name,
+                                value: client.name
+                            })
+                        })}
+                        isSearchable
+                        placeholder="Select client"
+                    />
                 </ModalBody>
                 <ModalFooter>
                     <Button variant="secondary" onClick={handleClose}>Close</Button>
