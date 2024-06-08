@@ -172,3 +172,13 @@ ul{
 .date-picker{
     z-index: 9999 !important;
 }
+
+.react-selectcomponent{
+    width: 300px;
+}
+
+.project-dropdown{
+    position: fixed;
+    z-index: 999 !important;
+    margin-left: 40%;
+}

@@ -79,6 +79,7 @@ export function Project(props){
                 isSearchable
                 isClearable
                 placeholder="Search project"
+                menuIsOpen
                 components={{ MenuList: componentMenuList }}
             />
             {showPopup && 

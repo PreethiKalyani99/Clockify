@@ -109,6 +109,10 @@ export function TimeTracker(props){
         setShowActionItems(false)
     })
 
+    const projectDropdowm = useClickOutside(() => {
+        setShowProjects(false)
+    })
+    
     const handleDiscard = () => {
         setIsTimerOn(false)
         setShowActionItems(false)
@@ -223,6 +227,7 @@ export function TimeTracker(props){
                     projectClient={projectClient}
                     onToggle={toggleProject}
                     showProjects={showProjects}
+                    projectDropdowm={projectDropdowm}
                     projects={projects}
                     clients={clients}
                     uniqueId={uniqueId}
