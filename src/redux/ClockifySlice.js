@@ -22,6 +22,8 @@ export const ClockifySlice = createSlice({
         isModalOpen: false,
         projects: [],
         clients: [],
+        selectedProject: {value: '', label: 'Project'},
+        selectedClient: {value: '', label: ''},
         currentTask: {
             startTime: new Date().toString(),
             endTime: new Date().toString(),
@@ -68,6 +70,12 @@ export const ClockifySlice = createSlice({
             state.currentTask.taskName = name
             state.currentTask.project = project
             state.currentTask.client = client
+        },
+        updateProjectValue: (state, action) => {
+            state.selectedProject = action.payload
+        },
+        updateClientValue: (state, action) => {
+            state.selectedClient = action.payload
         }
     },
     extraReducers: (builder) => {
@@ -138,6 +146,8 @@ export const {
     updateDuration,
     updateTaskName,
     resetState,
-    updateTimer
+    updateTimer,
+    updateProjectValue,
+    updateClientValue
 } = ClockifySlice.actions
 export default ClockifySlice.reducer

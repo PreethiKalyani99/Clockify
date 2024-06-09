@@ -82,6 +82,9 @@ export function Project(props){
             {showPopup && 
                 <CreateNewProject
                     isOpen={isOpen}
+                    setShowProjects={props.setShowProjects}
+                    selectedProject={props.selectedProject}
+                    selectedClient={props.selectedClient}
                     setIsOpen={setIsOpen}
                     projects={props.projects}
                     clients={props.clients}

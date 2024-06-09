@@ -11,6 +11,8 @@ import {
     updateUniqueId,
     updateTaskName,
     resetState,
+    updateProjectValue,
+    updateClientValue
 } from "../redux/ClockifySlice";
 import {
     createTimeEntry,
@@ -29,7 +31,7 @@ import { formatTime } from "../utils/formatTime";
 import useClickOutside from "../utils/useClickOutside";
 
 export function TimeTracker(props){
-    const {projectClient , uniqueId, isModalOpen, currentTask, data, projects, clients} = useSelector(state => state.clockify)
+    const {projectClient , uniqueId, isModalOpen, currentTask, data, projects, clients, selectedProject, selectedClient} = useSelector(state => state.clockify)
     const {startTime, endTime, duration, taskName, project, client} = currentTask
 
     const timeStart = new Date(startTime)
@@ -37,18 +39,16 @@ export function TimeTracker(props){
 
     const [startDateTime, setStartDateTime] = useState(getFormattedTime(timeStart))
     const [endDateTime, setEndDateTime] = useState(getFormattedTime(timeEnd))
-    const [selected, setSelected] = useState({value: '', label: ''})
     const [totalDuration, setDuration] = useState(duration)
     const [isTimerOn, setIsTimerOn] = useState(false)
     const [elapsedTime, setElapsedTime] = useState(0)
     const [showActionItems, setShowActionItems] = useState(false)
     const [showProjects, setShowProjects] = useState(false)
-    const [selectedProject, setSelectedProject] = useState('Project')
 
     const dispatch = useDispatch()
     const intervalIdRef = useRef()
     const timerStart = Date.now()
-
+    
     useEffect(() => {
         dispatch(getUserTimeEntries())
         dispatch(getProjects())
@@ -56,16 +56,11 @@ export function TimeTracker(props){
     }, [])
     
     useEffect(() => {
-        if(selected?.value){
-            const selectedProject = projects?.find(project => project.id === selected?.value);
-            if (selectedProject) {
-                setSelectedProject(`${selectedProject.name}${(selectedProject.name && selectedProject.clientName) && ' - '}${selectedProject.clientName}`);
-            }
+        const projectValue = projects?.find(project => project.name === selectedProject.label)
+        if(projectValue){
+            dispatch(updateProjectValue({value: projectValue?.id, label: projectValue?.name}))
         }
-        else{
-            setSelectedProject('Project')
-        }
-    }, [selected?.value, projects])
+    }, [projects, dispatch, selectedProject.label])
 
     useEffect(() => {
         if(isTimerOn){
@@ -133,7 +128,7 @@ export function TimeTracker(props){
     }
 
     const handleSelect = (value) => {
-        setSelected(value)
+        dispatch(updateProjectValue(value))
         setShowProjects(false)
     }
 
@@ -207,16 +202,18 @@ export function TimeTracker(props){
     const toggleTimer = () => { 
         setIsTimerOn(true)
     }
+    
     const addTask = () => {
         if(taskName !== ''){
             dispatch(createTimeEntry({
                 description: taskName,
                 start: new Date(timeStart).toISOString().split('.')[0] + 'Z',
                 end:  new Date(timeEnd).toISOString().split('.')[0] + 'Z',
-                projectId: selected.value
+                projectId: selectedProject.value
             }))
             dispatch(resetState())
-            setSelected({value: '', label: ''})
+            dispatch(updateProjectValue({value: '', label: 'Project'}))
+            dispatch(updateClientValue({value: '', label: ''}))
         }
         else{
             alert('Please enter task description')
@@ -248,11 +245,10 @@ export function TimeTracker(props){
                     projectClient={projectClient}
                     onToggle={toggleProject}
                     selectedProject={selectedProject}
-                    selectedValue={selected?.value}
+                    selectedClient={selectedClient}
                     onSelect={handleSelect}
                     showProjects={showProjects}
                     setShowProjects={setShowProjects}
-                    // projectDropdowm={projectDropdowm}
                     projects={projects}
                     clients={clients}
                     uniqueId={uniqueId}
