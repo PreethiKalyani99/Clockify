@@ -6,19 +6,13 @@ import { setIsModalOpen } from "../redux/ClockifySlice";
 import { createClient, createProject } from "../redux/clockifyThunk";
 
 export function CreateNewProject(props){
-    const [inputvalues, setInputvalues] = useState({
-        project: props.project,
-        client: props.client
-    })
+    const [projectInput, setProjectInput] = useState(props.project)
     const [selectedValue, setSelectedValue] = useState('')
     const dispatch = useDispatch()
 
     useEffect(() => {
-        setInputvalues({
-            project: props.project,
-            client: props.client
-        })
-    }, [props.project, props.client])
+        setProjectInput(props.project)
+    }, [props.project])
 
     function handleClose(){
         props.setIsOpen(false)
@@ -27,7 +21,7 @@ export function CreateNewProject(props){
     }
 
     function handleInputChange(e){
-        setInputvalues({...inputvalues, [e.target.name]: e.target.value})
+        setProjectInput(e.target.value)
     }
 
     function handleSelect(value){
@@ -36,24 +30,21 @@ export function CreateNewProject(props){
 
     function handleCreateOption(input){
         dispatch(createClient({name: input}))
-        setSelectedValue(input)
+        setSelectedValue({ label: input, value: input })
     }
 
     function addProject(){
-        const clientvalue = typeof selectedValue === 'object' ? selectedValue.label : selectedValue
-        const clientInfo = props?.clients?.find(item => item.name === clientvalue)
+        const clientInfo = props?.clients?.find(item => item.name === selectedValue.label)
         dispatch(createProject({
-            name: inputvalues.project,
+            name: projectInput,
             clientId: clientInfo.id
         }))
-        setInputvalues({
-            project: '',
-            client: ''
-        })
+        setProjectInput('')
       props.setIsOpen(false)
       dispatch(setIsModalOpen(false))
       props.setShowPopup(false)
     }
+    
     return (
         <>
             {/* <button
@@ -79,7 +70,7 @@ export function CreateNewProject(props){
                         placeholder="Enter Project name" 
                         name="project"
                         required
-                        value={inputvalues.project} 
+                        value={projectInput} 
                         onChange={handleInputChange}
                     ></input>
                      <Creatable
@@ -93,7 +84,7 @@ export function CreateNewProject(props){
                             })
                         })}
                         isSearchable
-                        value={typeof selectedValue === 'object' ? selectedValue.value : selectedValue}
+                        value={selectedValue}
                         placeholder="Select client"
                     />
                 </ModalBody>
