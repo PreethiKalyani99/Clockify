@@ -12,7 +12,7 @@ import { groupTasksByWeek } from "../utils/groupTasksByWeek";
 import { addTotalTime } from "../utils/addTotalTime";
 import { formatDate } from "../utils/formatTime";
 
-export function Tasks({isSidebarShrunk, data, projectClient, timeStart, timeEnd, uniqueId, isTimerOn, toggleTimer}){
+export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, timeStart, timeEnd, uniqueId, isTimerOn, toggleTimer}){
     const dispatch = useDispatch()
 
     const tasksByWeek = groupTasksByWeek(data)
@@ -96,6 +96,8 @@ export function Tasks({isSidebarShrunk, data, projectClient, timeStart, timeEnd,
                                     <Task
                                         key={index}
                                         task={task}
+                                        projects={projects}
+                                        clients={clients}
                                         timeStart={timeStart}
                                         timeEnd={timeEnd}
                                         uniqueId={uniqueId}

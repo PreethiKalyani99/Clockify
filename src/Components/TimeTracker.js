@@ -273,6 +273,8 @@ export function TimeTracker(props){
             <Tasks
                 isSidebarShrunk={props.isSidebarShrunk}
                 data={data}
+                projects={projects}
+                clients={clients}
                 timeStart={new Date(startTime)}
                 timeEnd={new Date(endTime)}
                 projectClient={projectClient}
