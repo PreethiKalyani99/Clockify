@@ -129,6 +129,8 @@ export function TimeTracker(props){
 
     const handleSelect = (value) => {
         dispatch(updateProjectValue(value))
+        const projectInfo = projects?.find(project => project?.name === value?.label)
+        dispatch(updateClientValue({value: projectInfo.clientName, label: projectInfo.clientName}))
         setShowProjects(false)
     }
 
