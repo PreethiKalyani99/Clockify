@@ -29,11 +29,11 @@ export function CreateNewProject(props){
 
     function handleCreateOption(input){
         dispatch(createClient({name: input}))
-        dispatch(updateClientValue({ label: input, value: input }))
+        dispatch(updateClientValue({ label: input, value: '' }))
     }
 
     function addProject(){
-        const clientInfo = props?.clients?.find(item => item.name === props.selectedClient.label)
+        const clientInfo = props?.clients?.find(item => item.id === props.selectedClient.value)
         dispatch(createProject({
             name: projectInput,
             clientId: clientInfo?.id

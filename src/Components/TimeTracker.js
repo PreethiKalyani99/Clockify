@@ -56,9 +56,10 @@ export function TimeTracker(props){
     }, [])
     
     useEffect(() => {
-        const projectValue = projects?.find(project => project.name === selectedProject.label)
+        const projectValue = projects?.find(project => project.id === selectedProject.value)
         if(projectValue){
             dispatch(updateProjectValue({value: projectValue?.id, label: projectValue?.name}))
+            dispatch(updateClientValue({value: projectValue.clientId, label: projectValue.clientName}))
         }
     }, [projects, dispatch, selectedProject.label])
 
@@ -129,8 +130,6 @@ export function TimeTracker(props){
 
     const handleSelect = (value) => {
         dispatch(updateProjectValue(value))
-        const projectInfo = projects?.find(project => project?.name === value?.label)
-        dispatch(updateClientValue({value: projectInfo.clientName, label: projectInfo.clientName}))
         setShowProjects(false)
     }
 
@@ -211,7 +210,7 @@ export function TimeTracker(props){
                 description: taskName,
                 start: new Date(timeStart).toISOString().split('.')[0] + 'Z',
                 end:  new Date(timeEnd).toISOString().split('.')[0] + 'Z',
-                projectId: selectedProject.value
+                projectId: selectedProject.value ? selectedProject.value : null
             }))
             dispatch(resetState())
             dispatch(updateProjectValue({value: '', label: 'Project'}))
