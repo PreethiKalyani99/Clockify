@@ -24,12 +24,20 @@ export function CreateNewProject(props){
     }
 
     function handleSelect(value){
-        dispatch(updateClientValue(value))
+        if(!props.setClientSelected){
+            dispatch(updateClientValue(value))
+            return
+        }
+        props.setClientSelected(value)
     }
 
     function handleCreateOption(input){
         dispatch(createClient({name: input}))
-        dispatch(updateClientValue({ label: input, value: '' }))
+        if(!props.setClientSelected){
+            dispatch(updateClientValue({ label: input, value: '' }))
+            return
+        }
+        props.setClientSelected({ label: input, value: '' })
     }
 
     function addProject(){
@@ -38,7 +46,12 @@ export function CreateNewProject(props){
             name: projectInput,
             clientId: clientInfo?.id
         }))
-        dispatch(updateProjectValue({value: '', label: projectInput}))
+        if(!props.setProjectSelected){
+            dispatch(updateProjectValue({value: '', label: projectInput}))
+        }
+        else{
+            props.setProjectSelected({value: '', label: projectInput})
+        }
         setProjectInput('')
         props.setIsOpen(false)
         dispatch(setIsModalOpen(false))

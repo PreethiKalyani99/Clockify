@@ -77,7 +77,6 @@ export function AddTask(props) {
                         setShowProjects={props.setShowProjects}
                         selectedProject={props.selectedProject}
                         selectedClient={props.selectedClient}
-                        selectedValue={props.selectedValue}
                         projects={props.projects} 
                         clients={props.clients}
                         projectClient={props.projectClient}

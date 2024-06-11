@@ -5,12 +5,13 @@ import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import "react-datepicker/dist/react-datepicker.css";
 import { updateTimer, addProjectClient } from "../redux/ClockifySlice";
-import { updateTimeEntry } from "../redux/clockifyThunk";
+import { updateProjectClient, updateTimeEntry } from "../redux/clockifyThunk";
 import useClickOutside from "../utils/useClickOutside";
 import { calculateDays } from "../utils/calculateDays";
 import { parseISODuration } from "../utils/parseISODuration";
+import { Project } from "./Project";
 
-export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, projectClient, uniqueId, toggleTimer}){
+export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, onUpdate, uniqueId, toggleTimer, projectClientInfo}){
     const dispatch = useDispatch()
     const timeStart = new Date(task.timeInterval.start)
     const timeEnd = new Date(task.timeInterval.end)
@@ -19,7 +20,11 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
     const [totalDuration, setDuration] = useState(parseISODuration(task.timeInterval.duration || '00:00:00'))
     const [taskDescription, setTaskDescription] = useState(task.description)
     const [showActionItems, setShowActionItems] = useState(false)
-    const [showProjects, setShowProjects] = useState(false)
+    const [showProjects, setShowProjects] = useState(false) 
+
+    const [projectSelected, setProjectSelected] = useState({value: task.projectId, label: projectClientInfo.project})
+    const [clientSelected, setClientSelected] = useState({value: projectClientInfo.clientId, label: projectClientInfo.client})
+
 
     function updateEndDateIfNeeded() {
         if (timeStart > timeEnd) {
@@ -42,20 +47,33 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
         }
         updateEndDateIfNeeded()
     }, [task.timeInterval.start, task.timeInterval.end, task.timeInterval.duration, task.description])
-    
-    const projectClientInfo = projects?.reduce((acc,cur) => {
-        if(!task.projectId || cur.id !== task.projectId){
-            return acc
-        }
-        return `${cur?.name}${cur?.clientName && ' - '}${cur?.clientName}`
-    }, 'Project')
 
+    useEffect(() => {
+        const projectValue = projects?.find(project => project.id === projectSelected.value)
+        if(projectValue){
+            setProjectSelected({value: projectValue?.id, label: projectValue?.name})
+            setClientSelected({value: projectValue.clientId, label: projectValue.clientName})
+        }
+    }, [projects, projectSelected.label])
+    
     const actionItem = useClickOutside(() => {
         setShowActionItems(false)
     })
 
     const days = calculateDays(timeStart, timeEnd)
 
+    const handleSelect = (value) => {
+        setProjectSelected(value)
+        setShowProjects(false)
+        dispatch(updateProjectClient({id: value.value, name: value.label}))
+        dispatch(updateTimeEntry({
+            id: task.id, 
+            start: task.timeInterval.start, 
+            end: task.timeInterval.end, 
+            description: task.description,
+            projectId: value.value
+        }))
+    }
     return(
         <>
             <div className="task-container">
@@ -66,13 +84,9 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
                     onChange={(e) => setTaskDescription(e.target.value)}
                     onBlur={() => onTaskBlur(taskDescription, task.id)}
                 ></input>
-                <button onClick={() => setShowProjects(!showProjects)}>{projectClientInfo}</button>
-                {/* <CreateNewProject
-                    projectClient={projectClient}
-                    project= {projectClient[task.id]?.project || ''}
-                    client={projectClient[task.id]?.client || ''}
-                    id={task.id}
-                /> */}
+                <button onClick={() => {
+                    setShowProjects(!showProjects)
+                }}>{`${projectSelected.label}${clientSelected.label && ' - '}${clientSelected.label}`}</button> 
                 <input
                     type="text"
                     name="startTime"
@@ -129,6 +143,21 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
                         </li>
                     </ul>
                 </div>
+            </div>
+            <div className= {showProjects ? "project-dropdown" : ''}>
+                {showProjects && 
+                    <Project 
+                        onSelect={handleSelect}
+                        setShowProjects={setShowProjects}
+                        selectedProject={projectSelected}
+                        setProjectSelected={setProjectSelected}
+                        selectedClient={clientSelected}
+                        setClientSelected={setClientSelected}
+                        task={task}
+                        projects={projects} 
+                        clients={clients}
+                    />
+                }    
             </div>
         </>
     )

@@ -19,10 +19,10 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
 
     function handleTaskNameBlur(taskDescription, id){
         const task = getTaskById(data, id)
-        dispatch(updateTimeEntry({start: task.timeInterval.start, end: task.timeInterval.end, description: taskDescription, id: id}))
+        dispatch(updateTimeEntry({start: task.timeInterval.start, end: task.timeInterval.end, description: taskDescription, id: id,  projectId: task.projectId}))
     }
 
-    function handleStartTimeBlur(e, id, endTime){
+    function handleStartTimeBlur(e, id){
         const task = getTaskById(data, id)
 
         const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
@@ -33,8 +33,7 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
             dispatch(updateTimeEntry({task, id}))
             return
         }
-        console.log(new Date(endTime), "start Blur end time")
-        dispatch(updateTimeEntry({description: task.description, start: newStart.toISOString().split('.')[0] + 'Z', end: task.timeInterval.end, id: id}))
+        dispatch(updateTimeEntry({description: task.description, start: newStart.toISOString().split('.')[0] + 'Z', end: task.timeInterval.end, id: id, projectId: task.projectId}))
     }
 
     function handleEndTimeBlur(e, id, startTime){
@@ -49,7 +48,7 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
             return
         }
 
-        dispatch(updateTimeEntry({description: task.description, start: task.timeInterval.start, end: newEnd.toISOString().split('.')[0] + 'Z', id: id}))
+        dispatch(updateTimeEntry({description: task.description, start: task.timeInterval.start, end: newEnd.toISOString().split('.')[0] + 'Z', id: id, projectId: task.projectId}))
     }
 
     function handleDurationBlur(e, id){
@@ -57,7 +56,7 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
 
         const {isValid, newEndTime} = calculateEndTime(new Date(task.timeInterval.start), e.target.value)
         if(isValid){
-            dispatch(updateTimeEntry({description: task.description, start: task.timeInterval.start, end: newEndTime.toISOString().split('.')[0] + 'Z', id: id}))
+            dispatch(updateTimeEntry({description: task.description, start: task.timeInterval.start, end: newEndTime.toISOString().split('.')[0] + 'Z', id: id, projectId: task.projectId}))
         }
     }
 
@@ -65,18 +64,25 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
         const task = getTaskById(data, id)
 
         const newEndTime = calculateEndDate(dateTime, new Date(task.timeInterval.end), new Date(task.timeInterval.start))
-        dispatch(updateTimeEntry({description: task.description, start: dateTime.toISOString().split('.')[0] + 'Z', end: newEndTime.toISOString().split('.')[0] + 'Z', id: id}))
+        dispatch(updateTimeEntry({description: task.description, start: dateTime.toISOString().split('.')[0] + 'Z', end: newEndTime.toISOString().split('.')[0] + 'Z', id: id, projectId: task.projectId}))
     }
 
     function handleDuplicateTask(id){
-        // const task = getTaskById(data, id)
-        // dispatch(addProjectClient({id: uniqueId, project: task.project.projectName, client: task.project.client}))
         dispatch(duplicateTimeEntry({id}))
         dispatch(updateUniqueId())
     }
 
     function handleDeleteTask(id){
         dispatch(deleteTimeEntry({id}))
+    }
+
+    function getProjectClientInfo(task, projects) {
+        return projects?.reduce((acc, cur) => {
+            if (cur.id === task.projectId) {
+                return { project: cur.name, client: cur.clientName, clientId: cur.clientId }
+            }
+            return acc
+        }, { project: 'Project', client: '', clientId: '' })
     }
     return(
         <div className="parent-container" >
@@ -91,29 +97,33 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
                         <p>{new Date(key).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})}</p>
                         <p>Total: {addTotalTime(tasks)}</p>
                         {tasks.length > 0 && <div className="display-container" key={key}>
-                            <div> {tasks.map((task, index) => (
-                                <div className={(tasks.length > 0 && tasks.length-1 !== index) ? isSidebarShrunk ? "sub-container border-style expand-width" : "sub-container border-style shrink-width" : "sub-container"} key={index}>
-                                    <Task
-                                        key={index}
-                                        task={task}
-                                        projects={projects}
-                                        clients={clients}
-                                        timeStart={timeStart}
-                                        timeEnd={timeEnd}
-                                        uniqueId={uniqueId}
-                                        projectClient={projectClient}
-                                        isTimerOn={isTimerOn}
-                                        toggleTimer={toggleTimer}
-                                        onTaskBlur={handleTaskNameBlur}
-                                        onStartBlur={handleStartTimeBlur}
-                                        onEndBlur={handleEndTimeBlur}
-                                        onDurationBlur={handleDurationBlur}
-                                        onDateChange={handleDateChange}
-                                        onDuplicate={handleDuplicateTask}
-                                        onDelete={handleDeleteTask}
-                                    />
-                                </div>
-                            ))}
+                            <div> {tasks.map((task, index) => {
+                                const projectClientInfo = getProjectClientInfo(task, projects)
+                                return (
+                                    <div className={(tasks.length > 0 && tasks.length-1 !== index) ? isSidebarShrunk ? "sub-container border-style expand-width" : "sub-container border-style shrink-width" : "sub-container"} key={index}>
+                                        <Task
+                                            key={index}
+                                            task={task}
+                                            projects={projects}
+                                            clients={clients}
+                                            timeStart={timeStart}
+                                            timeEnd={timeEnd}
+                                            uniqueId={uniqueId}
+                                            projectClient={projectClient}
+                                            isTimerOn={isTimerOn}
+                                            toggleTimer={toggleTimer}
+                                            onTaskBlur={handleTaskNameBlur}
+                                            onStartBlur={handleStartTimeBlur}
+                                            onEndBlur={handleEndTimeBlur}
+                                            onDurationBlur={handleDurationBlur}
+                                            onDateChange={handleDateChange}
+                                            onDuplicate={handleDuplicateTask}
+                                            onDelete={handleDeleteTask}
+                                            projectClientInfo={projectClientInfo}
+                                        />
+                                    </div>
+                                )
+                            })}
                             </div>
                         </div>}
                     </div>

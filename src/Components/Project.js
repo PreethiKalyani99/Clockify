@@ -84,11 +84,14 @@ export function Project(props){
                     isOpen={isOpen}
                     setShowProjects={props.setShowProjects}
                     selectedProject={props.selectedProject}
+                    setProjectSelected={props.setProjectSelected ? props.setProjectSelected : null}
                     selectedClient={props.selectedClient}
+                    setClientSelected={props.setClientSelected ? props.setClientSelected : null}
                     setIsOpen={setIsOpen}
                     projects={props.projects}
                     clients={props.clients}
                     projectClient={props.projectClient}
+                    task={props.task}
                     id={props.id}
                     project=''
                     client=''
