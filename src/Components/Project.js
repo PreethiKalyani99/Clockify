@@ -90,11 +90,7 @@ export function Project(props){
                     setIsOpen={setIsOpen}
                     projects={props.projects}
                     clients={props.clients}
-                    projectClient={props.projectClient}
                     task={props.task}
-                    id={props.id}
-                    project=''
-                    client=''
                     setShowPopup={setShowPopup}
                 />
             }

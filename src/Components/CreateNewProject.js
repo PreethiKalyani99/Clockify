@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState } from "react";
 import Creatable from 'react-select/creatable';
 import { Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
@@ -6,12 +6,8 @@ import { setIsModalOpen, updateClientValue, updateProjectValue } from "../redux/
 import { createClient, createProject, updateTimeEntry } from "../redux/clockifyThunk";
 
 export function CreateNewProject(props){
-    const [projectInput, setProjectInput] = useState(props.project)
+    const [projectInput, setProjectInput] = useState('')
     const dispatch = useDispatch()
-
-    useEffect(() => {
-        setProjectInput(props.project)
-    }, [props.project])
 
     function handleClose(){
         props.setIsOpen(false)

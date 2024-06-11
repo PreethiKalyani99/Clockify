@@ -49,13 +49,12 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
     }, [task.timeInterval.start, task.timeInterval.end, task.timeInterval.duration, task.description])
 
     useEffect(() => {
-        const projectId = projectSelected.value ? projectSelected.value : task.projectId
-        const projectValue = projects?.find(project => project.id === projectId)
+        const projectValue = projects?.find(project => project.id === projectSelected.value)
         if(projectValue){
             setProjectSelected({value: projectValue?.id, label: projectValue?.name})
             setClientSelected({value: projectValue.clientId, label: projectValue.clientName})
         }
-    }, [projects, projectSelected.label])
+    }, [projects, projectSelected.value])
     
     const actionItem = useClickOutside(() => {
         setShowActionItems(false)
