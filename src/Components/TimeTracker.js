@@ -8,7 +8,6 @@ import {
     updateEndTime,
     updateStartTime,
     addTodayTask,
-    updateUniqueId,
     updateTaskName,
     resetState,
     updateProjectValue,
@@ -29,10 +28,11 @@ import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import { formatTime } from "../utils/formatTime";
 import useClickOutside from "../utils/useClickOutside";
+import { TablePagination } from "@mui/material";
 
 export function TimeTracker(props){
     const {projectClient , uniqueId, isModalOpen, currentTask, data, projects, clients, selectedProject, selectedClient} = useSelector(state => state.clockify)
-    const {startTime, endTime, duration, taskName, project, client} = currentTask
+    const {startTime, endTime, duration, taskName} = currentTask
 
     const timeStart = new Date(startTime)
     const timeEnd = new Date(endTime)
@@ -44,16 +44,23 @@ export function TimeTracker(props){
     const [elapsedTime, setElapsedTime] = useState(0)
     const [showActionItems, setShowActionItems] = useState(false)
     const [showProjects, setShowProjects] = useState(false)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [rowsPerPage, setRowsPerPage] = useState(50)
+
 
     const dispatch = useDispatch()
     const intervalIdRef = useRef()
     const timerStart = Date.now()
     
     useEffect(() => {
-        dispatch(getUserTimeEntries())
+        dispatch(getUserTimeEntries({pageSize: rowsPerPage, page: currentPage}))
         dispatch(getProjects())
         dispatch(getClients())
     }, [])
+
+    useEffect(() => {
+        dispatch(getUserTimeEntries({pageSize: rowsPerPage, page: currentPage}))
+    }, [currentPage, rowsPerPage])
     
     useEffect(() => {
         const projectValue = projects?.find(project => project.id === selectedProject.value)
@@ -122,6 +129,15 @@ export function TimeTracker(props){
     // const projectDropdowm = useClickOutside(() => {
     //     setShowProjects(false)
     // })
+
+    const handlePageChange = (e, nextpage) => {
+        setCurrentPage(nextpage)
+    }
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10))
+        setCurrentPage(1)
+    }
     
     const handleDiscard = () => {
         setIsTimerOn(false)
@@ -300,6 +316,14 @@ export function TimeTracker(props){
                 toggleTimer={toggleTimer}
                 addTodayTask={addTodayTask}
                 dispatch={dispatch}
+            />
+            <TablePagination
+                component="div"
+                count={300}
+                page={currentPage}
+                onPageChange={handlePageChange}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
             />
         </>
     )
