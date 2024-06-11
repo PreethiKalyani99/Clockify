@@ -146,9 +146,9 @@ export function TimeTracker(props){
                 description: taskName,
                 start: new Date(start).toISOString().split('.')[0] + 'Z',
                 end:  new Date(newEndTime).toISOString().split('.')[0] + 'Z',
+                projectId: selectedProject.value
             }))
             setIsTimerOn(false)
-            dispatch(updateUniqueId())
             dispatch(resetState())
         }
     }
@@ -213,8 +213,6 @@ export function TimeTracker(props){
                 projectId: selectedProject.value ? selectedProject.value : null
             }))
             dispatch(resetState())
-            dispatch(updateProjectValue({value: '', label: 'Project'}))
-            dispatch(updateClientValue({value: '', label: ''}))
         }
         else{
             alert('Please enter task description')
@@ -230,8 +228,14 @@ export function TimeTracker(props){
                     isTimerOn={isTimerOn}
                     elapsedTime={elapsedTime}
                     taskName={taskName}
-                    project={project}
-                    client={client}
+                    selectedProject={selectedProject}
+                    selectedClient={selectedClient}
+                    onToggleProject={toggleProject}
+                    showProjects={showProjects}
+                    setShowProjects={setShowProjects}
+                    onSelect={handleSelect}
+                    projects={projects}
+                    clients={clients}
                     actionItem={actionItem}
                     showActionItems={showActionItems}
                     projectClient={projectClient}

@@ -1,5 +1,5 @@
 import { formatTime } from "../utils/formatTime"
-import { CreateNewProject } from "./CreateNewProject"
+import { Project } from "./Project"
 
 export function Timer(props){
     const totalTime = formatTime(props.elapsedTime)
@@ -13,13 +13,8 @@ export function Timer(props){
                     className={props.isSidebarShrunk ? "input-box expand-input-width" : "input-box shrink-input-width"}
                     onChange={props.onNameChange}
                     value={props.taskName}
-                    ></input>
-                <CreateNewProject
-                    projectClient={props.projectClient}
-                    id={props.uniqueId}
-                    project={props.project}
-                    client={props.client}
-                />
+                ></input>
+                <button onClick={props.onToggleProject}>{`${props?.selectedProject?.label}${props?.selectedClient?.label && ' - '}${props?.selectedClient?.label}`}</button>
                 {props.isTimerOn && <input disabled className="time" value={totalTime}></input>}
                 <button onClick={props.onTimerStop}><i className="bi bi-pause"></i></button>
                 <button className="three-dots" onClick={props.onToggle}><i className="bi bi-three-dots-vertical"></i></button>
@@ -30,6 +25,18 @@ export function Timer(props){
                     </li>
                 </ul>
             </div>
+            </div>
+            <div className= {props.showProjects ? "project-dropdown" : ''}>
+                {props.showProjects && 
+                    <Project 
+                        onSelect={props.onSelect}
+                        setShowProjects={props.setShowProjects}
+                        selectedProject={props.selectedProject}
+                        selectedClient={props.selectedClient}
+                        projects={props.projects} 
+                        clients={props.clients}
+                    />
+                }    
             </div>
         </>
     )

@@ -64,12 +64,14 @@ export const ClockifySlice = createSlice({
             state.currentTask.startTime = new Date().toString()
             state.currentTask.endTime = new Date().toString()
             state.currentTask.duration = '00:00:00'
+            state.selectedProject = {value: '', label: 'Project'}
+            state.selectedClient = {value: '', label: ''}
         },
         updateTimer: (state, action) => {
-            const {name, project, client} = action.payload
+            const {name, project, client, projectId, clientId} = action.payload
             state.currentTask.taskName = name
-            state.currentTask.project = project
-            state.currentTask.client = client
+            state.selectedProject = {value: projectId, label: project}
+            state.selectedClient = {value: clientId, label: client}
         },
         updateProjectValue: (state, action) => {
             state.selectedProject = action.payload

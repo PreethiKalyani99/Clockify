@@ -22,7 +22,7 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
     const [showActionItems, setShowActionItems] = useState(false)
     const [showProjects, setShowProjects] = useState(false) 
 
-    const [projectSelected, setProjectSelected] = useState({value: task?.project?.id || '', label: task?.project?.name  || 'Project'})
+    const [projectSelected, setProjectSelected] = useState({value: task?.projectId || '', label: task?.project?.name  || 'Project'})
     const [clientSelected, setClientSelected] = useState({value: task?.project?.clientId  || '', label: task?.project?.clientName  || ''})
 
 
@@ -60,7 +60,7 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
         setShowActionItems(false)
     })
 
-    const days = calculateDays(timeStart, timeEnd)
+    const days = calculateDays(timeStart, timeEnd)  
 
     const handleSelect = (value) => {
         setProjectSelected(value)
@@ -121,9 +121,9 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
                     onBlur={(e) => onDurationBlur(e, task.id)}
                 />
                 <button onClick={() => {
+                    console.log(task, task, "task")
                     toggleTimer()
-                    dispatch(updateTimer({name: task.description, project: task?.project, client: task?.client}))
-                    dispatch(addProjectClient({id: uniqueId, project: task?.project?.projectName, client: task?.project?.client}))
+                    dispatch(updateTimer({name: task.description, project: task.project.name, projectId: task.projectId, client: task.project.clientName, clientId: task.project.clientId}))
                 }}><i className ="bi bi-play"></i></button>
                 <button className="three-dots" onClick={() => setShowActionItems(!showActionItems)}><i className="bi bi-three-dots-vertical"></i></button>
                 <div className={showActionItems ? "action-items-container": "hide"} ref={actionItem}>

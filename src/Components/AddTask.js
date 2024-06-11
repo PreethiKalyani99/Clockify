@@ -79,8 +79,6 @@ export function AddTask(props) {
                         selectedClient={props.selectedClient}
                         projects={props.projects} 
                         clients={props.clients}
-                        projectClient={props.projectClient}
-                        id={props.uniqueId}
                     />
                 }    
             </div>
