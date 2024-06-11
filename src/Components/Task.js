@@ -5,13 +5,13 @@ import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import "react-datepicker/dist/react-datepicker.css";
 import { updateTimer, addProjectClient } from "../redux/ClockifySlice";
-import { updateProjectClient, updateTimeEntry } from "../redux/clockifyThunk";
+import { updateTimeEntry } from "../redux/clockifyThunk";
 import useClickOutside from "../utils/useClickOutside";
 import { calculateDays } from "../utils/calculateDays";
 import { parseISODuration } from "../utils/parseISODuration";
 import { Project } from "./Project";
 
-export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, onUpdate, uniqueId, toggleTimer, projectClientInfo}){
+export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, uniqueId, toggleTimer}){
     const dispatch = useDispatch()
     const timeStart = new Date(task.timeInterval.start)
     const timeEnd = new Date(task.timeInterval.end)
@@ -22,8 +22,8 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
     const [showActionItems, setShowActionItems] = useState(false)
     const [showProjects, setShowProjects] = useState(false) 
 
-    const [projectSelected, setProjectSelected] = useState({value: task.projectId, label: projectClientInfo.project})
-    const [clientSelected, setClientSelected] = useState({value: projectClientInfo.clientId, label: projectClientInfo.client})
+    const [projectSelected, setProjectSelected] = useState({value: task?.project?.id || '', label: task?.project?.name  || 'Project'})
+    const [clientSelected, setClientSelected] = useState({value: task?.project?.clientId  || '', label: task?.project?.clientName  || ''})
 
 
     function updateEndDateIfNeeded() {
@@ -49,7 +49,8 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
     }, [task.timeInterval.start, task.timeInterval.end, task.timeInterval.duration, task.description])
 
     useEffect(() => {
-        const projectValue = projects?.find(project => project.id === projectSelected.value)
+        const projectId = projectSelected.value ? projectSelected.value : task.projectId
+        const projectValue = projects?.find(project => project.id === projectId)
         if(projectValue){
             setProjectSelected({value: projectValue?.id, label: projectValue?.name})
             setClientSelected({value: projectValue.clientId, label: projectValue.clientName})
@@ -65,7 +66,6 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
     const handleSelect = (value) => {
         setProjectSelected(value)
         setShowProjects(false)
-        dispatch(updateProjectClient({id: value.value, name: value.label}))
         dispatch(updateTimeEntry({
             id: task.id, 
             start: task.timeInterval.start, 
@@ -144,7 +144,7 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
                     </ul>
                 </div>
             </div>
-            <div className= {showProjects ? "project-dropdown" : ''}>
+            <div className= {showProjects ? "" : ''}>
                 {showProjects && 
                     <Project 
                         onSelect={handleSelect}

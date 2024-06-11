@@ -3,7 +3,7 @@ import Creatable from 'react-select/creatable';
 import { Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { setIsModalOpen, updateClientValue, updateProjectValue } from "../redux/ClockifySlice";
-import { createClient, createProject } from "../redux/clockifyThunk";
+import { createClient, createProject, updateTimeEntry } from "../redux/clockifyThunk";
 
 export function CreateNewProject(props){
     const [projectInput, setProjectInput] = useState(props.project)
@@ -40,17 +40,25 @@ export function CreateNewProject(props){
         props.setClientSelected({ label: input, value: '' })
     }
 
-    function addProject(){
-        const clientInfo = props?.clients?.find(item => item.id === props.selectedClient.value)
-        dispatch(createProject({
+    async function addProject(){
+        const clientInfo = props?.clients?.find(item => item.name === props.selectedClient.label)
+        const response = await dispatch(createProject({
             name: projectInput,
             clientId: clientInfo?.id
         }))
         if(!props.setProjectSelected){
-            dispatch(updateProjectValue({value: '', label: projectInput}))
+            dispatch(updateProjectValue({value: response?.payload?.id, label: projectInput}))
+            dispatch(updateClientValue({value: clientInfo?.id, label: props.selectedClient.label}))
         }
         else{
-            props.setProjectSelected({value: '', label: projectInput})
+            props.setProjectSelected({value: response?.payload?.id, label: projectInput})
+            dispatch(updateTimeEntry({
+                id: props.task.id, 
+                start: props.task.timeInterval.start, 
+                end: props.task.timeInterval.end, 
+                description: props.task.description,
+                projectId: response?.payload?.id
+            }))
         }
         setProjectInput('')
         props.setIsOpen(false)

@@ -8,7 +8,7 @@ import {
     getProjects,
     getClients,
     createProject,
-    createClient
+    createClient,
 } from "./clockifyThunk";
 
 export const ClockifySlice = createSlice({
@@ -91,7 +91,7 @@ export const ClockifySlice = createSlice({
         })
         .addCase(createTimeEntry.fulfilled, (state, action) => {
             state.isLoading = false
-            state.data = [action.payload, ...state.data]
+            state.data = [...state.data, action.payload]
         })
         .addCase(updateTimeEntry.pending, (state) => {
             state.isLoading = true

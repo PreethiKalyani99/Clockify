@@ -76,14 +76,6 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
         dispatch(deleteTimeEntry({id}))
     }
 
-    function getProjectClientInfo(task, projects) {
-        return projects?.reduce((acc, cur) => {
-            if (cur.id === task.projectId) {
-                return { project: cur.name, client: cur.clientName, clientId: cur.clientId }
-            }
-            return acc
-        }, { project: 'Project', client: '', clientId: '' })
-    }
     return(
         <div className="parent-container" >
            {Object.entries(tasksByWeek).map(([range, total_tasks]) => {
@@ -97,9 +89,7 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
                         <p>{new Date(key).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})}</p>
                         <p>Total: {addTotalTime(tasks)}</p>
                         {tasks.length > 0 && <div className="display-container" key={key}>
-                            <div> {tasks.map((task, index) => {
-                                const projectClientInfo = getProjectClientInfo(task, projects)
-                                return (
+                            <div> {tasks.map((task, index) => (
                                     <div className={(tasks.length > 0 && tasks.length-1 !== index) ? isSidebarShrunk ? "sub-container border-style expand-width" : "sub-container border-style shrink-width" : "sub-container"} key={index}>
                                         <Task
                                             key={index}
@@ -119,11 +109,9 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
                                             onDateChange={handleDateChange}
                                             onDuplicate={handleDuplicateTask}
                                             onDelete={handleDeleteTask}
-                                            projectClientInfo={projectClientInfo}
                                         />
                                     </div>
-                                )
-                            })}
+                                ))}
                             </div>
                         </div>}
                     </div>

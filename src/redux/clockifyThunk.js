@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AUTH_TOKEN, USER_ID, WORKSPACE_ID } from "../config";
 
 export const getUserTimeEntries = createAsyncThunk("getUserTimeEntries", async () => {
-    const response = await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/user/${USER_ID}/time-entries`, {
+    const response = await fetch(`https://api.clockify.me/api/v1/workspaces/${WORKSPACE_ID}/user/${USER_ID}/time-entries?hydrated=true`, {
             method: "GET",
             headers: {
                 'X-Api-Key':AUTH_TOKEN,
