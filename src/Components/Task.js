@@ -111,9 +111,8 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
                     onBlur={(e) => onDurationBlur(e, task.id)}
                 />
                 <button onClick={() => {
-                    console.log(task, task, "task")
                     toggleTimer()
-                    dispatch(updateTimer({name: task.description, project: task.project.name, projectId: task.projectId, client: task.project.clientName, clientId: task.project.clientId}))
+                    dispatch(updateTimer({name: task.description, project: projectSelected.label, projectId: task.projectId, client: clientSelected.label, clientId: clientSelected.value}))
                 }}><i className ="bi bi-play"></i></button>
                 <button className="three-dots" onClick={() => setShowActionItems(!showActionItems)}><i className="bi bi-three-dots-vertical"></i></button>
                 <div className={showActionItems ? "action-items-container": "hide"} ref={actionItem}>
