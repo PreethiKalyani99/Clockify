@@ -22,10 +22,11 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
         dispatch(updateTimeEntry({start: task.timeInterval.start, end: task.timeInterval.end, description: taskDescription, id: id,  projectId: task.projectId}))
     }
 
-    function handleStartTimeBlur(e, id){
+    function handleStartTimeBlur(e, id, endTime){
         const task = getTaskById(data, id)
-
         const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
+        const timeEnd = new Date(endTime)
+
         const newStart = new Date(task.timeInterval.start)
         newStart.setHours(validatedHour, validatedMins)
 
@@ -33,17 +34,26 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
             dispatch(updateTimeEntry({task, id}))
             return
         }
-        dispatch(updateTimeEntry({description: task.description, start: newStart.toISOString().split('.')[0] + 'Z', end: task.timeInterval.end, id: id, projectId: task.projectId}))
+        if(newStart > timeEnd){
+            timeEnd.setDate(timeEnd.getDate() + 1)
+        }
+        dispatch(updateTimeEntry({description: task.description, start: newStart.toISOString().split('.')[0] + 'Z', end: timeEnd.toISOString().split('.')[0] + 'Z', id: id, projectId: task.projectId}))
     }
 
-    function handleEndTimeBlur(e, id){
+    function handleEndTimeBlur(e, id, startTime){
         const task = getTaskById(data, id)
         const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
+        const timeStart = new Date(startTime)
+
         const newEnd = new Date(task.timeInterval.end)
         newEnd.setHours(validatedHour, validatedMins)
+
         if(!isValid || isDurationLimitExceeded(new Date(task.timeInterval.start), newEnd)) {
             dispatch(updateTimeEntry({task, id: id}))
             return
+        }
+        if(timeStart > newEnd){
+            newEnd.setDate(newEnd.getDate() + 1)
         }
         dispatch(updateTimeEntry({description: task.description, start: task.timeInterval.start, end: newEnd.toISOString().split('.')[0] + 'Z', id: id, projectId: task.projectId}))
     }

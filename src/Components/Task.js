@@ -25,19 +25,6 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
     const [projectSelected, setProjectSelected] = useState({value: task?.projectId || '', label: task?.project?.name  || 'Project'})
     const [clientSelected, setClientSelected] = useState({value: task?.project?.clientId  || '', label: task?.project?.clientName  || ''})
 
-
-    function updateEndDateIfNeeded() {
-        if (timeStart > timeEnd) {
-            let date = new Date(timeEnd)
-            date.setDate(date.getDate() + 1)
-            dispatch(updateTimeEntry({
-                start: timeStart.toISOString().split('.')[0] + 'Z',
-                end: date.toISOString().split('.')[0] + 'Z',
-                id: task.id
-            }))
-        }
-    }
-
     useEffect(() => {
         if(getFormattedTime(timeStart) !== startDateTime || getFormattedTime(timeEnd) !== endDateTime || parseISODuration(task.timeInterval.duration) !== totalDuration || taskDescription !== task.description){
             setStartDateTime(getFormattedTime(timeStart))
@@ -49,7 +36,6 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
                 setClientSelected({value: task?.project?.clientId || projectSelected.clientId, label: task?.project?.clientName || projectSelected.label})
             }
         }
-        updateEndDateIfNeeded()
     }, [task.timeInterval.start, task.timeInterval.end, task.timeInterval.duration, task.description])
 
     useEffect(() => {
