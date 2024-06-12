@@ -11,7 +11,7 @@ import { calculateDays } from "../utils/calculateDays";
 import { parseISODuration } from "../utils/parseISODuration";
 import { Project } from "./Project";
 
-export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, uniqueId, toggleTimer}){
+export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, toggleTimer}){
     const dispatch = useDispatch()
     const timeStart = new Date(task.timeInterval.start)
     const timeEnd = new Date(task.timeInterval.end)
@@ -44,6 +44,10 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
             setEndDateTime(getFormattedTime(timeEnd))
             setDuration(parseISODuration(task.timeInterval.duration))
             setTaskDescription(task.description)
+            if(projectSelected.value !== task.projectId){
+                setProjectSelected({value: task.projectId, label: task?.project?.name || projectSelected.label})
+                setClientSelected({value: task?.project?.clientId || projectSelected.clientId, label: task?.project?.clientName || projectSelected.label})
+            }
         }
         updateEndDateIfNeeded()
     }, [task.timeInterval.start, task.timeInterval.end, task.timeInterval.duration, task.description])

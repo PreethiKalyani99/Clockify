@@ -36,18 +36,15 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
         dispatch(updateTimeEntry({description: task.description, start: newStart.toISOString().split('.')[0] + 'Z', end: task.timeInterval.end, id: id, projectId: task.projectId}))
     }
 
-    function handleEndTimeBlur(e, id, startTime){
+    function handleEndTimeBlur(e, id){
         const task = getTaskById(data, id)
         const {isValid, validatedHour, validatedMins} = convertToHoursAndMinutes(e.target.value)
         const newEnd = new Date(task.timeInterval.end)
         newEnd.setHours(validatedHour, validatedMins)
-
-        console.log(new Date(startTime), "end blur start time")
         if(!isValid || isDurationLimitExceeded(new Date(task.timeInterval.start), newEnd)) {
             dispatch(updateTimeEntry({task, id: id}))
             return
         }
-
         dispatch(updateTimeEntry({description: task.description, start: task.timeInterval.start, end: newEnd.toISOString().split('.')[0] + 'Z', id: id, projectId: task.projectId}))
     }
 
@@ -94,6 +91,7 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
                                         <Task
                                             key={index}
                                             task={task}
+                                            data={data}
                                             projects={projects}
                                             clients={clients}
                                             timeStart={timeStart}

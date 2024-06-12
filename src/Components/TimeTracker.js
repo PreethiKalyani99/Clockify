@@ -53,7 +53,6 @@ export function TimeTracker(props){
     const timerStart = Date.now()
     
     useEffect(() => {
-        dispatch(getUserTimeEntries({pageSize: rowsPerPage, page: currentPage}))
         dispatch(getProjects())
         dispatch(getClients())
     }, [])
