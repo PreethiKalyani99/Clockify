@@ -28,7 +28,7 @@ import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import { formatTime } from "../utils/formatTime";
 import useClickOutside from "../utils/useClickOutside";
-import { TablePagination } from "@mui/material";
+import { TablePagination  as Pagination} from "@mui/material";
 
 export function TimeTracker(props){
     const {projectClient , uniqueId, isModalOpen, currentTask, data, projects, clients, selectedProject, selectedClient} = useSelector(state => state.clockify)
@@ -317,12 +317,18 @@ export function TimeTracker(props){
                 addTodayTask={addTodayTask}
                 dispatch={dispatch}
             />
-            <TablePagination
+            <Pagination
                 component="div"
                 count={300}
                 page={currentPage}
                 onPageChange={handlePageChange}
                 rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={[
+                    {value: 50, label: '50'},
+                    {value: 100, label: '100'},
+                    {value: 200, label: '200'}
+                ]}
+                labelRowsPerPage={'Items per page'}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
         </>

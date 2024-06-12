@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import "react-datepicker/dist/react-datepicker.css";
-import { updateTimer, addProjectClient } from "../redux/ClockifySlice";
+import { updateTimer } from "../redux/ClockifySlice";
 import { updateTimeEntry } from "../redux/clockifyThunk";
 import useClickOutside from "../utils/useClickOutside";
 import { calculateDays } from "../utils/calculateDays";
