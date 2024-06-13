@@ -70,7 +70,10 @@ ul{
     position: sticky;
     top: 30px;
     background-color: white;
-    justify-content: space-around;
+}
+
+.sub-container{
+    display: flex;
 }
 
 .zIndex{
@@ -82,18 +85,11 @@ ul{
     border: none;
     outline: none;
     padding: 10px;
+    width: 50%;
 }
 
 .input-box:hover{
     border: 1px solid #858181;
-}
-
-.expand-input-width{
-    width: 42%;
-}
-
-.shrink-input-width{
-    width: 40%;
 }
 
 .popup{
@@ -121,10 +117,6 @@ ul{
     border: 1px solid black;
     padding: 10px;
     z-index: 1 !important;
-}
-.sub-container{
-    display: flex;
-    gap: 50px;
 }
 
 .border-style{
@@ -181,4 +173,74 @@ ul{
     position: fixed;
     z-index: 999 !important;
     margin-left: 40%;
+}
+
+.project-text-color{
+    color: #03a9f4;
+}
+
+.project-text{
+    border: none;
+    outline: none;
+    background-color: white;
+    margin-left: 1rem;
+}
+
+.sub-container{
+    width: 50%;
+}
+
+.startTimeBox{
+    margin-left: 3rem;
+}
+.startTimeBox, .endTimeBox{
+    width: 55px;
+    padding: 7px;
+}
+
+.startTimeBox:hover, .endTimeBox:hover, .durationBox:hover{
+    border: 1px solid #C6D2D9;
+}
+
+.startTimeBox, .endTimeBox, .durationBox, .dateIcon{
+    height: 45px;
+    border: none;
+    outline: none;
+}
+
+.durationBox{
+    width: 90px;
+    height: 45px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    margin-left: 3rem;
+}
+
+.days{
+    font-size: 12px;
+    color: grey;
+    top: .8rem;
+}
+
+.dateIcon{
+    background-color: white;
+    margin-left: 3rem;
+}
+
+.date-text{
+    margin-left: 1rem;
+    width: 140px;
+    border-right: 1px dotted rgb(206, 202, 202);
+}
+
+.addButton{
+    width: 90px;
+    height: 40px;
+    border-color: #03a9f4;
+    background-color: #03a9f4;
+    color: white;
+    position: absolute;
+    right: 35px;
 }

@@ -12,7 +12,7 @@ import { groupTasksByWeek } from "../utils/groupTasksByWeek";
 import { addTotalTime } from "../utils/addTotalTime";
 import { formatDate } from "../utils/formatTime";
 
-export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, timeStart, timeEnd, uniqueId, isTimerOn, toggleTimer}){
+export function Tasks({ data, projects, clients, projectClient, timeStart, timeEnd, uniqueId, isTimerOn, toggleTimer}){
     const dispatch = useDispatch()
 
     const tasksByWeek = groupTasksByWeek(data)
@@ -97,7 +97,7 @@ export function Tasks({isSidebarShrunk, data, projects, clients, projectClient, 
                         <p>Total: {addTotalTime(tasks)}</p>
                         {tasks.length > 0 && <div className="display-container" key={key}>
                             <div> {tasks.map((task, index) => (
-                                    <div className={(tasks.length > 0 && tasks.length-1 !== index) ? isSidebarShrunk ? "sub-container border-style expand-width" : "sub-container border-style shrink-width" : "sub-container"} key={index}>
+                                    <div className={(tasks.length > 0 && tasks.length-1 !== index) ? "sub-container border-style" : "sub-container"} key={index}>
                                         <Task
                                             key={index}
                                             task={task}

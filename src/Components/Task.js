@@ -10,6 +10,7 @@ import useClickOutside from "../utils/useClickOutside";
 import { calculateDays } from "../utils/calculateDays";
 import { parseISODuration } from "../utils/parseISODuration";
 import { Project } from "./Project";
+import circledPlusIcon from '../assets/icons/circledPlusIcon.png'
 
 export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, toggleTimer}){
     const dispatch = useDispatch()
@@ -75,7 +76,10 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
                 ></input>
                 <button onClick={() => {
                     setShowProjects(!showProjects)
-                }}>{`${projectSelected.label}${clientSelected.label && ' - '}${clientSelected.label}`}</button> 
+                }}>  
+                    {!projectSelected.value && <img src={circledPlusIcon} alt="Circled Plus Icon" style={{ width: '20px', height: '20px', marginRight: '5px'}}/>}
+                    {`${projectSelected.label}${clientSelected.label && ' - '}${clientSelected.label}`}
+                </button> 
                 <input
                     type="text"
                     name="startTime"
