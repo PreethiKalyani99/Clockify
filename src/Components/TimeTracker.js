@@ -234,6 +234,7 @@ export function TimeTracker(props){
         }
     }
 
+    const isNextDisabled = data.length < rowsPerPage
     return (
         <>
             {isTimerOn ? 
@@ -316,7 +317,8 @@ export function TimeTracker(props){
                 addTodayTask={addTodayTask}
                 dispatch={dispatch}
             />
-            <Pagination
+            {data.length > 0 && <Pagination
+                className="pagination"
                 component="div"
                 count={300}
                 page={currentPage}
@@ -329,7 +331,15 @@ export function TimeTracker(props){
                 ]}
                 labelRowsPerPage={'Items per page'}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+                labelDisplayedRows={() => `Page: ${currentPage} - entries: ${data.length}`}
+                slotProps={{
+                    actions: {
+                        nextButton: {
+                            disabled: isNextDisabled,
+                        },
+                    },
+                }}
+            />}
         </>
     )
 }
