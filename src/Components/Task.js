@@ -131,7 +131,7 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
                     </button>
                 </div>
                 <button className="three-dots" onClick={() => setShowActionItems(!showActionItems)}>
-                    <img src={threeDotsIcon} alt="Circled Plus Icon" style={{ width: '25px', height: '25px'}}/>
+                    <img src={threeDotsIcon} alt="menu Icon" style={{ width: '25px', height: '25px'}}/>
                 </button>
                 <div className={showActionItems ? "action-items-container": "hide"} ref={actionItem}>
                     <ul className="action-items">

@@ -61,9 +61,9 @@
 .parent-container{
     overflow: auto !important;
 }
-.add-task-container{
+.add-task-container, .timer-task-container{
     height: 65px !important;
-    border: 1px solid black;
+    border: 1px solid #858181;
     display: flex;
     align-items: center;
     padding-left: 10px;
@@ -72,10 +72,13 @@
     background-color: white;
 }
 
-.add-sub-container, .task-sub-container{
+.add-sub-container, .task-sub-container, .timer-sub-container{
     display: flex;
 }
 
+.timer-sub-container{
+    align-items: center;
+}
 .task-sub-container{
     height: 70px;
 }
@@ -84,15 +87,22 @@
     z-index: 99999 !important;
 }
 
-.input-box{
+.input-box, .timer-input-box{
     height: 40px;
     border: none;
     outline: none;
     padding: 10px;
+}
+
+.input-box{
     width: 50%;
 }
 
-.input-box:hover{
+.timer-input-box{
+    width: 70%;
+}
+
+.input-box:hover, .timer-input-box:hover{
     border: 1px solid #858181;
 }
 
@@ -117,12 +127,13 @@
 }
 
 .week-container{
-    border: 1px solid black;
+    border: 1px solid #858181;
+    border-bottom: 5px solid #b1adad;
     z-index: 1 !important;
 }
 
 .border-style{
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #858181;
 }
 
 .task-container{
@@ -217,12 +228,23 @@
     outline: none;
 }
 
-.durationBox{
+.durationBox, .timer-duration{
     width: 90px;
     height: 45px;
     text-align: center;
     color: #333;
+}
+
+.durationBox{
     margin-left: 3rem;
+}
+
+
+.timer-duration{
+    position: absolute;
+    right: 13rem;
+    border: none;
+    outline: none;
 }
 
 .days, .task-days{
@@ -245,13 +267,22 @@
     border-right: 1px dotted rgb(206, 202, 202);
 }
 
-.addButton{
+.addButton, .stop-btn{
     width: 90px;
     height: 40px;
-    border-color: #03a9f4;
-    background-color: #03a9f4;
     color: white;
     position: absolute;
+}
+
+.stop-btn{
+    background-color: #f22112;
+    border-color: #ea1c0d;
+    right: 80px;
+}
+
+.addButton{
+    border-color: #03a9f4;
+    background-color: #03a9f4;
     right: 35px;
 }
 
@@ -260,7 +291,7 @@
     justify-content: space-between;
 }
 
-.week-total, .durationBox, .total-time{
+.week-total, .durationBox, .total-time, .timer-duration{
     font-size: 18px;
     font-weight: 500;
 }
@@ -270,7 +301,7 @@
 }
 
 .total-time-container{
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #858181;
     padding: 10px 15px 0;
     background-color: #e4eaee;
 }
@@ -298,7 +329,7 @@
     outline: none;
 }
 
-.duplicate-btn, .delete-btn {
+.duplicate-btn, .delete-btn, .discard-btn {
     border: none;
     outline: none;
     background-color: white;

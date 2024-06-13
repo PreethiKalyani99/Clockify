@@ -21,7 +21,7 @@ export function AddTask(props) {
                     data-testid="task-name"
                     type="text"
                     placeholder="What are you working on?"
-                    className="input-box "
+                    className="input-box"
                     onChange={props.onNameChange}
                     value={props.taskDescription}
                     onKeyDown={handleEnter}
