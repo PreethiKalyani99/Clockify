@@ -141,6 +141,7 @@ export function TimeTracker(props){
     const handleDiscard = () => {
         setIsTimerOn(false)
         setShowActionItems(false)
+        dispatch(resetState())
     }
 
     const handleSelect = (value) => {

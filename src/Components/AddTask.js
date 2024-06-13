@@ -17,20 +17,22 @@ export function AddTask(props) {
     return (
         <>
             <div className={props.isModalOpen ? "add-task-container" : "add-task-container zIndex"} data-testid="container">
-                <input
-                    data-testid="task-name"
-                    type="text"
-                    placeholder="What are you working on?"
-                    className="input-box"
-                    onChange={props.onNameChange}
-                    value={props.taskDescription}
-                    onKeyDown={handleEnter}
-                ></input>
-                <div className="add-sub-container">
+                <div className="description-project-container">
+                    <input
+                        data-testid="task-name"
+                        type="text"
+                        placeholder="What are you working on?"
+                        className="input-box"
+                        onChange={props.onNameChange}
+                        value={props.taskDescription}
+                        onKeyDown={handleEnter}
+                    ></input>
                     <button onClick={props.onToggle} className={!props.selectedProject.value ? "project-text-color project-text" : 'project-text'}>
                         {!props.selectedProject.value && <img src={circledPlusIcon} alt="Circled Plus Icon" style={{ width: '20px', height: '20px', marginRight: '5px'}}/>}
                         {`${props?.selectedProject?.label}${props?.selectedClient?.label && ' - '}${props?.selectedClient?.label}`}
                     </button>
+                </div>
+                <div className="add-sub-container">
                     <input
                         className="startTimeBox"
                         data-testid="start-time"

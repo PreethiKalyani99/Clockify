@@ -95,7 +95,7 @@
 }
 
 .input-box{
-    width: 50%;
+    width: 80%;
 }
 
 .timer-input-box{
@@ -199,11 +199,21 @@
     color: #03a9f4;
 }
 
-.project-text{
+.project-text, .task-project-text{
     border: none;
     outline: none;
     background-color: white;
     margin-left: 1rem;
+}
+
+.description-project-container{
+    width: 60%;
+    display: flex;
+    align-items: center;
+}
+
+.project-text{
+    flex-grow: 1;
 }
 
 .display-container-style{
@@ -236,7 +246,7 @@
 }
 
 .durationBox{
-    margin-left: 3rem;
+    margin-left: 2rem;
 }
 
 
@@ -263,7 +273,7 @@
 
 .date-text{
     margin-left: 1rem;
-    width: 140px;
+    width: 120px;
     border-right: 1px dotted rgb(206, 202, 202);
 }
 
