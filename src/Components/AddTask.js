@@ -26,7 +26,7 @@ export function AddTask(props) {
                     value={props.taskDescription}
                     onKeyDown={handleEnter}
                 ></input>
-                <div className="sub-container">
+                <div className="add-sub-container">
                     <button onClick={props.onToggle} className={!props.selectedProject.value ? "project-text-color project-text" : 'project-text'}>
                         {!props.selectedProject.value && <img src={circledPlusIcon} alt="Circled Plus Icon" style={{ width: '20px', height: '20px', marginRight: '5px'}}/>}
                         {`${props?.selectedProject?.label}${props?.selectedClient?.label && ' - '}${props?.selectedClient?.label}`}

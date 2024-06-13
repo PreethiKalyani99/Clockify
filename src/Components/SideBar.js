@@ -6,7 +6,7 @@ export function SideBar(props){
     return (
         <>
             <div>
-                <ul className="nav nav-pills flex-column">
+                <ul className="nav nav-pills flex-column time-tracker-icon">
                     <li className={`mb-3 ${props.isSidebarShrunk ? 'shrink-li' : 'expand-li'}`}>
                         <Link to='/tracker' className="nav-link text-decoration-none">
                         <i className="bi bi-clock me-2 ms-2"></i>

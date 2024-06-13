@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { useDispatch } from "react-redux";
 import DatePicker from "react-datepicker";
-import { getFormattedDate } from "../utils/getFormattedDate";
 import { getFormattedTime } from "../utils/getFormattedTime";
 import "react-datepicker/dist/react-datepicker.css";
 import { updateTimer } from "../redux/ClockifySlice";
@@ -11,6 +10,7 @@ import { calculateDays } from "../utils/calculateDays";
 import { parseISODuration } from "../utils/parseISODuration";
 import { Project } from "./Project";
 import circledPlusIcon from '../assets/icons/circledPlusIcon.png'
+import threeDotsIcon from '../assets/icons/menu.png'
 
 export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlur, onDurationBlur, onDateChange, onDelete, onDuplicate, toggleTimer}){
     const dispatch = useDispatch()
@@ -68,70 +68,90 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
         <>
             <div className="task-container">
                 <input
+                    className="description-display"
                     type="text"
                     name="task-name"
                     value={taskDescription || ''}
                     onChange={(e) => setTaskDescription(e.target.value)}
                     onBlur={() => onTaskBlur(taskDescription, task.id)}
                 ></input>
-                <button onClick={() => {
-                    setShowProjects(!showProjects)
-                }}>  
+                <button 
+                    onClick={() => setShowProjects(!showProjects)}
+                    className={!projectSelected.value ? "project-text-color project-text" : "project-text"}
+                >  
                     {!projectSelected.value && <img src={circledPlusIcon} alt="Circled Plus Icon" style={{ width: '20px', height: '20px', marginRight: '5px'}}/>}
                     {`${projectSelected.label}${clientSelected.label && ' - '}${clientSelected.label}`}
                 </button> 
-                <input
-                    type="text"
-                    name="startTime"
-                    value={startDateTime || '00:00'}
-                    onChange={(e) => setStartDateTime(e.target.value)}
-                    onBlur={(e) => onStartBlur(e, task.id, task.timeInterval.end)}
-                ></input>
-                <input
-                    type="text"
-                    name="endTime"
-                    value={endDateTime || '00:00'}
-                    onChange={(e) => setEndDateTime(e.target.value)}
-                    onBlur={(e) => onEndBlur(e, task.id, task.timeInterval.start)}
-                ></input>
-                {days > 0 && <sup className="fs-6"><b>{'+' + days}</b></sup>}
-                <DatePicker
-                    selected={timeStart}
-                    onChange={(e) => onDateChange(e, task.id)}
-                    showTimeSelect={false}
-                    dateFormat="yyyy-MM-dd"
-                    customInput={
-                        <button>
-                            <i className="bi bi-calendar"></i>
-                        </button>
-                    }
-                />
-                <p className="ms-2">{getFormattedDate(timeStart)}</p>
-                <input
-                    type='text'
-                    className='duration'
-                    value={totalDuration || '00:00:00'}
-                    onChange={(e) => setDuration(e.target.value)}
-                    onBlur={(e) => onDurationBlur(e, task.id)}
-                />
-                <button onClick={() => {
-                    toggleTimer()
-                    dispatch(updateTimer({name: task.description, project: projectSelected.label, projectId: task.projectId, client: clientSelected.label, clientId: clientSelected.value}))
-                }}><i className ="bi bi-play"></i></button>
-                <button className="three-dots" onClick={() => setShowActionItems(!showActionItems)}><i className="bi bi-three-dots-vertical"></i></button>
+                <div className="task-time-container">
+                    <input
+                        className="startTimeBox"
+                        type="text"
+                        name="startTime"
+                        value={startDateTime || '00:00'}
+                        onChange={(e) => setStartDateTime(e.target.value)}
+                        onBlur={(e) => onStartBlur(e, task.id, task.timeInterval.end)}
+                    ></input>
+                    <span className="ms-2 me-2">-</span>
+                    <input
+                        className="endTimeBox"
+                        type="text"
+                        name="endTime"
+                        value={endDateTime || '00:00'}
+                        onChange={(e) => setEndDateTime(e.target.value)}
+                        onBlur={(e) => onEndBlur(e, task.id, task.timeInterval.start)}
+                    ></input>
+                    {days > 0 && <sup className="task-days"><b>{'+' + days}</b></sup>}
+                    <DatePicker
+                        className="dateIcon"                    
+                        selected={timeStart}
+                        onChange={(e) => onDateChange(e, task.id)}
+                        showTimeSelect={false}
+                        dateFormat="yyyy-MM-dd"
+                        customInput={
+                            <button>
+                                <i className="bi bi-calendar"></i>
+                            </button>
+                        }
+                    />
+                    <input
+                        type='text'
+                        className='durationBox'
+                        value={totalDuration || '00:00:00'}
+                        onChange={(e) => setDuration(e.target.value)}
+                        onBlur={(e) => onDurationBlur(e, task.id)}
+                    />
+                    <button 
+                        onClick={() => {
+                            toggleTimer()
+                            dispatch(updateTimer({name: task.description, project: projectSelected.label, projectId: task.projectId, client: clientSelected.label, clientId: clientSelected.value}))
+                        }}
+                        className="play-button"
+                    >
+                        <i className ="bi bi-play"></i>
+                    </button>
+                </div>
+                <button className="three-dots" onClick={() => setShowActionItems(!showActionItems)}>
+                    <img src={threeDotsIcon} alt="Circled Plus Icon" style={{ width: '25px', height: '25px'}}/>
+                </button>
                 <div className={showActionItems ? "action-items-container": "hide"} ref={actionItem}>
-                    <ul>
+                    <ul className="action-items">
                         <li>
-                        <button onClick={() => {
-                            onDuplicate(task.id)
-                            setShowActionItems(false)
-                        }}>Duplicate</button>
+                        <button 
+                            onClick={() => {
+                                onDuplicate(task.id)
+                                setShowActionItems(false)
+                            }}
+                            className="duplicate-btn"
+                        >Duplicate</button>
                         </li>
                         <li>
-                        <button onClick={() => {
-                            onDelete(task.id)
-                            setShowActionItems(false)
-                        }}>Delete</button>
+                        <button 
+                            onClick={() => {
+                                onDelete(task.id)
+                                setShowActionItems(false)
+                            }}
+                            className="delete-btn"
+                        >Delete</button>
                         </li>
                     </ul>
                 </div>

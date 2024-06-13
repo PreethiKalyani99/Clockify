@@ -89,15 +89,19 @@ export function Tasks({ data, projects, clients, projectClient, timeStart, timeE
              const result = range.split(' to ').map(date => formatDate(date))
              const weekTasks = Object.values(total_tasks).flat(1)
              return (<div key={range} className="mt-3">
-                <p><b>{result.join(' - ')}</b></p>
-                <p>Week total: {addTotalTime(weekTasks)}</p>
+                <div className="week-total-container">
+                    <p><b>{result.join(' - ')}</b></p>
+                    <p className="week-total-text">Week total: <span className="week-total ms-2">{addTotalTime(weekTasks)}</span></p>
+                </div>
                 {Object.entries(total_tasks).map(([key, tasks]) => (
                     <div className="week-container mb-3" key={key}>
-                        <p>{new Date(key).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})}</p>
-                        <p>Total: {addTotalTime(tasks)}</p>
+                        <div className="total-time-container">
+                            <p>{new Date(key).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})}</p>
+                            <p className="total-text">Total: <span className="total-time ms-2">{addTotalTime(tasks)}</span></p>
+                        </div>
                         {tasks.length > 0 && <div className="display-container" key={key}>
-                            <div> {tasks.map((task, index) => (
-                                    <div className={(tasks.length > 0 && tasks.length-1 !== index) ? "sub-container border-style" : "sub-container"} key={index}>
+                            <div className="display-container-style"> {tasks.map((task, index) => (
+                                    <div className={(tasks.length > 0 && tasks.length-1 !== index) ? "task-sub-container border-style" : "task-sub-container"} key={index}>
                                         <Task
                                             key={index}
                                             task={task}

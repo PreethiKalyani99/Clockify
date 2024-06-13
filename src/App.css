@@ -24,7 +24,7 @@
     width: 94% !important;
 }
 
-ul{
+.time-tracker-icon{
     padding: 15px;
     margin-left: 8%;
 }
@@ -72,8 +72,12 @@ ul{
     background-color: white;
 }
 
-.sub-container{
+.add-sub-container, .task-sub-container{
     display: flex;
+}
+
+.task-sub-container{
+    height: 70px;
 }
 
 .zIndex{
@@ -108,14 +112,12 @@ ul{
 }
 
 .display-container{
-    border: 1px solid black;
     display: flex;
     position: relative;
 }
 
 .week-container{
     border: 1px solid black;
-    padding: 10px;
     z-index: 1 !important;
 }
 
@@ -133,24 +135,31 @@ ul{
 .three-dots{
     position: absolute;
     right: 10px;
+    outline: none;
+    border: none;
+    background-color: white;
 }
 
 .action-items-container{
     position: absolute;
-    right: 50px;
-    width: 150px;
-    height: 100px;
-    display: block;
+    right: 0px;
+    text-align: start;
+    z-index: 2 !important;
 }
 
 .hide{
     display: none;
 }
 
-ul{
+.action-items{
     list-style-type: none;
     background-color: white;
     padding: 10px;
+    margin: 0;
+    position: absolute;
+    top: 30px;
+    right: 0;
+    z-index: 3 !important;
 }
 
 .shrink-width{
@@ -186,8 +195,8 @@ ul{
     margin-left: 1rem;
 }
 
-.sub-container{
-    width: 50%;
+.display-container-style{
+    width: 100%;
 }
 
 .startTimeBox{
@@ -198,7 +207,7 @@ ul{
     padding: 7px;
 }
 
-.startTimeBox:hover, .endTimeBox:hover, .durationBox:hover{
+.startTimeBox:hover, .endTimeBox:hover, .durationBox:hover, .description-display:hover{
     border: 1px solid #C6D2D9;
 }
 
@@ -212,15 +221,16 @@ ul{
     width: 90px;
     height: 45px;
     text-align: center;
-    font-size: 18px;
-    font-weight: 500;
     color: #333;
     margin-left: 3rem;
 }
 
-.days{
+.days, .task-days{
     font-size: 12px;
     color: grey;
+}
+
+.days{
     top: .8rem;
 }
 
@@ -243,4 +253,53 @@ ul{
     color: white;
     position: absolute;
     right: 35px;
+}
+
+.week-total-container, .total-time-container{
+    display: flex;
+    justify-content: space-between;
+}
+
+.week-total, .durationBox, .total-time{
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.week-total-text, .total-time-text{
+    font-size: 13px;
+}
+
+.total-time-container{
+    border-bottom: 1px solid black;
+    padding: 10px 15px 0;
+    background-color: #e4eaee;
+}
+
+.description-display{
+    border: none;
+    outline: none;
+    height: 45px;
+    padding-left: 10px;
+}
+
+.task-time-container{
+   position: absolute;
+   right: 150px;
+   display: flex;
+   align-items: center;
+}
+
+.play-button{
+    background-color: white;
+    margin-left: 2rem;
+    font-size: 35px;
+    color: #858181;
+    border: none;
+    outline: none;
+}
+
+.duplicate-btn, .delete-btn {
+    border: none;
+    outline: none;
+    background-color: white;
 }
