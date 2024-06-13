@@ -244,6 +244,7 @@ export function TimeTracker(props){
                     isTimerOn={isTimerOn}
                     elapsedTime={elapsedTime}
                     taskName={taskName}
+                    isModalOpen={isModalOpen}
                     selectedProject={selectedProject}
                     selectedClient={selectedClient}
                     onToggleProject={toggleProject}

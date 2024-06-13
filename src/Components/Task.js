@@ -77,9 +77,9 @@ export function Task({task, projects, clients, onTaskBlur, onStartBlur, onEndBlu
                 ></input>
                 <button 
                     onClick={() => setShowProjects(!showProjects)}
-                    className={!projectSelected.value ? "project-text-color project-text" : "project-text"}
+                    className={projectSelected.label === 'Project' ? "project-text-color project-text" : "project-text"}
                 >  
-                    {!projectSelected.value && <img src={circledPlusIcon} alt="Circled Plus Icon" style={{ width: '20px', height: '20px', marginRight: '5px'}}/>}
+                    {projectSelected.label === 'Project' && <img src={circledPlusIcon} alt="Circled Plus Icon" style={{ width: '20px', height: '20px', marginRight: '5px'}}/>}
                     {`${projectSelected.label}${clientSelected.label && ' - '}${clientSelected.label}`}
                 </button> 
                 <div className="task-time-container">
