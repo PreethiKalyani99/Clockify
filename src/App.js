@@ -32,7 +32,7 @@ function App() {
             </div>
             <div className= {isSidebarShrunk ? 'col-11 width-expand' : 'col-11 col-width'}>
               <Routes>
-                <Route path='/tracker' element={<TimeTracker
+                <Route exact path='/' element={<TimeTracker
                     isSidebarShrunk={isSidebarShrunk}
                 />}></Route>
               </Routes>
