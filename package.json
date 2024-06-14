@@ -1,8 +1,8 @@
 {
-  "name": "clockify-timetracker",
+  "name": "clockify",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://PreethiKalyani99.github.io/clockify-timetracker",
+  "homepage": "https://PreethiKalyani99.github.io/clockify",
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
