@@ -82,7 +82,7 @@ export function AddTask(props) {
                     </button>
                 </div>
             </div>
-            <div className= {props.showProjects ? "project-dropdown" : ''} ref={props.projectDropdowm}>
+            <div className= {props.showProjects ? "project-dropdown" : ''}>
                 {props.showProjects && 
                     <Project 
                         onSelect={props.onSelect}

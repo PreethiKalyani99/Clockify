@@ -15,7 +15,7 @@ function App() {
     setIsSidebarShrunk(!isSidebarShrunk)
   }
   return (
-    <Router>
+    <Router  basename='/clockify'>
         <div className='container'>
           <div className={isModalOpen ? 'row header' : 'row header zIndex'}>
             <Header
