@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/clockify-timetracker/static/css/main.f26e7acb.css",
-    "main.js": "/clockify-timetracker/static/js/main.1d0df6a0.js",
-    "static/js/453.999f8434.chunk.js": "/clockify-timetracker/static/js/453.999f8434.chunk.js",
-    "static/media/bootstrap-icons.woff?": "/clockify-timetracker/static/media/bootstrap-icons.39795c0b4513de014cf8.woff",
-    "static/media/bootstrap-icons.woff2?": "/clockify-timetracker/static/media/bootstrap-icons.b7bcc075b395c14ce8c2.woff2",
-    "static/media/circledPlusIcon.png": "/clockify-timetracker/static/media/circledPlusIcon.4e330d35a561e7882c06.png",
-    "static/media/menu.png": "/clockify-timetracker/static/media/menu.4cec5c7e9bcfdebbe3bd.png",
-    "index.html": "/clockify-timetracker/index.html",
-    "main.f26e7acb.css.map": "/clockify-timetracker/static/css/main.f26e7acb.css.map",
-    "main.1d0df6a0.js.map": "/clockify-timetracker/static/js/main.1d0df6a0.js.map",
-    "453.999f8434.chunk.js.map": "/clockify-timetracker/static/js/453.999f8434.chunk.js.map"
+    "main.css": "/clockify/static/css/main.f443add2.css",
+    "main.js": "/clockify/static/js/main.d5ad836e.js",
+    "static/js/453.31958d20.chunk.js": "/clockify/static/js/453.31958d20.chunk.js",
+    "static/media/bootstrap-icons.woff?": "/clockify/static/media/bootstrap-icons.39795c0b4513de014cf8.woff",
+    "static/media/bootstrap-icons.woff2?": "/clockify/static/media/bootstrap-icons.b7bcc075b395c14ce8c2.woff2",
+    "static/media/circledPlusIcon.png": "/clockify/static/media/circledPlusIcon.4e330d35a561e7882c06.png",
+    "static/media/menu.png": "/clockify/static/media/menu.4cec5c7e9bcfdebbe3bd.png",
+    "index.html": "/clockify/index.html",
+    "main.f443add2.css.map": "/clockify/static/css/main.f443add2.css.map",
+    "main.d5ad836e.js.map": "/clockify/static/js/main.d5ad836e.js.map",
+    "453.31958d20.chunk.js.map": "/clockify/static/js/453.31958d20.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f26e7acb.css",
-    "static/js/main.1d0df6a0.js"
+    "static/css/main.f443add2.css",
+    "static/js/main.d5ad836e.js"
   ]
 }
