@@ -349,3 +349,16 @@
     display: flex;
     justify-content: center;
 }
+
+.required{
+    color: #ea1c0d;
+}
+
+.modal-body{
+    display: flex;
+}
+
+.create-project{
+    padding-left: 10px;
+    outline: none;
+}

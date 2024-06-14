@@ -29,7 +29,7 @@ export function AddTask(props) {
                     ></input>
                     <button onClick={props.onToggle} className={!props.selectedProject.value ? "project-text-color project-text" : 'project-text'}>
                         {!props.selectedProject.value && <img src={circledPlusIcon} alt="Circled Plus Icon" style={{ width: '20px', height: '20px', marginRight: '5px'}}/>}
-                        {`${props?.selectedProject?.label}${props?.selectedClient?.label && ' - '}${props?.selectedClient?.label}`}
+                        {`${props?.selectedProject?.label}${(props?.selectedClient?.label && props.selectedProject?.value) && ' - '}${props.selectedProject?.value ? props?.selectedClient?.label : ''}`}
                     </button>
                 </div>
                 <div className="add-sub-container">

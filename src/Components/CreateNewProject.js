@@ -28,12 +28,15 @@ export function CreateNewProject(props){
     }
 
     function handleCreateOption(input){
-        dispatch(createClient({name: input}))
-        if(!props.setClientSelected){
-            dispatch(updateClientValue({ label: input, value: '' }))
-            return
+        const isClientExists = props.clients.some(client => client.name === input)
+        if(!isClientExists){
+            dispatch(createClient({name: input}))
+            if(!props.setClientSelected){
+                dispatch(updateClientValue({ label: input, value: '' }))
+                return
+            }
+            props.setClientSelected({ label: input, value: '' })
         }
-        props.setClientSelected({ label: input, value: '' })
     }
 
     async function addProject(){
@@ -71,8 +74,9 @@ export function CreateNewProject(props){
                         Create New Project
                     </ModalTitle>
                 </ModalHeader>
-                <ModalBody>
-                    <input 
+                <ModalBody className="modal-body">
+                    <input
+                        className="create-project" 
                         type="text" 
                         placeholder="Enter Project name" 
                         name="project"
@@ -80,8 +84,9 @@ export function CreateNewProject(props){
                         value={projectInput} 
                         onChange={handleInputChange}
                     ></input>
+                    <sup className="mt-3 ms-2 required fs-5">*</sup>
                      <Creatable
-                        className="react-selectcomponent"
+                        className="react-selectcomponent ms-4"
                         onChange={handleSelect}
                         onCreateOption={handleCreateOption}
                         options={props?.clients?.map(client => {
@@ -97,7 +102,7 @@ export function CreateNewProject(props){
                 </ModalBody>
                 <ModalFooter>
                     <Button variant="secondary" onClick={handleClose}>Close</Button>
-                    <Button variant="primary" onClick={addProject}>CREATE</Button>
+                    <Button variant="primary" onClick={addProject} disabled={projectInput.length < 2}>CREATE</Button>
                 </ModalFooter>
             </Modal>
         </>
