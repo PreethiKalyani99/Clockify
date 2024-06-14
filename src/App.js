@@ -15,7 +15,7 @@ function App() {
     setIsSidebarShrunk(!isSidebarShrunk)
   }
   return (
-    <Router  basename='/clockify'>
+    <Router  basename='/clockify-timetracker'>
         <div className='container'>
           <div className={isModalOpen ? 'row header' : 'row header zIndex'}>
             <Header
@@ -32,7 +32,7 @@ function App() {
             </div>
             <div className= {isSidebarShrunk ? 'col-11 width-expand' : 'col-11 col-width'}>
               <Routes>
-                <Route exact path='/' element={<TimeTracker
+                <Route path='/' element={<TimeTracker
                     isSidebarShrunk={isSidebarShrunk}
                 />}></Route>
               </Routes>
